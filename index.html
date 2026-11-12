@@ -3648,89 +3648,12 @@
       }
     }
 
-    // Initialize animations & theme on load
-        // =========================================================================
-    // 24/7 REAL-TIME CLOUD HEARTBEAT (INSTANT 3-SECOND TWO-WAY SYNC ACROSS ALL DEVICES)
-    // =========================================================================
-    let _lastInventoryHash = '';
-    let _realtimePulseTimer = null;
-
-    async function checkRealtimeInventoryUpdate() {
-      if (document.hidden) return;
-      try {
-        const url = SUPABASE_CONFIG.url + '/rest/v1/reservations?order_id=eq.CONFIG-STORE-ITEMS&select=items_summary';
-        const res = await fetch(url, {
-          method: 'GET',
-          headers: {
-            'apikey': SUPABASE_CONFIG.key,
-            'Authorization': 'Bearer ' + SUPABASE_CONFIG.key
-          }
-        });
-        if (!res.ok) return;
-        const rows = await res.json();
-        if (Array.isArray(rows) && rows.length > 0 && rows[0].items_summary) {
-          const raw = rows[0].items_summary;
-          if (raw !== _lastInventoryHash) {
-            _lastInventoryHash = raw;
-            const cloudItems = JSON.parse(raw);
-            if (Array.isArray(cloudItems) && cloudItems.length > 0) {
-              let changed = false;
-              cloudItems.forEach(ci => {
-                const localItem = appState.items.find(it => it.id === ci.id);
-                if (localItem) {
-                  if (ci.available !== undefined && localItem.available !== ci.available) {
-                    localItem.available = ci.available;
-                    changed = true;
-                  }
-                  if (ci.dailyRateLkr && localItem.dailyRateLkr !== ci.dailyRateLkr) {
-                    localItem.dailyRateLkr = ci.dailyRateLkr;
-                    changed = true;
-                  }
-                  if (ci.pack2DaysLkr && localItem.pack2DaysLkr !== ci.pack2DaysLkr) {
-                    localItem.pack2DaysLkr = ci.pack2DaysLkr;
-                    changed = true;
-                  }
-                  if (ci.pack7DaysLkr && localItem.pack7DaysLkr !== ci.pack7DaysLkr) {
-                    localItem.pack7DaysLkr = ci.pack7DaysLkr;
-                    changed = true;
-                  }
-                }
-              });
-
-              if (changed) {
-                saveState();
-                renderCatalog();
-                renderCategoryPills();
-                renderAdminRateTable();
-                populateContractItemSelect();
-                renderLegalAgreement();
-                console.log('⚡ Real-time Cloud Update: Inventory synced live without refresh!');
-              }
-            }
-          }
-        }
-      } catch (e) {
-        // Silent retry
-      }
-    }
-
-    function startRealtimeCloudSync() {
-      if (_realtimePulseTimer) clearInterval(_realtimePulseTimer);
-      checkRealtimeInventoryUpdate();
-      // Pulse every 3 seconds for seamless real-time cloud updates
-      _realtimePulseTimer = setInterval(() => {
-        checkRealtimeInventoryUpdate();
-        if (appState.currentView === 'admin') {
-          syncAdminOrdersFromSupabase();
-        }
-      }, 3000);
-    }
-
     window.addEventListener('DOMContentLoaded', () => {
       initScrollAnimations();
       updateThemeUI();
     });
 </script>
+
   <!-- FLOATING QUICK WHATSAPP CONTACT WIDGET -->
   <aside aria-label="Quick WhatsApp Contact" class="fixed bottom-6 right-6 z-40 no-print flex items-center gap-2 group">
     <a href="https://wa.me/94701875455?text=Hello%20DronieX%20Galle%2C%20I%20would%20like%20to%20inquire%20about%20renting%20gear." target="_blank" rel="noopener noreferrer" class="relative flex items-center justify-center w-14 h-14 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white shadow-xl hover:scale-105 transition-all duration-200" title="Chat on WhatsApp (070 187 5455)">
