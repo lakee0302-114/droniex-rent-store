@@ -1614,7 +1614,7 @@
         if (!res.ok) return null;
         const rows = await res.json();
         if (Array.isArray(rows)) {
-          return rows.map(mapSupabaseToBooking).filter(Boolean);
+          return rows.filter(r => r.order_id !== 'CONFIG-STORE-ITEMS' && r.booking_state !== 'store_inventory').map(mapSupabaseToBooking).filter(Boolean);
         }
         return null;
       } catch (err) {
@@ -1624,7 +1624,7 @@
     }
 
     async function supabaseLookupReservation(orderId) {
-      if (!orderId) return null;
+      if (!orderId || orderId === 'CONFIG-STORE-ITEMS') return null;
       try {
         const cleanId = encodeURIComponent(orderId.trim().toUpperCase());
         const res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/reservations?order_id=eq.${cleanId}&select=*`, {
@@ -1680,6 +1680,128 @@
       }
     }
 
+        async function supabaseSyncInventoryToCloud() {
+      try {
+        const itemsConfig = appState.items.map(it => ({
+          id: it.id,
+          title: it.title,
+          available: Boolean(it.available),
+          dailyRateLkr: Number(it.dailyRateLkr) || 0,
+          pack2DaysLkr: Number(it.pack2DaysLkr) || 0,
+          pack7DaysLkr: Number(it.pack7DaysLkr) || 0,
+          hourlyRateLkr: Number(it.hourlyRateLkr) || 0,
+          depositLkr: Number(it.depositLkr) || 0,
+          lateFeePerDayLkr: Number(it.lateFeePerDayLkr) || 0
+        }));
+
+        const body = {
+          order_id: 'CONFIG-STORE-ITEMS',
+          item_id: 'system-config',
+          customer_name: 'DronieX Inventory Sync',
+          phone: '070 187 5455',
+          nic: 'STORE-CONFIG',
+          email: 'admin@droniex.lk',
+          address: 'Galwadugoda, Galle',
+          payment_method: 'System',
+          package_name: 'Store Inventory Configuration',
+          items_summary: JSON.stringify(itemsConfig),
+          schedule: 'Live Inventory Sync',
+          total_lkr: 0,
+          booking_state: 'store_inventory',
+          status: 'Active'
+        };
+
+        const checkRes = await fetch(SUPABASE_CONFIG.url + '/rest/v1/reservations?order_id=eq.CONFIG-STORE-ITEMS&select=id', {
+          method: 'GET',
+          headers: {
+            'apikey': SUPABASE_CONFIG.key,
+            'Authorization': 'Bearer ' + SUPABASE_CONFIG.key
+          }
+        });
+
+        if (checkRes.ok) {
+          const existing = await checkRes.json();
+          if (Array.isArray(existing) && existing.length > 0) {
+            await fetch(SUPABASE_CONFIG.url + '/rest/v1/reservations?order_id=eq.CONFIG-STORE-ITEMS', {
+              method: 'PATCH',
+              headers: getSupabaseHeaders(),
+              body: JSON.stringify(body)
+            });
+            console.log('Supabase: Inventory status synced to Cloud!');
+            return true;
+          }
+        }
+
+        await fetch(SUPABASE_CONFIG.url + '/rest/v1/reservations', {
+          method: 'POST',
+          headers: getSupabaseHeaders(),
+          body: JSON.stringify(body)
+        });
+        console.log('Supabase: Inventory status created in Cloud!');
+        return true;
+      } catch (err) {
+        console.warn('Supabase Inventory sync error:', err);
+        return false;
+      }
+    }
+
+    async function supabaseFetchInventoryFromCloud() {
+      try {
+        const url = SUPABASE_CONFIG.url + '/rest/v1/reservations?order_id=eq.CONFIG-STORE-ITEMS&select=items_summary';
+        const res = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'apikey': SUPABASE_CONFIG.key,
+            'Authorization': 'Bearer ' + SUPABASE_CONFIG.key
+          }
+        });
+
+        if (!res.ok) return false;
+        const rows = await res.json();
+        if (Array.isArray(rows) && rows.length > 0 && rows[0].items_summary) {
+          const cloudItems = JSON.parse(rows[0].items_summary);
+          if (Array.isArray(cloudItems) && cloudItems.length > 0) {
+            let changed = false;
+            cloudItems.forEach(ci => {
+              const localItem = appState.items.find(it => it.id === ci.id);
+              if (localItem) {
+                if (ci.available !== undefined && localItem.available !== ci.available) {
+                  localItem.available = ci.available;
+                  changed = true;
+                }
+                if (ci.dailyRateLkr && localItem.dailyRateLkr !== ci.dailyRateLkr) {
+                  localItem.dailyRateLkr = ci.dailyRateLkr;
+                  changed = true;
+                }
+                if (ci.pack2DaysLkr && localItem.pack2DaysLkr !== ci.pack2DaysLkr) {
+                  localItem.pack2DaysLkr = ci.pack2DaysLkr;
+                  changed = true;
+                }
+                if (ci.pack7DaysLkr && localItem.pack7DaysLkr !== ci.pack7DaysLkr) {
+                  localItem.pack7DaysLkr = ci.pack7DaysLkr;
+                  changed = true;
+                }
+              }
+            });
+
+            if (changed) {
+              saveState();
+              renderCatalog();
+              renderCategoryPills();
+              renderAdminRateTable();
+              populateContractItemSelect();
+              renderLegalAgreement();
+            }
+            console.log('Loaded live inventory from Supabase Cloud!');
+            return true;
+          }
+        }
+      } catch (err) {
+        console.warn('Could not fetch cloud inventory:', err);
+      }
+      return false;
+    }
+
     async function syncAdminOrdersFromSupabase(isManual) {
       const syncStatusEl = document.getElementById('adminCloudSyncStatus');
       if (syncStatusEl) syncStatusEl.textContent = 'Syncing...';
@@ -1706,8 +1828,10 @@
 
         const rows = await res.json();
         if (Array.isArray(rows)) {
+          supabaseFetchInventoryFromCloud();
+          const cleanBookingRows = rows.filter(r => r.order_id !== 'CONFIG-STORE-ITEMS' && r.booking_state !== 'store_inventory');
           const existingMap = new Map();
-          rows.map(mapSupabaseToBooking).filter(Boolean).forEach(b => existingMap.set(b.orderId, b));
+          cleanBookingRows.map(mapSupabaseToBooking).filter(Boolean).forEach(b => existingMap.set(b.orderId, b));
 
           appState.bookings.forEach(b => {
             if (!existingMap.has(b.orderId)) {
@@ -3054,7 +3178,8 @@
       renderCatalog();
       renderCart();
       renderLegalAgreement();
-      showToast(`Updated ${appState.items[idx].title} (${field})`);
+      supabaseSyncInventoryToCloud();
+      showToast(`Updated ${appState.items[idx].title} (${field}) · Cloud Synced`);
     }
 
     function toggleItemAvailability(idx) {
@@ -3063,7 +3188,8 @@
       saveState();
       renderAdminRateTable();
       renderCatalog();
-      showToast(`Status updated for ${appState.items[idx].title}`);
+      supabaseSyncInventoryToCloud();
+      showToast(`Status updated for ${appState.items[idx].title} · Cloud Synced`);
     }
 
     function handleAddNewItem(e) {
@@ -3107,7 +3233,8 @@
       renderAdminRateTable();
       renderCategoryPills();
       renderCatalog();
-      showToast(`Added "${title}" to DronieX catalog!`);
+      supabaseSyncInventoryToCloud();
+      showToast(`Added "${title}" to DronieX catalog! · Cloud Synced`);
     }
 
     function resetCatalogToDefaults() {
@@ -3117,7 +3244,8 @@
       renderCategoryPills();
       renderCatalog();
       renderCart();
-      showToast('Restored default DronieX catalog & rates.');
+      supabaseSyncInventoryToCloud();
+      showToast('Restored default DronieX catalog & rates · Cloud Synced');
     }
 
     // =========================================================================
@@ -3316,7 +3444,12 @@
       populateContractItemSelect();
       renderLegalAgreement();
       renderAdminRateTable();
+      supabaseFetchInventoryFromCloud();
       syncAdminOrdersFromSupabase();
+    });
+
+    window.addEventListener('focus', () => {
+      supabaseFetchInventoryFromCloud();
     });
   
     // =========================================================================
