@@ -1481,6 +1481,9 @@
               return {
                 ...def,
                 available: savedIt.available !== undefined ? Boolean(savedIt.available) : def.available,
+                reservedUntilDate: savedIt.reservedUntilDate || '',
+                reservedFromDate: savedIt.reservedFromDate || '',
+                activeOrderId: savedIt.activeOrderId || '',
                 dailyRateLkr: Number(savedIt.dailyRateLkr) || def.dailyRateLkr,
                 pack2DaysLkr: Number(savedIt.pack2DaysLkr) || def.pack2DaysLkr,
                 pack7DaysLkr: Number(savedIt.pack7DaysLkr) || def.pack7DaysLkr,
@@ -1631,6 +1634,9 @@
           id: it.id,
           title: it.title,
           available: Boolean(it.available),
+          reservedUntilDate: it.reservedUntilDate || '',
+          reservedFromDate: it.reservedFromDate || '',
+          activeOrderId: it.activeOrderId || '',
           dailyRateLkr: Number(it.dailyRateLkr) || 0,
           pack2DaysLkr: Number(it.pack2DaysLkr) || 0,
           pack7DaysLkr: Number(it.pack7DaysLkr) || 0,
@@ -1670,6 +1676,18 @@
             if (localItem) {
               if (ci.available !== undefined && localItem.available !== ci.available) {
                 localItem.available = Boolean(ci.available);
+                changed = true;
+              }
+              if (ci.reservedUntilDate !== undefined && localItem.reservedUntilDate !== ci.reservedUntilDate) {
+                localItem.reservedUntilDate = ci.reservedUntilDate;
+                changed = true;
+              }
+              if (ci.reservedFromDate !== undefined && localItem.reservedFromDate !== ci.reservedFromDate) {
+                localItem.reservedFromDate = ci.reservedFromDate;
+                changed = true;
+              }
+              if (ci.activeOrderId !== undefined && localItem.activeOrderId !== ci.activeOrderId) {
+                localItem.activeOrderId = ci.activeOrderId;
                 changed = true;
               }
               if (ci.dailyRateLkr && localItem.dailyRateLkr !== ci.dailyRateLkr) {
@@ -1727,8 +1745,26 @@
           return (new Date(b.createdAt || 0)) - (new Date(a.createdAt || 0));
         });
 
+        // Cross-device sync check: If any booking in cloud is picked up, ensure target item is locked on all devices!
+        let invLockChanged = false;
+        appState.bookings.forEach(b => {
+          if (b && (b.bookingState === 'picked_up' || (b.status || '').includes('Picked Up'))) {
+            const targetItem = findItemForBooking(b);
+            if (targetItem && targetItem.available) {
+              targetItem.available = false;
+              targetItem.reservedUntilDate = b.returnDate || '';
+              targetItem.activeOrderId = b.orderId;
+              invLockChanged = true;
+            }
+          }
+        });
+
         saveState();
         renderAdminOrdersTable();
+        renderAdminRateTable();
+        if (invLockChanged) {
+          renderCatalog();
+        }
         if (syncStatusEl) {
           syncStatusEl.textContent = appState.bookings.length > 0
             ? 'Cloud Live (' + appState.bookings.length + ')'
@@ -2995,11 +3031,11 @@
       renderAdminRateTable();
       renderCatalog();
 
-      // Sync status to Firebase Realtime Database
-      firebaseUpdateReservation(b.orderId, {
-        booking_state: b.bookingState,
-        status: b.status
-      });
+      // Instantly broadcast inventory availability (available: false/true & dates) to Firebase Cloud
+      firebaseSyncInventoryToCloud();
+
+      // Sync full booking state to Firebase Realtime Database
+      firebaseInsertReservation(b);
     }
 
     function deleteBookingOrder(idx) {
@@ -3018,6 +3054,7 @@
       renderAdminOrdersTable();
       renderAdminRateTable();
       renderCatalog();
+      firebaseSyncInventoryToCloud();
       showToast(`Removed order ${id}`);
 
       // Delete from Firebase Realtime Database
@@ -3345,6 +3382,18 @@
               if (localItem) {
                 if (ci.available !== undefined && localItem.available !== ci.available) {
                   localItem.available = Boolean(ci.available);
+                  changed = true;
+                }
+                if (ci.reservedUntilDate !== undefined && localItem.reservedUntilDate !== ci.reservedUntilDate) {
+                  localItem.reservedUntilDate = ci.reservedUntilDate;
+                  changed = true;
+                }
+                if (ci.reservedFromDate !== undefined && localItem.reservedFromDate !== ci.reservedFromDate) {
+                  localItem.reservedFromDate = ci.reservedFromDate;
+                  changed = true;
+                }
+                if (ci.activeOrderId !== undefined && localItem.activeOrderId !== ci.activeOrderId) {
+                  localItem.activeOrderId = ci.activeOrderId;
                   changed = true;
                 }
                 if (ci.dailyRateLkr && localItem.dailyRateLkr !== ci.dailyRateLkr) {
