@@ -923,7 +923,11 @@
               <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Review customer bookings, manage dates, and update equipment handover status.</p>
             </div>
           </div>
-          <div class="flex items-center gap-2">
+          <div class="flex flex-wrap items-center gap-2">
+            <button type="button" onclick="exportOrdersToCsv()" id="adminExportCsvBtn" class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-xs cursor-pointer" title="Export all reservations to Excel (.csv)">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              <span>📊 Export Excel</span>
+            </button>
             <button type="button" onclick="syncAdminOrdersFromFirebase(true)" id="adminCloudSyncBtn" class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold transition cursor-pointer" title="Sync live reservations from Firebase Cloud Database">
               <svg class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
               <span id="adminCloudSyncStatus">Cloud Live</span>
@@ -3059,6 +3063,81 @@
 
       // Delete from Firebase Realtime Database
       firebaseDeleteReservation(id);
+    }
+
+    function exportOrdersToCsv() {
+      if (!appState.bookings || appState.bookings.length === 0) {
+        showToast('No reservation orders to export!');
+        return;
+      }
+
+      const headers = [
+        'Order ID',
+        'Customer Name',
+        'NIC Number',
+        'Phone Number',
+        'Email Address',
+        'Residential Address',
+        'Equipment Reserved',
+        'Item ID',
+        'Pickup Date',
+        'Return Date',
+        'Rental Duration (Days)',
+        'Schedule Summary',
+        'Total Rental (LKR)',
+        'Payment Method',
+        'Package Name',
+        'Booking Status',
+        'Booking State',
+        'Created Date'
+      ];
+
+      function escapeCsv(val) {
+        if (val === null || val === undefined) return '""';
+        let str = String(val).replace(/"/g, '""');
+        if (/^[=\+\-@]/.test(str)) {
+          str = "'" + str;
+        }
+        return '"' + str + '"';
+      }
+
+      const rows = appState.bookings.map(b => {
+        return [
+          escapeCsv(b.orderId || ''),
+          escapeCsv(b.customerName || ''),
+          escapeCsv(b.nic || ''),
+          escapeCsv(b.phone || ''),
+          escapeCsv(b.email || ''),
+          escapeCsv(b.address || ''),
+          escapeCsv(b.itemsSummary || ''),
+          escapeCsv(b.itemId || ''),
+          escapeCsv(b.pickupDate || ''),
+          escapeCsv(b.returnDate || ''),
+          escapeCsv(b.rentalDays || ''),
+          escapeCsv(b.schedule || ''),
+          escapeCsv(b.totalLkr || 0),
+          escapeCsv(b.paymentMethod || 'Pay on Store'),
+          escapeCsv(b.packageName || ''),
+          escapeCsv(b.status || ''),
+          escapeCsv(b.bookingState || ''),
+          escapeCsv(b.createdAt || '')
+        ].join(',');
+      });
+
+      // UTF-8 BOM (﻿) ensures Microsoft Excel and Google Sheets open Sinhala and special chars without mojibake
+      const csvContent = '\uFEFF' + headers.join(',') + '\r\n' + rows.join('\r\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      const dateStr = new Date().toISOString().split('T')[0];
+      link.setAttribute('href', url);
+      link.setAttribute('download', 'DronieX_Reservations_' + dateStr + '.csv');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      showToast('Exported ' + appState.bookings.length + ' reservation(s) to Excel sheet (.csv)!');
     }
 
     function renderAdminRateTable() {
