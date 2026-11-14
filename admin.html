@@ -178,6 +178,23 @@
         </div>
       </div>
 
+      <!-- Live Equipment Availability Control Panel -->
+      <div class="bg-slate-800/60 border border-slate-700/80 rounded-2xl p-4 space-y-3">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-700/80 pb-2.5">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-300">⚡ Live Store Equipment Availability</span>
+            <span class="text-[10px] text-slate-400">(Synced instantly with Store Catalog)</span>
+          </div>
+          <button type="button" onclick="adminResetAllGearAvailable()" class="self-start sm:self-auto px-3 py-1 rounded-xl bg-emerald-600/80 hover:bg-emerald-600 text-white text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-xs">
+            <span>🔄</span>
+            <span>Make All Gear Available Now</span>
+          </button>
+        </div>
+        <div id="adminGearStatusGrid" class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+          <!-- Populated by renderGearStatusGrid() -->
+        </div>
+      </div>
+
       <!-- VIEW 1: ORDERS TABLE -->
       <div id="tabViewTable" class="space-y-4">
         <!-- Search & Filter Bar -->
@@ -517,7 +534,7 @@
             changed = true;
           }
         } else {
-          if (!it.available && it.activeOrderId) {
+          if (!it.available) {
             it.available = true;
             it.reservedUntilDate = '';
             it.reservedFromDate = '';
@@ -542,7 +559,11 @@
           const data = await res.json();
           if (data && typeof data === 'object') {
             _adminBookings = Object.values(data).sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+          } else {
+            _adminBookings = [];
           }
+        } else {
+          _adminBookings = [];
         }
         const invRes = await fetch(FIREBASE_BASE + '/inventory.json');
         if (invRes.ok) {
@@ -652,8 +673,61 @@
     function renderDashboard() {
       loadWhatsAppGatewaySettings();
       updateKpis();
+      renderGearStatusGrid();
       renderOrdersTable();
       renderCalendar();
+    }
+
+    function renderGearStatusGrid() {
+      const container = document.getElementById('adminGearStatusGrid');
+      if (!container) return;
+      container.innerHTML = _adminItems.map(it => {
+        const isAvail = Boolean(it.available);
+        return `
+          <div class="p-3 rounded-xl bg-slate-900 border ${isAvail ? 'border-emerald-900/50' : 'border-amber-800/80'} flex items-center justify-between">
+            <div>
+              <div class="font-bold text-white text-xs">${it.title}</div>
+              <div class="text-[10px] ${isAvail ? 'text-emerald-400' : 'text-amber-400'} font-semibold mt-0.5">
+                ${isAvail ? '🟢 Available on Store' : ('🔒 Reserved · Out (' + (it.reservedUntilDate || 'Active') + ')')}
+              </div>
+            </div>
+            <button type="button" onclick="adminToggleItemAvailability('${it.id}')"
+              class="px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition cursor-pointer ${
+                isAvail
+                  ? 'bg-amber-600/80 hover:bg-amber-600 text-white'
+                  : 'bg-emerald-600 hover:bg-emerald-500 text-white'
+              }">
+              ${isAvail ? 'Lock Out' : 'Unlock Now'}
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function adminToggleItemAvailability(itemId) {
+      const it = _adminItems.find(i => i.id === itemId);
+      if (!it) return;
+      it.available = !it.available;
+      if (it.available) {
+        it.reservedUntilDate = '';
+        it.reservedFromDate = '';
+        it.activeOrderId = '';
+      }
+      await syncAdminInventoryToCloud();
+      renderDashboard();
+      showToast(`${it.title} is now ${it.available ? 'Available' : 'Locked Reserved'} on Store!`);
+    }
+
+    async function adminResetAllGearAvailable() {
+      _adminItems.forEach(it => {
+        it.available = true;
+        it.reservedUntilDate = '';
+        it.reservedFromDate = '';
+        it.activeOrderId = '';
+      });
+      await syncAdminInventoryToCloud();
+      renderDashboard();
+      showToast('✓ All 3 Gear units are now Available on Store Catalog!');
     }
 
     function updateKpis() {

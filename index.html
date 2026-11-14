@@ -2353,21 +2353,11 @@
 
       try {
         const cleanBookingRows = await firebaseFetchAllReservations();
-        const existingMap = new Map();
-        cleanBookingRows.forEach(b => {
-          if (b && b.orderId) existingMap.set(b.orderId, b);
-        });
-
-        appState.bookings.forEach(b => {
-          if (b && b.orderId && !existingMap.has(b.orderId)) {
-            existingMap.set(b.orderId, b);
-          }
-        });
-
         const previousCount = appState.bookings.length;
         const previousIds = new Set(appState.bookings.map(b => b.orderId));
 
-        appState.bookings = Array.from(existingMap.values()).sort((a, b) => {
+        // Cloud Database is the single source of truth for all bookings
+        appState.bookings = cleanBookingRows.sort((a, b) => {
           return (new Date(b.createdAt || 0)) - (new Date(a.createdAt || 0));
         });
 
@@ -4247,8 +4237,8 @@
             changed = true;
           }
         } else {
-          // If this item was locked by a booking that is now returned or cancelled
-          if (!it.available && it.activeOrderId) {
+          // If this item has no active picked-up reservation, it MUST be available!
+          if (!it.available) {
             it.available = true;
             it.reservedUntilDate = '';
             it.reservedFromDate = '';
