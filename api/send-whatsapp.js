@@ -20,7 +20,7 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const { phone, message, orderId, test } = req.body || {};
+    const { phone, message, orderId, test, notifyAdmin, customerName, gear, totalAmount } = req.body || {};
 
     if (!phone || !message) {
       return res.status(400).json({ error: 'Phone and message are required' });
@@ -73,7 +73,7 @@ module.exports = async (req, res) => {
       cleanInstanceId = 'instance' + cleanInstanceId;
     }
 
-    // 3. Dispatch POST request to UltraMsg API
+    // 3. Dispatch POST request to UltraMsg API for Customer
     const params = new URLSearchParams();
     params.append('token', token);
     params.append('to', targetPhone);
@@ -87,6 +87,34 @@ module.exports = async (req, res) => {
     });
 
     const result = await ultraRes.json();
+
+    // 4. Also notify Store Owner Hotline (0701875455 / 94701875455) if notifyAdmin is requested
+    if (notifyAdmin && targetPhone !== '94701875455') {
+      try {
+        const adminParams = new URLSearchParams();
+        adminParams.append('token', token);
+        adminParams.append('to', '94701875455');
+        const adminBody =
+          `🚨 *NEW ONLINE RESERVATION RECEIVED!*\n` +
+          `━━━━━━━━━━━━━━━━━━━━━\n` +
+          `📋 *Order ID:* ${orderId || 'New'}\n` +
+          `👤 *Customer:* ${customerName || 'Customer'}\n` +
+          `📞 *Contact:* +${targetPhone}\n` +
+          `📦 *Gear:* ${gear || 'Equipment'}\n` +
+          `💰 *Total:* Rs. ${totalAmount ? Number(totalAmount).toLocaleString('en-LK') : '—'}\n` +
+          `━━━━━━━━━━━━━━━━━━━━━\n` +
+          `👉 *Admin Portal:* https://droniex-rent-store.vercel.app/admin.html`;
+        adminParams.append('body', adminBody);
+
+        fetch(ultraUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: adminParams.toString()
+        }).catch(err => console.warn('Admin WA dispatch error:', err));
+      } catch (adminErr) {
+        console.warn('Admin notification error:', adminErr);
+      }
+    }
 
     if (result && (result.sent === 'true' || result.sent === true || result.id || result.message === 'ok')) {
       return res.status(200).json({
