@@ -37,47 +37,95 @@
 <body class="bg-slate-900 text-slate-100 min-h-full flex flex-col font-sans antialiased selection:bg-blue-600 selection:text-white">
 
   <!-- =========================================================================
-       GATE 1: HIGH SECURITY STAFF PIN LOGIN SCREEN
+       GATE 1: FIREBASE AUTHENTICATION & MASTER PIN GATEWAY
        ========================================================================= -->
   <div id="adminGateScreen" class="fixed inset-0 z-50 bg-slate-950 flex flex-col items-center justify-center p-4">
-    <div class="relative bg-slate-900 border border-slate-800 rounded-3xl max-w-sm w-full p-7 space-y-6 shadow-2xl">
-      <div class="text-center space-y-3">
+    <div class="relative bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-5 shadow-2xl">
+      <div class="text-center space-y-2.5">
         <div class="w-14 h-14 rounded-2xl bg-blue-600/10 border border-blue-500/20 text-blue-400 mx-auto flex items-center justify-center text-2xl shadow-inner">
-          🔒
+          🔥
         </div>
         <div>
           <span class="text-[10px] font-bold uppercase tracking-wider text-blue-400 bg-blue-950/80 px-2.5 py-0.5 rounded-full border border-blue-800">
-            DronieX Staff Authorization
+            Firebase Cloud Authentication
           </span>
-          <h2 class="text-xl font-black text-white mt-2">Store Admin Portal</h2>
+          <h2 class="text-xl font-black text-white mt-2">DronieX Store Admin Portal</h2>
           <p class="text-xs text-slate-400 mt-1">
-            Restricted gateway for store staff at No. 131, Galwadugoda, Galle.
+            Authorized staff login for No. 131, Galwadugoda, Galle 80000.
           </p>
         </div>
       </div>
 
-      <form onsubmit="event.preventDefault(); submitAdminGatePin();" class="space-y-4">
-        <div>
-          <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 text-center">
-            Master Security PIN
-          </label>
-          <input
-            type="password"
-            id="gatePinInput"
-            maxlength="8"
-            inputmode="numeric"
-            placeholder="••••"
-            class="w-full text-center tracking-[0.5em] text-2xl font-black bg-slate-800 border-2 border-slate-700 focus:border-blue-500 rounded-2xl py-3 px-4 text-white placeholder-slate-600 focus:outline-none focus:ring-4 focus:ring-blue-500/20 transition"
-            autocomplete="off"
-            autofocus
-          />
-          <p id="gatePinError" class="hidden text-xs text-rose-400 font-bold mt-2.5 text-center"></p>
+      <!-- Auth Method Switcher Tabs -->
+      <div class="flex items-center gap-1.5 bg-slate-800/80 p-1 rounded-2xl border border-slate-700">
+        <button type="button" id="authTabFirebase" onclick="setAuthTab('firebase')" class="flex-1 py-2 rounded-xl text-xs font-bold bg-blue-600 text-white transition flex items-center justify-center gap-1.5 cursor-pointer">
+          <span>🔥</span>
+          <span>Firebase Auth</span>
+        </button>
+        <button type="button" id="authTabPin" onclick="setAuthTab('pin')" class="flex-1 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white transition flex items-center justify-center gap-1.5 cursor-pointer">
+          <span>🔢</span>
+          <span>Master PIN</span>
+        </button>
+      </div>
+
+      <!-- TAB 1: FIREBASE EMAIL & PASSWORD AUTH PANEL -->
+      <div id="authPanelFirebase" class="space-y-4">
+        <div class="flex items-center justify-between text-xs border-b border-slate-800 pb-2">
+          <span id="firebaseAuthSubTitle" class="font-bold text-slate-300">Staff Account Sign In</span>
+          <div id="firebaseActionToggle" onclick="toggleFirebaseAction(_firebaseAction === 'signUp' ? 'signIn' : 'signUp')" class="text-blue-400 text-[11px] cursor-pointer hover:underline">
+            New staff member? <span class="font-bold">Register Admin</span>
+          </div>
         </div>
 
-        <button type="submit" class="w-full py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-lg transition flex items-center justify-center gap-2 cursor-pointer">
-          <span>Authorize &amp; Access Dashboard →</span>
-        </button>
-      </form>
+        <form onsubmit="event.preventDefault(); submitFirebaseAdminAuth();" class="space-y-3.5">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Admin Email</label>
+            <input type="email" id="authEmailInput" placeholder="admin@droniex.lk" class="w-full bg-slate-800 border border-slate-700 focus:border-blue-500 rounded-xl py-2.5 px-3.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition" required />
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Password</label>
+              <button type="button" onclick="sendAdminPasswordReset()" class="text-[10px] text-blue-400 hover:underline cursor-pointer">Forgot Password?</button>
+            </div>
+            <input type="password" id="authPasswordInput" placeholder="••••••••" class="w-full bg-slate-800 border border-slate-700 focus:border-blue-500 rounded-xl py-2.5 px-3.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition" required />
+          </div>
+
+          <p id="firebaseAuthError" class="hidden text-xs text-rose-400 font-semibold p-2.5 rounded-xl bg-rose-950/40 border border-rose-800/80 text-center leading-relaxed"></p>
+
+          <button type="submit" id="firebaseSubmitBtn" class="w-full py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-lg transition flex items-center justify-center gap-2 cursor-pointer">
+            <span>Sign In with Firebase Auth →</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- TAB 2: MASTER PIN AUTH PANEL (FALLBACK) -->
+      <div id="authPanelPin" class="hidden space-y-4">
+        <div class="text-xs text-slate-400 text-center border-b border-slate-800 pb-2">
+          <span>Emergency offline fallback access with 4-digit Master Security PIN</span>
+        </div>
+        <form onsubmit="event.preventDefault(); submitAdminGatePin();" class="space-y-4">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 text-center">
+              Master Security PIN
+            </label>
+            <input
+              type="password"
+              id="gatePinInput"
+              maxlength="8"
+              inputmode="numeric"
+              placeholder="••••"
+              class="w-full text-center tracking-[0.5em] text-2xl font-black bg-slate-800 border-2 border-slate-700 focus:border-blue-500 rounded-2xl py-3 px-4 text-white placeholder-slate-600 focus:outline-none focus:ring-4 focus:ring-blue-500/20 transition"
+              autocomplete="off"
+            />
+            <p id="gatePinError" class="hidden text-xs text-rose-400 font-bold mt-2.5 text-center"></p>
+          </div>
+
+          <button type="submit" class="w-full py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-lg transition flex items-center justify-center gap-2 cursor-pointer">
+            <span>Authorize with Master PIN →</span>
+          </button>
+        </form>
+      </div>
 
       <div class="pt-3 border-t border-slate-800 text-center">
         <a href="/" class="text-xs text-slate-400 hover:text-white transition flex items-center justify-center gap-1.5">
@@ -108,6 +156,10 @@
         </div>
 
         <div class="flex items-center gap-2.5">
+          <div id="adminUserBadge" class="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 text-xs">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            <span id="adminUserEmailLabel">Staff Admin</span>
+          </div>
           <button type="button" onclick="exportOrdersToCsv()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition shadow-xs cursor-pointer" title="Export all reservations to Excel (.csv)">
             <span>📊 Excel Export</span>
           </button>
@@ -419,7 +471,183 @@
       }, 3000);
     }
 
-    // Gate Authentication
+    // =========================================================================
+    // FIREBASE AUTHENTICATION & MASTER PIN LOGIC
+    // =========================================================================
+    const FIREBASE_API_KEY = 'AIzaSyCksMhbBk0wIzXmmx-a1RJSmwRYWAqlPWg';
+    let _authMode = 'firebase';
+    let _firebaseAction = 'signIn';
+
+    function setAuthTab(tab) {
+      _authMode = tab;
+      const tabFb = document.getElementById('authTabFirebase');
+      const tabPin = document.getElementById('authTabPin');
+      const panelFb = document.getElementById('authPanelFirebase');
+      const panelPin = document.getElementById('authPanelPin');
+
+      if (tab === 'firebase') {
+        tabFb.className = 'flex-1 py-2 rounded-xl text-xs font-bold bg-blue-600 text-white transition flex items-center justify-center gap-1.5 cursor-pointer';
+        tabPin.className = 'flex-1 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white transition flex items-center justify-center gap-1.5 cursor-pointer';
+        panelFb.classList.remove('hidden');
+        panelPin.classList.add('hidden');
+      } else {
+        tabPin.className = 'flex-1 py-2 rounded-xl text-xs font-bold bg-blue-600 text-white transition flex items-center justify-center gap-1.5 cursor-pointer';
+        tabFb.className = 'flex-1 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white transition flex items-center justify-center gap-1.5 cursor-pointer';
+        panelPin.classList.remove('hidden');
+        panelFb.classList.add('hidden');
+      }
+    }
+
+    function toggleFirebaseAction(action) {
+      _firebaseAction = action;
+      const btn = document.getElementById('firebaseSubmitBtn');
+      const toggleText = document.getElementById('firebaseActionToggle');
+      const title = document.getElementById('firebaseAuthSubTitle');
+      const err = document.getElementById('firebaseAuthError');
+      if (err) err.classList.add('hidden');
+
+      if (action === 'signUp') {
+        btn.textContent = 'Create Admin Account & Log In →';
+        toggleText.innerHTML = 'Already have an account? <span class="font-bold">Sign In</span>';
+        if (title) title.textContent = 'Register New Admin Account';
+      } else {
+        btn.textContent = 'Sign In with Firebase Auth →';
+        toggleText.innerHTML = 'New staff member? <span class="font-bold">Register Admin</span>';
+        if (title) title.textContent = 'Staff Account Sign In';
+      }
+    }
+
+    async function submitFirebaseAdminAuth() {
+      const emailInput = document.getElementById('authEmailInput');
+      const passInput = document.getElementById('authPasswordInput');
+      const err = document.getElementById('firebaseAuthError');
+      const btn = document.getElementById('firebaseSubmitBtn');
+
+      const email = (emailInput ? emailInput.value : '').trim();
+      const password = (passInput ? passInput.value : '').trim();
+
+      if (!email || !password) {
+        if (err) {
+          err.textContent = 'Please enter both email and password.';
+          err.classList.remove('hidden');
+        }
+        return;
+      }
+
+      if (password.length < 6) {
+        if (err) {
+          err.textContent = 'Password must be at least 6 characters.';
+          err.classList.remove('hidden');
+        }
+        return;
+      }
+
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="animate-spin mr-1.5">⏳</span> Authenticating with Firebase...';
+      }
+      if (err) err.classList.add('hidden');
+
+      try {
+        const endpoint = _firebaseAction === 'signUp'
+          ? 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' + FIREBASE_API_KEY
+          : 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=' + FIREBASE_API_KEY;
+
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, returnSecureToken: true })
+        });
+
+        const data = await res.json();
+
+        if (res.ok && data && data.idToken) {
+          sessionStorage.setItem('droniex_admin_auth', 'firebase');
+          sessionStorage.setItem('droniex_admin_email', data.email || email);
+          sessionStorage.setItem('droniex_admin_token', data.idToken);
+          unlockAdminDashboard(data.email || email);
+          showToast(`✓ Welcome ${data.email || 'Admin'}! Signed in via Firebase Auth.`);
+        } else {
+          let msg = 'Authentication failed.';
+          const code = data?.error?.message || '';
+
+          if (code.includes('EMAIL_NOT_FOUND')) {
+            msg = 'No admin account found with this email. Click "Register Admin" to create it.';
+          } else if (code.includes('INVALID_PASSWORD') || code.includes('INVALID_LOGIN_CREDENTIALS')) {
+            msg = 'Incorrect password! Please check and try again.';
+          } else if (code.includes('EMAIL_EXISTS')) {
+            msg = 'An account with this email already exists. Switch to Sign In.';
+          } else if (code.includes('CONFIGURATION_NOT_FOUND')) {
+            msg = 'Firebase Auth is not yet enabled in your Firebase Console. Please open console.firebase.google.com -> Authentication -> Get Started -> enable Email/Password, or switch to the Master PIN tab above!';
+          } else if (code.includes('OPERATION_NOT_ALLOWED')) {
+            msg = 'Email/Password sign-in is disabled in Firebase Console. Please enable it in Firebase Console -> Authentication -> Sign-in method, or use Master PIN.';
+          } else if (code.includes('TOO_MANY_ATTEMPTS')) {
+            msg = 'Temporarily disabled due to multiple failed attempts. Please try again later or use Master PIN.';
+          } else if (data?.error?.message) {
+            msg = 'Firebase Auth: ' + data.error.message;
+          }
+
+          if (err) {
+            err.textContent = msg;
+            err.classList.remove('hidden');
+          }
+        }
+      } catch (networkErr) {
+        if (err) {
+          err.textContent = 'Network error contacting Firebase Auth. Please verify connection or use Master PIN.';
+          err.classList.remove('hidden');
+        }
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = _firebaseAction === 'signUp' ? 'Create Admin Account & Log In →' : 'Sign In with Firebase Auth →';
+        }
+      }
+    }
+
+    async function sendAdminPasswordReset() {
+      const emailInput = document.getElementById('authEmailInput');
+      const err = document.getElementById('firebaseAuthError');
+      const email = (emailInput ? emailInput.value : '').trim();
+
+      if (!email) {
+        if (err) {
+          err.textContent = 'Please enter your email address above to receive a password reset link.';
+          err.classList.remove('hidden');
+        }
+        return;
+      }
+
+      showToast('Sending password reset email via Firebase...');
+      try {
+        const url = 'https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=' + FIREBASE_API_KEY;
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ requestType: 'PASSWORD_RESET', email })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          showToast('✓ Password reset email sent to ' + email + '!');
+          if (err) {
+            err.textContent = 'Password reset email sent to ' + email + '! Check your inbox.';
+            err.classList.remove('hidden');
+          }
+        } else {
+          if (err) {
+            err.textContent = 'Password reset: ' + (data?.error?.message || 'Error sending link');
+            err.classList.remove('hidden');
+          }
+        }
+      } catch (e) {
+        if (err) {
+          err.textContent = 'Network error: ' + e.message;
+          err.classList.remove('hidden');
+        }
+      }
+    }
+
+    // Master PIN Gate Authentication
     function submitAdminGatePin() {
       const input = document.getElementById('gatePinInput');
       const err = document.getElementById('gatePinError');
@@ -427,7 +655,8 @@
 
       if (pin === ADMIN_SECURITY_PIN) {
         sessionStorage.setItem('droniex_admin_auth', '1121');
-        unlockAdminDashboard();
+        sessionStorage.setItem('droniex_admin_email', 'Staff Master PIN');
+        unlockAdminDashboard('Staff Master PIN');
         showToast('Store Admin Authorized Successfully');
       } else {
         if (err) {
@@ -442,9 +671,16 @@
     }
 
     let _adminPollTimer = null;
-    function unlockAdminDashboard() {
+    function unlockAdminDashboard(adminEmail) {
       document.getElementById('adminGateScreen').classList.add('hidden');
       document.getElementById('adminAppDashboard').classList.remove('hidden');
+
+      const emailLabel = document.getElementById('adminUserEmailLabel');
+      const badge = document.getElementById('adminUserBadge');
+      const currentEmail = adminEmail || sessionStorage.getItem('droniex_admin_email') || 'Staff Admin';
+      if (emailLabel) emailLabel.textContent = currentEmail;
+      if (badge) badge.classList.remove('hidden');
+
       syncFirebaseOrders(false);
       renderDashboard();
       if (_adminPollTimer) clearInterval(_adminPollTimer);
@@ -455,10 +691,15 @@
 
     function lockAdminGate() {
       sessionStorage.removeItem('droniex_admin_auth');
+      sessionStorage.removeItem('droniex_admin_email');
+      sessionStorage.removeItem('droniex_admin_token');
       document.getElementById('adminAppDashboard').classList.add('hidden');
       document.getElementById('adminGateScreen').classList.remove('hidden');
       const input = document.getElementById('gatePinInput');
-      if (input) { input.value = ''; input.focus(); }
+      if (input) { input.value = ''; }
+      const pass = document.getElementById('authPasswordInput');
+      if (pass) { pass.value = ''; }
+      showToast('Logged out of Admin Portal');
     }
 
     function setDashboardTab(tab) {
@@ -1242,12 +1483,9 @@
 
     // Init on Load
     window.addEventListener('DOMContentLoaded', () => {
-      const isAuthed = sessionStorage.getItem('droniex_admin_auth') === ADMIN_SECURITY_PIN;
-      if (isAuthed) {
-        unlockAdminDashboard();
-      } else {
-        const input = document.getElementById('gatePinInput');
-        if (input) setTimeout(() => input.focus(), 150);
+      const auth = sessionStorage.getItem('droniex_admin_auth');
+      if (auth === '1121' || auth === 'firebase') {
+        unlockAdminDashboard(sessionStorage.getItem('droniex_admin_email'));
       }
     });
   </script>
