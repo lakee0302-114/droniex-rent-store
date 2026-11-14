@@ -259,6 +259,73 @@
           <!-- Populated dynamically -->
         </div>
       </div>
+    
+      <!-- SECTION: WHATSAPP AUTOMATION (ULTRAMSG GATEWAY) -->
+      <section class="bg-slate-800/60 border border-slate-700 rounded-3xl p-6 sm:p-8 space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-700 pb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-emerald-950/80 border border-emerald-800 flex items-center justify-center text-emerald-400 font-bold text-lg">
+              💬
+            </div>
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Option A · Automated Messaging</span>
+              <h2 class="text-xl font-black text-white mt-0.5">WhatsApp Auto-Send Gateway (UltraMsg)</h2>
+              <p class="text-xs text-slate-400 mt-1">
+                Send customer booking confirmations and Thank You messages 100% automatically in the background from your store WhatsApp (070 187 5455).
+              </p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="waGatewayStatusBadge" class="px-3 py-1 rounded-full text-xs font-bold bg-slate-800 text-slate-400 border border-slate-700">
+              ⚪ Standby (Enter API Credentials)
+            </span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div class="space-y-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1.5">UltraMsg Instance ID</label>
+              <input type="text" id="waConfigInstanceId" placeholder="e.g. instance102345" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white font-mono focus:border-emerald-500 focus:outline-none" />
+              <p class="text-[11px] text-slate-400 mt-1">Found in your UltraMsg.com dashboard.</p>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1.5">UltraMsg API Token</label>
+              <input type="password" id="waConfigToken" placeholder="••••••••••••••••" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white font-mono focus:border-emerald-500 focus:outline-none" />
+              <p class="text-[11px] text-slate-400 mt-1">Private authentication token.</p>
+            </div>
+
+            <div class="flex items-center justify-between p-3.5 rounded-2xl bg-slate-800/80 border border-slate-700">
+              <div>
+                <div class="text-xs font-bold text-white">Auto-Send on New Reservation</div>
+                <div class="text-[11px] text-slate-400">Dispatch WhatsApp reply immediately when an order is received</div>
+              </div>
+              <input type="checkbox" id="waConfigEnabled" class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500" checked />
+            </div>
+
+            <div class="flex items-center gap-3 pt-2">
+              <button type="button" onclick="saveWhatsAppGatewaySettings()" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition shadow-xs cursor-pointer">
+                <span>💾 Save &amp; Activate Gateway</span>
+              </button>
+              <button type="button" onclick="testWhatsAppGatewayMessage()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition cursor-pointer">
+                <span>🧪 Send Test Message</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="bg-slate-800/40 p-5 rounded-2xl border border-slate-700 space-y-3.5 text-xs text-slate-300">
+            <div class="font-bold text-white">🚀 3-Minute Quick Setup Guide (Option A)</div>
+            <ol class="space-y-2 list-decimal list-inside text-[11px] leading-relaxed text-slate-400">
+              <li>Create a free account on <a href="https://ultramsg.com" target="_blank" class="text-blue-400 underline">UltraMsg.com</a>.</li>
+              <li>Under Instances, open your instance and <strong>scan the QR code</strong> using WhatsApp on your phone (070 187 5455).</li>
+              <li>Paste your <strong>Instance ID</strong> and <strong>Token</strong> on the left, then click <strong>Save &amp; Activate</strong>.</li>
+              <li>Click <strong>Send Test Message</strong> to confirm messages deliver to WhatsApp!</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
     </main>
   </div>
 
@@ -421,7 +488,95 @@
       }
     }
 
+    
+    async function loadWhatsAppGatewaySettings() {
+      try {
+        const res = await fetch(FIREBASE_BASE + '/config/whatsapp.json');
+        if (!res.ok) return;
+        const cfg = await res.json();
+        if (cfg) {
+          const instEl = document.getElementById('waConfigInstanceId');
+          const tokEl = document.getElementById('waConfigToken');
+          const enEl = document.getElementById('waConfigEnabled');
+          const badgeEl = document.getElementById('waGatewayStatusBadge');
+
+          if (instEl && cfg.instanceId) instEl.value = cfg.instanceId;
+          if (tokEl && cfg.token) tokEl.value = cfg.token;
+          if (enEl && cfg.enabled !== undefined) enEl.checked = Boolean(cfg.enabled);
+
+          if (badgeEl) {
+            if (cfg.instanceId && cfg.token && cfg.enabled !== false) {
+              badgeEl.className = 'px-3 py-1 rounded-full text-xs font-bold bg-emerald-950 border border-emerald-800 text-emerald-300';
+              badgeEl.textContent = '🟢 Gateway Active (' + cfg.instanceId + ')';
+            } else if (cfg.enabled === false) {
+              badgeEl.className = 'px-3 py-1 rounded-full text-xs font-bold bg-amber-950 border border-amber-800 text-amber-300';
+              badgeEl.textContent = '🟡 Gateway Paused (Disabled)';
+            }
+          }
+        }
+      } catch (e) {}
+    }
+
+    async function saveWhatsAppGatewaySettings() {
+      const instEl = document.getElementById('waConfigInstanceId');
+      const tokEl = document.getElementById('waConfigToken');
+      const enEl = document.getElementById('waConfigEnabled');
+      const badgeEl = document.getElementById('waGatewayStatusBadge');
+
+      const instanceId = (instEl ? instEl.value : '').trim();
+      const token = (tokEl ? tokEl.value : '').trim();
+      const enabled = enEl ? enEl.checked : true;
+
+      try {
+        await fetch(FIREBASE_BASE + '/config/whatsapp.json', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ instanceId, token, enabled, updatedAt: new Date().toISOString() })
+        });
+
+        if (badgeEl) {
+          if (instanceId && token && enabled) {
+            badgeEl.className = 'px-3 py-1 rounded-full text-xs font-bold bg-emerald-950 border border-emerald-800 text-emerald-300';
+            badgeEl.textContent = '🟢 Gateway Active (' + instanceId + ')';
+          } else {
+            badgeEl.className = 'px-3 py-1 rounded-full text-xs font-bold bg-slate-800 text-slate-400 border border-slate-700';
+            badgeEl.textContent = '⚪ Standby (Enter API Credentials)';
+          }
+        }
+        showToast('✓ WhatsApp Gateway Settings Saved to Firebase!');
+      } catch (e) {
+        showToast('Error saving settings to cloud');
+      }
+    }
+
+    async function testWhatsAppGatewayMessage() {
+      const testPhone = prompt('Enter a phone number to receive a test WhatsApp message:', '0701875455');
+      if (!testPhone) return;
+
+      showToast('Dispatching test WhatsApp message...');
+      try {
+        const res = await fetch('/api/send-whatsapp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            phone: testPhone,
+            message: 'Hello! This is a test message from DronieX Rent Store — Galle WhatsApp Automation Gateway. System is 100% operational! 🚁',
+            test: true
+          })
+        });
+        const data = await res.json();
+        if (data && data.success) {
+          showToast('✓ Test WhatsApp message delivered successfully to ' + data.targetPhone + '!');
+        } else {
+          alert('Gateway Response: ' + (data.message || JSON.stringify(data.details || data.reason)));
+        }
+      } catch (e) {
+        alert('Test failed: ' + e.message);
+      }
+    }
+
     function renderDashboard() {
+      loadWhatsAppGatewaySettings();
       updateKpis();
       renderOrdersTable();
       renderCalendar();

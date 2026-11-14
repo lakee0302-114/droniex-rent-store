@@ -1231,6 +1231,86 @@
           </table>
         </div>
       </section>
+
+      <!-- SECTION: WHATSAPP AUTOMATION (ULTRAMSG GATEWAY) -->
+      <section class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200/90 dark:border-slate-800 space-y-6 shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center text-emerald-600 dark:text-emerald-400 font-bold text-lg">
+              💬
+            </div>
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Option A · Automated Messaging</span>
+              <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white mt-0.5">WhatsApp Auto-Send Gateway (UltraMsg)</h2>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                When active, customer reservations and Thank You tracking confirmations are sent 100% automatically in the background from your store WhatsApp (070 187 5455).
+              </p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="waGatewayStatusBadge" class="px-3 py-1 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+              ⚪ Standby (Enter API Credentials)
+            </span>
+          </div>
+        </div>
+
+        <!-- Configuration Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div class="space-y-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                UltraMsg Instance ID
+              </label>
+              <input type="text" id="waConfigInstanceId" placeholder="e.g. instance102345" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white font-mono focus:border-emerald-500 focus:outline-none" />
+              <p class="text-[11px] text-slate-400 mt-1">Found in your UltraMsg.com dashboard after creating an instance.</p>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                UltraMsg API Token
+              </label>
+              <input type="password" id="waConfigToken" placeholder="••••••••••••••••" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white font-mono focus:border-emerald-500 focus:outline-none" />
+              <p class="text-[11px] text-slate-400 mt-1">Private authentication token from your UltraMsg instance.</p>
+            </div>
+
+            <div class="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+              <div>
+                <div class="text-xs font-bold text-slate-900 dark:text-white">Auto-Send on New Reservation</div>
+                <div class="text-[11px] text-slate-500 dark:text-slate-400">Automatically dispatch WhatsApp reply when an order is placed</div>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="waConfigEnabled" class="sr-only peer" checked />
+                <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+              </label>
+            </div>
+
+            <div class="flex items-center gap-3 pt-2">
+              <button type="button" onclick="saveWhatsAppGatewaySettings()" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-xs flex items-center gap-2 cursor-pointer">
+                <span>💾 Save &amp; Activate Gateway</span>
+              </button>
+              <button type="button" onclick="testWhatsAppGatewayMessage()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold transition cursor-pointer">
+                <span>🧪 Send Test Message</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick Setup Guide Card -->
+          <div class="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-2xl border border-slate-200 dark:border-slate-700/80 space-y-3.5 text-xs text-slate-600 dark:text-slate-300">
+            <div class="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <span>🚀 3-Minute Quick Setup Guide (Option A)</span>
+            </div>
+            <ol class="space-y-2 list-decimal list-inside text-[11px] leading-relaxed">
+              <li>Visit <a href="https://ultramsg.com" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline font-semibold">UltraMsg.com</a> and create a free account.</li>
+              <li>Under Instances, open your instance and <strong>scan the QR code</strong> using WhatsApp on your store phone (WhatsApp &gt; Linked Devices &gt; Link a Device).</li>
+              <li>Copy your <strong>Instance ID</strong> and <strong>Token</strong>, paste them in the inputs on the left, and click <strong>Save &amp; Activate</strong>.</li>
+              <li>Click <strong>Send Test Message</strong> to confirm your phone is connected and delivering messages!</li>
+            </ol>
+            <div class="p-3 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 text-[11px] text-blue-800 dark:text-blue-300">
+              💡 <em>Note: If the gateway is not active or token is missing, the system automatically uses the one-click WhatsApp button so no customer ever misses their confirmation!</em>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
 
   </main>
@@ -3529,7 +3609,10 @@
       // Async cloud sync to Firebase Realtime Database
       firebaseInsertReservation(newBooking);
 
-      // Open direct online confirmation modal (NO WHATSAPP REQUIRED)
+      // Trigger Option A: Automated Background WhatsApp Dispatch
+      triggerAutoWhatsAppMessage(newBooking);
+
+      // Open direct online confirmation modal
       openOrderSuccessModal(newBooking);
     }
 
@@ -3767,16 +3850,9 @@
       }
     }
 
-    function sendCustomerThankYouWhatsApp(orderId) {
-      const b = (appState.bookings && appState.bookings.find(item => item.orderId === orderId)) || _latestSuccessBooking;
-      if (!b) return;
-
-      const rawDigits = (b.phone || '').replace(/[^0-9]/g, '');
-      let lkPhone = rawDigits;
-      if (rawDigits.startsWith('0')) lkPhone = '94' + rawDigits.substring(1);
-      else if (!rawDigits.startsWith('94') && rawDigits.length === 9) lkPhone = '94' + rawDigits;
-
-      const thankYouMsg =
+    function buildCustomerThankYouMessage(b) {
+      if (!b) return '';
+      return (
         `*THANK YOU FOR RESERVING WITH DRONIEX RENT STORE — GALLE!* 🚁\n` +
         `──────────────────────\n` +
         `Dear *${b.customerName || 'Valued Customer'}*,\n` +
@@ -3792,11 +3868,187 @@
         `No. 131, D.J. Wimalasurendra Mawatha, Galwadugoda, Galle 80000.\n` +
         `📞 *Store Hotlines:* 070 187 5455 / 071 351 0551\n` +
         `🌐 *Live Order Tracker:* https://droniex-rent-store.vercel.app\n\n` +
-        `_Please present your Tracking ID and original NIC/Passport upon store pickup. Thank you!_`;
+        `_Please present your Tracking ID and original NIC/Passport upon store pickup. Thank you!_`
+      );
+    }
 
+    async function triggerAutoWhatsAppMessage(booking) {
+      if (!booking || !booking.phone) return;
+      const rawDigits = (booking.phone || '').replace(/[^0-9]/g, '');
+      let lkPhone = rawDigits;
+      if (rawDigits.startsWith('0')) lkPhone = '94' + rawDigits.substring(1);
+      else if (!rawDigits.startsWith('94') && rawDigits.length === 9) lkPhone = '94' + rawDigits;
+
+      const thankYouMsg = buildCustomerThankYouMessage(booking);
+
+      try {
+        const res = await fetch('/api/send-whatsapp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            orderId: booking.orderId,
+            phone: lkPhone,
+            customerName: booking.customerName,
+            message: thankYouMsg
+          })
+        });
+        const result = await res.json();
+        const statusBox = document.getElementById('orderSuccessAutoWaStatus');
+        if (result && result.success) {
+          if (statusBox) {
+            statusBox.innerHTML = `
+              <div class="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-semibold flex items-center gap-2">
+                <span>✓</span>
+                <span>Official confirmation &amp; Tracking ID auto-sent to your WhatsApp (+${result.targetPhone})!</span>
+              </div>
+            `;
+          }
+          showToast('✓ Auto-sent WhatsApp confirmation to ' + (booking.customerName || 'Customer') + '!');
+        } else {
+          if (statusBox) {
+            statusBox.innerHTML = `
+              <div class="p-2 rounded-xl bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 text-[11px] flex items-center gap-1.5">
+                <span>ℹ️</span>
+                <span>Click the button below to receive/save details on WhatsApp.</span>
+              </div>
+            `;
+          }
+        }
+      } catch (e) {
+        console.warn('Auto WhatsApp dispatch caught exception (fallback active):', e);
+      }
+    }
+
+    async function sendCustomerThankYouWhatsApp(orderId, forceManual = false) {
+      const b = (appState.bookings && appState.bookings.find(item => item.orderId === orderId)) || _latestSuccessBooking;
+      if (!b) return;
+
+      const rawDigits = (b.phone || '').replace(/[^0-9]/g, '');
+      let lkPhone = rawDigits;
+      if (rawDigits.startsWith('0')) lkPhone = '94' + rawDigits.substring(1);
+      else if (!rawDigits.startsWith('94') && rawDigits.length === 9) lkPhone = '94' + rawDigits;
+
+      const thankYouMsg = buildCustomerThankYouMessage(b);
+
+      if (!forceManual) {
+        // Attempt automated serverless dispatch first
+        try {
+          const res = await fetch('/api/send-whatsapp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              orderId: b.orderId,
+              phone: lkPhone,
+              customerName: b.customerName,
+              message: thankYouMsg
+            })
+          });
+          const result = await res.json();
+          if (result && result.success) {
+            showToast('✓ Auto-sent WhatsApp confirmation to ' + (b.customerName || 'Customer') + ' (+' + result.targetPhone + ')!');
+            return;
+          }
+        } catch (e) {
+          console.warn('Auto send fallback:', e);
+        }
+      }
+
+      // Manual fallback via WhatsApp Web / App
       const targetPhone = lkPhone || '94701875455';
       const waUrl = `https://wa.me/${targetPhone}?text=` + encodeURIComponent(thankYouMsg);
       window.open(waUrl, '_blank', 'noopener,noreferrer');
+    }
+
+    // WhatsApp Gateway Admin Configuration Methods
+    async function loadWhatsAppGatewaySettings() {
+      try {
+        const url = FIREBASE_CONFIG.databaseURL + '/config/whatsapp.json';
+        const res = await fetch(url);
+        if (!res.ok) return;
+        const cfg = await res.json();
+        if (cfg) {
+          const instEl = document.getElementById('waConfigInstanceId');
+          const tokEl = document.getElementById('waConfigToken');
+          const enEl = document.getElementById('waConfigEnabled');
+          const badgeEl = document.getElementById('waGatewayStatusBadge');
+
+          if (instEl && cfg.instanceId) instEl.value = cfg.instanceId;
+          if (tokEl && cfg.token) tokEl.value = cfg.token;
+          if (enEl && cfg.enabled !== undefined) enEl.checked = Boolean(cfg.enabled);
+
+          if (badgeEl) {
+            if (cfg.instanceId && cfg.token && cfg.enabled !== false) {
+              badgeEl.className = 'px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 dark:bg-emerald-950 border border-emerald-300 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300';
+              badgeEl.textContent = '🟢 Gateway Active (' + cfg.instanceId + ')';
+            } else if (cfg.enabled === false) {
+              badgeEl.className = 'px-3 py-1 rounded-full text-xs font-bold bg-amber-50 dark:bg-amber-950 border border-amber-300 dark:border-amber-800 text-amber-700 dark:text-amber-300';
+              badgeEl.textContent = '🟡 Gateway Paused (Disabled)';
+            }
+          }
+        }
+      } catch (e) {
+        console.warn('loadWhatsAppGatewaySettings error:', e);
+      }
+    }
+
+    async function saveWhatsAppGatewaySettings() {
+      const instEl = document.getElementById('waConfigInstanceId');
+      const tokEl = document.getElementById('waConfigToken');
+      const enEl = document.getElementById('waConfigEnabled');
+      const badgeEl = document.getElementById('waGatewayStatusBadge');
+
+      const instanceId = (instEl ? instEl.value : '').trim();
+      const token = (tokEl ? tokEl.value : '').trim();
+      const enabled = enEl ? enEl.checked : true;
+
+      try {
+        const url = FIREBASE_CONFIG.databaseURL + '/config/whatsapp.json';
+        await fetch(url, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ instanceId, token, enabled, updatedAt: new Date().toISOString() })
+        });
+
+        if (badgeEl) {
+          if (instanceId && token && enabled) {
+            badgeEl.className = 'px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 dark:bg-emerald-950 border border-emerald-300 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300';
+            badgeEl.textContent = '🟢 Gateway Active (' + instanceId + ')';
+          } else {
+            badgeEl.className = 'px-3 py-1 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700';
+            badgeEl.textContent = '⚪ Standby (Enter API Credentials)';
+          }
+        }
+
+        showToast('✓ WhatsApp Gateway Settings Saved to Firebase!');
+      } catch (e) {
+        showToast('Error saving settings to cloud');
+      }
+    }
+
+    async function testWhatsAppGatewayMessage() {
+      const testPhone = prompt('Enter a phone number to receive a test WhatsApp message:', '0701875455');
+      if (!testPhone) return;
+
+      showToast('Dispatching test WhatsApp message...');
+      try {
+        const res = await fetch('/api/send-whatsapp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            phone: testPhone,
+            message: 'Hello! This is a test message from DronieX Rent Store — Galle WhatsApp Automation Gateway. System is 100% operational! 🚁',
+            test: true
+          })
+        });
+        const data = await res.json();
+        if (data && data.success) {
+          showToast('✓ Test WhatsApp message delivered successfully to ' + data.targetPhone + '!');
+        } else {
+          alert('Gateway Response: ' + (data.message || JSON.stringify(data.details || data.reason)));
+        }
+      } catch (e) {
+        alert('Test failed: ' + e.message);
+      }
     }
 
     function openOrderSuccessModal(booking) {
@@ -3838,9 +4090,15 @@
           </div>
         </div>
 
-        <!-- WhatsApp Reply / Confirmation Delivery Button -->
+        <!-- Automated WhatsApp Delivery Status Badge & Fallback Button -->
+        <div id="orderSuccessAutoWaStatus" class="pt-1">
+          <div class="p-2.5 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 text-blue-800 dark:text-blue-300 text-xs flex items-center gap-2">
+            <span class="animate-pulse">💬</span>
+            <span>Sending automated confirmation &amp; tracking ID to WhatsApp...</span>
+          </div>
+        </div>
         <div class="pt-2">
-          <button type="button" onclick="sendCustomerThankYouWhatsApp('${booking.orderId}')" class="w-full py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition flex items-center justify-center gap-2 cursor-pointer" title="Receive complete booking form & thank you message on WhatsApp">
+          <button type="button" onclick="sendCustomerThankYouWhatsApp('${booking.orderId}', true)" class="w-full py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition flex items-center justify-center gap-2 cursor-pointer" title="Receive complete booking form & thank you message on WhatsApp">
             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
             <span>💬 Send Details &amp; Thank You Message to My WhatsApp</span>
           </button>
@@ -4507,6 +4765,7 @@
     window.addEventListener('DOMContentLoaded', () => {
       loadSavedState();
       checkAdminRoute();
+      loadWhatsAppGatewaySettings();
       updateVerifiedStatusUI();
       renderCategoryPills();
       updateRentalSchedule();
