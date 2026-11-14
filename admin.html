@@ -424,11 +424,16 @@
       }
     }
 
+    let _adminPollTimer = null;
     function unlockAdminDashboard() {
       document.getElementById('adminGateScreen').classList.add('hidden');
       document.getElementById('adminAppDashboard').classList.remove('hidden');
       syncFirebaseOrders(false);
       renderDashboard();
+      if (_adminPollTimer) clearInterval(_adminPollTimer);
+      _adminPollTimer = setInterval(() => {
+        if (!document.hidden) syncFirebaseOrders(false);
+      }, 4000);
     }
 
     function lockAdminGate() {
@@ -460,6 +465,73 @@
       }
     }
 
+    function findItemForAdminBooking(b) {
+      if (!b) return null;
+      if (b.itemId) {
+        const byId = _adminItems.find(it => it.id === b.itemId);
+        if (byId) return byId;
+      }
+      const summary = (b.itemsSummary || b.equipmentTitle || '').toLowerCase();
+      if (summary.includes('mini 4 pro') || summary.includes('fly more combo')) {
+        return _adminItems.find(it => it.id === 'dji-mini-4-pro-combo');
+      }
+      if (summary.includes('osmo mobile se') || summary.includes('mobile se')) {
+        return _adminItems.find(it => it.id === 'dji-osmo-mobile-se');
+      }
+      if (summary.includes('osmo mobile 7p') || summary.includes('mobile 7p')) {
+        return _adminItems.find(it => it.id === 'dji-osmo-mobile-7p');
+      }
+      return _adminItems.find(it => (b.itemsSummary || '').includes(it.title)) || null;
+    }
+
+    async function syncAdminInventoryToCloud() {
+      try {
+        await fetch(FIREBASE_BASE + '/inventory.json', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(_adminItems)
+        });
+      } catch (err) {
+        console.warn('Firebase inventory PUT error:', err);
+      }
+    }
+
+    async function reconcileAdminInventory() {
+      const pickedUp = _adminBookings.filter(b => b && (b.bookingState === 'picked_up' || (b.status || '').includes('Picked Up')));
+      let changed = false;
+      _adminItems.forEach(it => {
+        const activeB = pickedUp.find(b => {
+          if (b.itemId && b.itemId === it.id) return true;
+          const matchItem = findItemForAdminBooking(b);
+          return matchItem && matchItem.id === it.id;
+        });
+
+        if (activeB) {
+          const ret = activeB.returnDate || '';
+          const pick = activeB.pickupDate || '';
+          if (it.available || it.reservedUntilDate !== ret || it.activeOrderId !== activeB.orderId) {
+            it.available = false;
+            it.reservedUntilDate = ret;
+            it.reservedFromDate = pick;
+            it.activeOrderId = activeB.orderId;
+            changed = true;
+          }
+        } else {
+          if (!it.available && it.activeOrderId) {
+            it.available = true;
+            it.reservedUntilDate = '';
+            it.reservedFromDate = '';
+            it.activeOrderId = '';
+            changed = true;
+          }
+        }
+      });
+
+      if (changed) {
+        await syncAdminInventoryToCloud();
+      }
+      return changed;
+    }
     // Firebase Data Sync
     async function syncFirebaseOrders(isManual) {
       const statusEl = document.getElementById('cloudSyncStatus');
@@ -477,6 +549,8 @@
           const invData = await invRes.json();
           if (Array.isArray(invData)) _adminItems = invData;
         }
+
+        await reconcileAdminInventory();
 
         renderDashboard();
         if (statusEl) statusEl.textContent = 'Cloud Live (' + _adminBookings.length + ')';
@@ -711,12 +785,39 @@
       if (!b) return;
 
       const wasPickedUp = b.bookingState === 'picked_up' || (b.status || '').includes('Picked Up');
+      const targetItem = findItemForAdminBooking(b);
+      const retDate = b.returnDate || '';
+      const pickDate = b.pickupDate || '';
+
       if (wasPickedUp) {
         b.bookingState = 'returned';
         b.status = 'Returned & Completed';
+        if (targetItem) {
+          const otherActive = _adminBookings.find(other => 
+            other.orderId !== orderId && 
+            findItemForAdminBooking(other)?.id === targetItem.id &&
+            (other.bookingState === 'picked_up' || (other.status || '').includes('Picked Up'))
+          );
+          if (!otherActive) {
+            targetItem.available = true;
+            targetItem.reservedUntilDate = '';
+            targetItem.reservedFromDate = '';
+            targetItem.activeOrderId = '';
+          } else {
+            targetItem.available = false;
+            targetItem.reservedUntilDate = otherActive.returnDate || '';
+            targetItem.activeOrderId = otherActive.orderId;
+          }
+        }
       } else {
         b.bookingState = 'picked_up';
-        b.status = '🔒 Picked Up · Reserved Until ' + (b.returnDate || 'Return');
+        b.status = '🔒 Picked Up · Reserved Until ' + (retDate || 'Return');
+        if (targetItem) {
+          targetItem.available = false;
+          targetItem.reservedUntilDate = retDate;
+          targetItem.reservedFromDate = pickDate;
+          targetItem.activeOrderId = b.orderId;
+        }
       }
 
       // Sync update to Firebase
@@ -728,8 +829,11 @@
         });
       } catch (e) {}
 
+      // Sync updated inventory directly to Firebase Cloud
+      await syncAdminInventoryToCloud();
+
       renderDashboard();
-      showToast('Order ' + orderId + ' updated: ' + (wasPickedUp ? 'Returned' : 'Picked Up'));
+      showToast('Order ' + orderId + ' updated: ' + (wasPickedUp ? 'Returned (Item Available Now)' : 'Picked Up (Item Locked on Store)'));
     }
 
     // Calendar Functions

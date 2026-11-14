@@ -2377,7 +2377,7 @@
         });
 
         // Trigger real-time sound alert and toast when a new online order arrives from a customer!
-        if (window.__initialOrderSyncDone && appState.bookings.length > previousCount) {
+        if (window.__initialOrderSyncDone && appState.bookings.length > previousCount && appState.currentView === 'admin') {
           const newOrders = appState.bookings.filter(b => b && b.orderId && !previousIds.has(b.orderId));
           if (newOrders.length > 0) {
             playNewOrderSound();
@@ -2386,19 +2386,8 @@
         }
         window.__initialOrderSyncDone = true;
 
-        // Cross-device sync check: If any booking in cloud is picked up, ensure target item is locked on all devices!
-        let invLockChanged = false;
-        appState.bookings.forEach(b => {
-          if (b && (b.bookingState === 'picked_up' || (b.status || '').includes('Picked Up'))) {
-            const targetItem = findItemForBooking(b);
-            if (targetItem && targetItem.available) {
-              targetItem.available = false;
-              targetItem.reservedUntilDate = b.returnDate || '';
-              targetItem.activeOrderId = b.orderId;
-              invLockChanged = true;
-            }
-          }
-        });
+        // Cross-device sync check: Reconcile inventory against active picked_up bookings
+        const invLockChanged = reconcileInventoryWithBookings();
 
         saveState();
         renderAdminOrdersTable();
@@ -2406,6 +2395,7 @@
         renderAdminBookingCalendar();
         if (invLockChanged) {
           renderCatalog();
+          firebaseSyncInventoryToCloud();
         }
         if (syncStatusEl) {
           syncStatusEl.textContent = appState.bookings.length > 0
@@ -3465,6 +3455,10 @@
     function openReservationForItem(itemId) {
       const item = appState.items.find(i => i.id === itemId);
       if (!item) return;
+      if (!item.available) {
+        showToast(`"${item.title}" is currently Out on Rental (Reserved Until ${formatShortDate(item.reservedUntilDate || '')})!`);
+        return;
+      }
       appState.selectedContractItemId = itemId;
       const days = (item && item.selectedDays) ? item.selectedDays : (appState.rentalDays || 1);
       setQuickDays(days);
@@ -4221,7 +4215,55 @@
         const byId = appState.items.find(it => it.id === b.itemId);
         if (byId) return byId;
       }
+      const summary = (b.itemsSummary || b.equipmentTitle || '').toLowerCase();
+      if (summary.includes('mini 4 pro') || summary.includes('fly more combo')) {
+        return appState.items.find(it => it.id === 'dji-mini-4-pro-combo');
+      }
+      if (summary.includes('osmo mobile se') || summary.includes('mobile se')) {
+        return appState.items.find(it => it.id === 'dji-osmo-mobile-se');
+      }
+      if (summary.includes('osmo mobile 7p') || summary.includes('mobile 7p')) {
+        return appState.items.find(it => it.id === 'dji-osmo-mobile-7p');
+      }
       return appState.items.find(it => (b.itemsSummary || '').includes(it.title)) || null;
+    }
+
+    function reconcileInventoryWithBookings() {
+      const pickedUpBookings = (appState.bookings || []).filter(b => 
+        b && (b.bookingState === 'picked_up' || (b.status || '').includes('Picked Up'))
+      );
+
+      let changed = false;
+      appState.items.forEach(it => {
+        const activeBooking = pickedUpBookings.find(b => {
+          if (b.itemId && b.itemId === it.id) return true;
+          const matchItem = findItemForBooking(b);
+          return matchItem && matchItem.id === it.id;
+        });
+
+        if (activeBooking) {
+          const ret = activeBooking.returnDate || '';
+          const pick = activeBooking.pickupDate || '';
+          if (it.available || it.reservedUntilDate !== ret || it.activeOrderId !== activeBooking.orderId) {
+            it.available = false;
+            it.reservedUntilDate = ret;
+            it.reservedFromDate = pick;
+            it.activeOrderId = activeBooking.orderId;
+            changed = true;
+          }
+        } else {
+          // If this item was locked by a booking that is now returned or cancelled
+          if (!it.available && it.activeOrderId) {
+            it.available = true;
+            it.reservedUntilDate = '';
+            it.reservedFromDate = '';
+            it.activeOrderId = '';
+            changed = true;
+          }
+        }
+      });
+
+      return changed;
     }
 
     function toggleOrderStatus(idx) {
@@ -4236,10 +4278,21 @@
         b.bookingState = 'returned';
         b.status = 'Returned & Completed';
         if (targetItem) {
-          targetItem.available = true;
-          targetItem.reservedFromDate = '';
-          targetItem.reservedUntilDate = '';
-          targetItem.activeOrderId = '';
+          const otherPicked = appState.bookings.find(other => 
+            other.orderId !== b.orderId &&
+            findItemForBooking(other)?.id === targetItem.id &&
+            (other.bookingState === 'picked_up' || (other.status || '').includes('Picked Up'))
+          );
+          if (!otherPicked) {
+            targetItem.available = true;
+            targetItem.reservedFromDate = '';
+            targetItem.reservedUntilDate = '';
+            targetItem.activeOrderId = '';
+          } else {
+            targetItem.available = false;
+            targetItem.reservedUntilDate = otherPicked.returnDate || '';
+            targetItem.activeOrderId = otherPicked.orderId;
+          }
         }
         showToast(`${targetItem ? targetItem.title : 'Equipment'} marked returned and Available again!`);
       } else {
@@ -4744,9 +4797,7 @@
       // Pulse every 3 seconds for seamless real-time cloud updates
       _realtimePulseTimer = setInterval(() => {
         checkRealtimeInventoryUpdate();
-        if (appState.currentView === 'admin') {
-          syncAdminOrdersFromFirebase();
-        }
+        syncAdminOrdersFromFirebase();
       }, 3000);
     }
 
