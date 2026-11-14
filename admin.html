@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DronieX Store Admin Portal — Galle Store Management</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/jpeg" href="droniex-logo.jpg">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8'
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.4); border-radius: 9999px; }
+    @media print {
+      .no-print { display: none !important; }
+      body { background: white !important; color: black !important; }
+    }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-full flex flex-col font-sans antialiased selection:bg-blue-600 selection:text-white">
+
+  <!-- =========================================================================
+       GATE 1: HIGH SECURITY STAFF PIN LOGIN SCREEN
+       ========================================================================= -->
+  <div id="adminGateScreen" class="fixed inset-0 z-50 bg-slate-950 flex flex-col items-center justify-center p-4">
+    <div class="relative bg-slate-900 border border-slate-800 rounded-3xl max-w-sm w-full p-7 space-y-6 shadow-2xl">
+      <div class="text-center space-y-3">
+        <div class="w-14 h-14 rounded-2xl bg-blue-600/10 border border-blue-500/20 text-blue-400 mx-auto flex items-center justify-center text-2xl shadow-inner">
+          🔒
+        </div>
+        <div>
+          <span class="text-[10px] font-bold uppercase tracking-wider text-blue-400 bg-blue-950/80 px-2.5 py-0.5 rounded-full border border-blue-800">
+            DronieX Staff Authorization
+          </span>
+          <h2 class="text-xl font-black text-white mt-2">Store Admin Portal</h2>
+          <p class="text-xs text-slate-400 mt-1">
+            Restricted gateway for store staff at No. 131, Galwadugoda, Galle.
+          </p>
+        </div>
+      </div>
+
+      <form onsubmit="event.preventDefault(); submitAdminGatePin();" class="space-y-4">
+        <div>
+          <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 text-center">
+            Master Security PIN
+          </label>
+          <input
+            type="password"
+            id="gatePinInput"
+            maxlength="8"
+            inputmode="numeric"
+            placeholder="••••"
+            class="w-full text-center tracking-[0.5em] text-2xl font-black bg-slate-800 border-2 border-slate-700 focus:border-blue-500 rounded-2xl py-3 px-4 text-white placeholder-slate-600 focus:outline-none focus:ring-4 focus:ring-blue-500/20 transition"
+            autocomplete="off"
+            autofocus
+          />
+          <p id="gatePinError" class="hidden text-xs text-rose-400 font-bold mt-2.5 text-center"></p>
+        </div>
+
+        <button type="submit" class="w-full py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-lg transition flex items-center justify-center gap-2 cursor-pointer">
+          <span>Authorize &amp; Access Dashboard →</span>
+        </button>
+      </form>
+
+      <div class="pt-3 border-t border-slate-800 text-center">
+        <a href="/" class="text-xs text-slate-400 hover:text-white transition flex items-center justify-center gap-1.5">
+          <span>← Return to Customer Storefront</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       GATE 2: AUTHENTICATED STAFF STORE MANAGEMENT DASHBOARD
+       ========================================================================= -->
+  <div id="adminAppDashboard" class="hidden flex-1 flex flex-col">
+    <!-- Top Nav Header -->
+    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-40 no-print">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-blue-600 text-white font-black text-sm flex items-center justify-center shadow-xs">
+            DX
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-black text-white text-base">DronieX</span>
+              <span class="px-2 py-0.5 rounded-md bg-blue-950 border border-blue-800 text-blue-400 text-[10px] font-bold uppercase tracking-wider">Staff Portal</span>
+            </div>
+            <div class="text-[11px] text-slate-400">Galwadugoda, Galle 80000 · 070 187 5455</div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2.5">
+          <button type="button" onclick="exportOrdersToCsv()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition shadow-xs cursor-pointer" title="Export all reservations to Excel (.csv)">
+            <span>📊 Excel Export</span>
+          </button>
+          <button type="button" onclick="syncFirebaseOrders(true)" id="cloudSyncBtn" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition cursor-pointer">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span id="cloudSyncStatus">Cloud Live</span>
+          </button>
+          <button type="button" onclick="lockAdminGate()" class="px-3 py-1.5 rounded-xl bg-rose-950/60 hover:bg-rose-900 border border-rose-800/80 text-rose-300 text-xs font-bold transition flex items-center gap-1 cursor-pointer">
+            <span>🔒 Log Out</span>
+          </button>
+          <a href="/" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition">
+            Storefront ↗
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="max-w-7xl mx-auto w-full px-4 sm:px-6 py-6 sm:py-8 space-y-6 flex-1">
+      
+      <!-- Section Title & Tabs -->
+      <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-blue-400">Store Management · Galle</span>
+          <h1 class="text-2xl font-black text-white mt-0.5">Reservations &amp; Booking Schedule</h1>
+        </div>
+
+        <!-- View Switcher Tabs: Orders Table vs Booking Calendar -->
+        <div class="flex items-center gap-1.5 bg-slate-800 p-1 rounded-2xl border border-slate-700">
+          <button type="button" onclick="setDashboardTab('table')" id="tabBtnTable" class="px-4 py-2 rounded-xl text-xs font-bold bg-blue-600 text-white shadow-xs transition flex items-center gap-1.5 cursor-pointer">
+            <span>📋 Orders Table</span>
+          </button>
+          <button type="button" onclick="setDashboardTab('calendar')" id="tabBtnCalendar" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition flex items-center gap-1.5 cursor-pointer">
+            <span>📅 Booking Calendar</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- KPI BENTO CARDS -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-4 flex items-center justify-between">
+          <div>
+            <span class="text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Bookings</span>
+            <div id="kpiTotalOrders" class="text-xl sm:text-2xl font-black text-white mt-0.5">0</div>
+          </div>
+          <div class="w-10 h-10 rounded-xl bg-blue-900/50 text-blue-400 flex items-center justify-center text-lg">📋</div>
+        </div>
+        <div class="bg-amber-950/40 border border-amber-800/60 rounded-2xl p-4 flex items-center justify-between">
+          <div>
+            <span class="text-[10px] sm:text-[11px] font-bold text-amber-400 uppercase tracking-wider">Out on Rental</span>
+            <div id="kpiActiveOrders" class="text-xl sm:text-2xl font-black text-amber-300 mt-0.5">0</div>
+          </div>
+          <div class="w-10 h-10 rounded-xl bg-amber-900/50 text-amber-400 flex items-center justify-center text-lg">🔒</div>
+        </div>
+        <div class="bg-sky-950/40 border border-sky-800/60 rounded-2xl p-4 flex items-center justify-between">
+          <div>
+            <span class="text-[10px] sm:text-[11px] font-bold text-sky-400 uppercase tracking-wider">Pending Pickup</span>
+            <div id="kpiPendingOrders" class="text-xl sm:text-2xl font-black text-sky-300 mt-0.5">0</div>
+          </div>
+          <div class="w-10 h-10 rounded-xl bg-sky-900/50 text-sky-400 flex items-center justify-center text-lg">⏳</div>
+        </div>
+        <div class="bg-emerald-950/40 border border-emerald-800/60 rounded-2xl p-4 flex items-center justify-between">
+          <div>
+            <span class="text-[10px] sm:text-[11px] font-bold text-emerald-400 uppercase tracking-wider">Booked Revenue</span>
+            <div id="kpiRevenue" class="text-xl sm:text-2xl font-black text-emerald-300 mt-0.5">Rs. 0</div>
+          </div>
+          <div class="w-10 h-10 rounded-xl bg-emerald-900/50 text-emerald-400 flex items-center justify-center text-lg">💰</div>
+        </div>
+      </div>
+
+      <!-- VIEW 1: ORDERS TABLE -->
+      <div id="tabViewTable" class="space-y-4">
+        <!-- Search & Filter Bar -->
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-slate-800/60 p-3 rounded-2xl border border-slate-700">
+          <div class="relative flex-1 max-w-md">
+            <input type="text" id="orderSearchInput" oninput="filterOrdersTable()" placeholder="Search order ID, customer name, phone, NIC..." class="w-full pl-3 pr-8 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-blue-500" />
+          </div>
+          <div class="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0" id="orderStatusFilters">
+            <button type="button" onclick="setFilter('all')" class="status-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-600 text-white" data-status="all">All</button>
+            <button type="button" onclick="setFilter('picked_up')" class="status-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700" data-status="picked_up">🔒 Active Out</button>
+            <button type="button" onclick="setFilter('pending')" class="status-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700" data-status="pending">⏳ Pending</button>
+            <button type="button" onclick="setFilter('returned')" class="status-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700" data-status="returned">✓ Returned</button>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="border border-slate-800 rounded-2xl overflow-x-auto custom-scrollbar bg-slate-900">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="border-b border-slate-800 bg-slate-800/80 text-slate-400 uppercase text-[11px]">
+                <th class="py-3 px-3">Order ID</th>
+                <th class="py-3 px-3">Customer Name</th>
+                <th class="py-3 px-3">Contact</th>
+                <th class="py-3 px-3">Equipment Reserved</th>
+                <th class="py-3 px-3">Rental Dates</th>
+                <th class="py-3 px-3">Total Amount</th>
+                <th class="py-3 px-3">Status</th>
+                <th class="py-3 px-3">Action</th>
+              </tr>
+            </thead>
+            <tbody id="ordersTableBody" class="divide-y divide-slate-800 text-slate-200">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- VIEW 2: BOOKING CALENDAR -->
+      <div id="tabViewCalendar" class="hidden space-y-6">
+        <!-- Calendar Controls Header -->
+        <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 bg-slate-800/60 p-4 rounded-2xl border border-slate-700">
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="changeMonth(-1)" class="p-2 rounded-xl bg-slate-800 border border-slate-700 hover:bg-slate-700 text-white text-xs font-bold transition">◀ Prev</button>
+            <h3 id="calMonthLabel" class="text-base sm:text-lg font-black text-white min-w-[150px] text-center">November 2026</h3>
+            <button type="button" onclick="changeMonth(1)" class="p-2 rounded-xl bg-slate-800 border border-slate-700 hover:bg-slate-700 text-white text-xs font-bold transition">Next ▶</button>
+            <button type="button" onclick="resetToToday()" class="px-3 py-1.5 rounded-xl bg-blue-950 border border-blue-800 text-blue-400 text-xs font-bold hover:bg-blue-900 transition">Today</button>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-3">
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-slate-400 font-semibold">Filter:</span>
+              <select id="calGearFilter" onchange="filterGear(this.value)" class="text-xs font-bold bg-slate-800 border border-slate-700 rounded-xl px-3 py-1.5 text-white focus:outline-none focus:border-blue-500">
+                <option value="all">All Equipment (3 Items)</option>
+                <option value="dji-mini-4-pro-combo">🚁 DJI Mini 4 Pro Drone</option>
+                <option value="dji-osmo-mobile-se">📱 DJI Osmo Mobile SE</option>
+                <option value="dji-osmo-mobile-7p">📱 DJI Osmo Mobile 7P</option>
+              </select>
+            </div>
+            <div class="flex items-center gap-2 text-[10px] text-slate-400">
+              <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Available</span>
+              <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Out</span>
+              <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-sky-500"></span> Pending</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Calendar Month Grid -->
+        <div class="border border-slate-800 rounded-3xl overflow-hidden bg-slate-900 shadow-xl">
+          <div class="grid grid-cols-7 border-b border-slate-800 bg-slate-800/80 text-center py-2.5 text-xs font-bold text-slate-400 uppercase tracking-wider">
+            <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div class="text-rose-400">Sun</div>
+          </div>
+          <div id="calendarGrid" class="grid grid-cols-7 divide-x divide-y divide-slate-800/80 bg-slate-900">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <!-- 7-Day Activity Stream -->
+        <div id="upcomingFeed" class="bg-slate-800/50 border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-3">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- =========================================================================
+       MODAL: DAY DETAILS & QUICK ACTIONS MODAL
+       ========================================================================= -->
+  <div id="dayModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
+    <div class="relative bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="flex items-center justify-between border-b border-slate-800 px-6 py-4 bg-slate-800/60">
+        <div>
+          <h3 id="dayModalTitle" class="text-base font-black text-white">Day Schedule</h3>
+          <p class="text-[11px] text-slate-400">Inventory availability &amp; handover status for this date</p>
+        </div>
+        <button type="button" onclick="closeDayModal()" class="w-7 h-7 rounded-lg bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-xs transition cursor-pointer">✕</button>
+      </div>
+      <div id="dayModalContent" class="overflow-y-auto flex-1 p-6 space-y-4 custom-scrollbar text-xs">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL: RENTAL AGREEMENT SLIP
+       ========================================================================= -->
+  <div id="slipModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
+    <div class="relative bg-white text-slate-900 rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="flex items-center justify-between border-b border-slate-200 px-6 py-4 bg-slate-50 no-print">
+        <span class="font-bold text-sm">Official Rental Agreement Slip</span>
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="window.print()" class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition shadow-xs">🖨️ Print Slip</button>
+          <button type="button" onclick="closeSlipModal()" class="w-7 h-7 rounded-lg bg-slate-200 text-slate-700 flex items-center justify-center text-xs transition">✕</button>
+        </div>
+      </div>
+      <div id="slipContent" class="overflow-y-auto flex-1 p-6 sm:p-8 space-y-4 text-xs">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toastBanner" class="fixed bottom-6 left-6 z-50 transform -translate-y-4 opacity-0 pointer-events-none transition-all duration-300">
+    <div class="bg-blue-600 text-white px-4 py-2.5 rounded-2xl shadow-xl text-xs font-bold flex items-center gap-2 border border-blue-400/30">
+      <span id="toastMessage">Action completed</span>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       ADMIN APP SCRIPTS
+       ========================================================================= -->
+  <script>
+    const ADMIN_SECURITY_PIN = '1121';
+    const FIREBASE_BASE = 'https://droniex-rent-store-default-rtdb.asia-southeast1.firebasedatabase.app';
+
+    let _adminBookings = [];
+    let _adminItems = [
+      { id: 'dji-mini-4-pro-combo', title: 'DJI Mini 4 Pro Drone — Fly More Combo', available: true },
+      { id: 'dji-osmo-mobile-se', title: 'DJI Osmo Mobile SE — Smartphone Gimbal', available: true },
+      { id: 'dji-osmo-mobile-7p', title: 'DJI Osmo Mobile 7P — Pro Smartphone Gimbal', available: false }
+    ];
+
+    let currentCalYear = 2026;
+    let currentCalMonth = 10; // Nov
+    let calFilter = 'all';
+    let currentStatusFilter = 'all';
+
+    function showToast(msg) {
+      const banner = document.getElementById('toastBanner');
+      const text = document.getElementById('toastMessage');
+      if (!banner || !text) return;
+      text.textContent = msg;
+      banner.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-4');
+      setTimeout(() => {
+        banner.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4');
+      }, 3000);
+    }
+
+    // Gate Authentication
+    function submitAdminGatePin() {
+      const input = document.getElementById('gatePinInput');
+      const err = document.getElementById('gatePinError');
+      const pin = (input ? input.value : '').trim();
+
+      if (pin === ADMIN_SECURITY_PIN) {
+        sessionStorage.setItem('droniex_admin_auth', '1121');
+        unlockAdminDashboard();
+        showToast('Store Admin Authorized Successfully');
+      } else {
+        if (err) {
+          err.textContent = 'Incorrect PIN! Unauthorized access rejected.';
+          err.classList.remove('hidden');
+        }
+        if (input) {
+          input.value = '';
+          input.focus();
+        }
+      }
+    }
+
+    function unlockAdminDashboard() {
+      document.getElementById('adminGateScreen').classList.add('hidden');
+      document.getElementById('adminAppDashboard').classList.remove('hidden');
+      syncFirebaseOrders(false);
+      renderDashboard();
+    }
+
+    function lockAdminGate() {
+      sessionStorage.removeItem('droniex_admin_auth');
+      document.getElementById('adminAppDashboard').classList.add('hidden');
+      document.getElementById('adminGateScreen').classList.remove('hidden');
+      const input = document.getElementById('gatePinInput');
+      if (input) { input.value = ''; input.focus(); }
+    }
+
+    function setDashboardTab(tab) {
+      const viewTable = document.getElementById('tabViewTable');
+      const viewCal = document.getElementById('tabViewCalendar');
+      const btnTable = document.getElementById('tabBtnTable');
+      const btnCal = document.getElementById('tabBtnCalendar');
+
+      if (tab === 'calendar') {
+        viewTable.classList.add('hidden');
+        viewCal.classList.remove('hidden');
+        btnCal.className = 'px-4 py-2 rounded-xl text-xs font-bold bg-blue-600 text-white shadow-xs transition flex items-center gap-1.5 cursor-pointer';
+        btnTable.className = 'px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition flex items-center gap-1.5 cursor-pointer';
+        renderCalendar();
+      } else {
+        viewCal.classList.add('hidden');
+        viewTable.classList.remove('hidden');
+        btnTable.className = 'px-4 py-2 rounded-xl text-xs font-bold bg-blue-600 text-white shadow-xs transition flex items-center gap-1.5 cursor-pointer';
+        btnCal.className = 'px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition flex items-center gap-1.5 cursor-pointer';
+        renderOrdersTable();
+      }
+    }
+
+    // Firebase Data Sync
+    async function syncFirebaseOrders(isManual) {
+      const statusEl = document.getElementById('cloudSyncStatus');
+      if (statusEl) statusEl.textContent = 'Syncing...';
+      try {
+        const res = await fetch(FIREBASE_BASE + '/reservations.json');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && typeof data === 'object') {
+            _adminBookings = Object.values(data).sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+          }
+        }
+        const invRes = await fetch(FIREBASE_BASE + '/inventory.json');
+        if (invRes.ok) {
+          const invData = await invRes.json();
+          if (Array.isArray(invData)) _adminItems = invData;
+        }
+
+        renderDashboard();
+        if (statusEl) statusEl.textContent = 'Cloud Live (' + _adminBookings.length + ')';
+        if (isManual) showToast('Synced ' + _adminBookings.length + ' reservation(s) from Firebase Cloud!');
+      } catch (e) {
+        console.warn('Sync error:', e);
+        if (statusEl) statusEl.textContent = 'Offline';
+        if (isManual) showToast('Network Offline');
+      }
+    }
+
+    function renderDashboard() {
+      updateKpis();
+      renderOrdersTable();
+      renderCalendar();
+    }
+
+    function updateKpis() {
+      const total = _adminBookings.length;
+      const active = _adminBookings.filter(b => b.bookingState === 'picked_up' || (b.status || '').includes('Picked Up')).length;
+      const pending = _adminBookings.filter(b => b.bookingState === 'pending' || (b.status || '').includes('Pending')).length;
+      const rev = _adminBookings.reduce((sum, b) => sum + (Number(b.totalLkr) || 0), 0);
+
+      document.getElementById('kpiTotalOrders').textContent = total;
+      document.getElementById('kpiActiveOrders').textContent = active;
+      document.getElementById('kpiPendingOrders').textContent = pending;
+      document.getElementById('kpiRevenue').textContent = 'Rs. ' + rev.toLocaleString('en-LK');
+    }
+
+    function setFilter(status) {
+      currentStatusFilter = status;
+      document.querySelectorAll('.status-btn').forEach(btn => {
+        if (btn.getAttribute('data-status') === status) {
+          btn.className = 'status-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-600 text-white';
+        } else {
+          btn.className = 'status-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700';
+        }
+      });
+      renderOrdersTable();
+    }
+
+    function filterOrdersTable() {
+      renderOrdersTable();
+    }
+
+    function renderOrdersTable() {
+      const tbody = document.getElementById('ordersTableBody');
+      const search = (document.getElementById('orderSearchInput')?.value || '').toLowerCase().trim();
+      if (!tbody) return;
+
+      const filtered = _adminBookings.filter(b => {
+        if (currentStatusFilter !== 'all') {
+          const isP = b.bookingState === 'picked_up' || (b.status || '').includes('Picked Up');
+          const isR = b.bookingState === 'returned' || (b.status || '').includes('Returned');
+          const isPend = b.bookingState === 'pending' || (b.status || '').includes('Pending');
+          if (currentStatusFilter === 'picked_up' && !isP) return false;
+          if (currentStatusFilter === 'returned' && !isR) return false;
+          if (currentStatusFilter === 'pending' && !isPend) return false;
+        }
+        if (search) {
+          const haystack = [b.orderId, b.customerName, b.phone, b.nic, b.itemsSummary].filter(Boolean).join(' ').toLowerCase();
+          if (!haystack.includes(search)) return false;
+        }
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="text-center py-8 text-slate-500">No reservations match the selected filter.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(b => {
+        const isP = b.bookingState === 'picked_up' || (b.status || '').includes('Picked Up');
+        const isR = b.bookingState === 'returned' || (b.status || '').includes('Returned');
+
+        return `
+          <tr class="hover:bg-slate-800/50 transition">
+            <td class="py-3 px-3 font-mono font-bold text-blue-400">${b.orderId}</td>
+            <td class="py-3 px-3">
+              <div class="font-bold text-white">${b.customerName || 'Customer'}</div>
+              <div class="text-[10px] text-slate-400">NIC: ${b.nic || '—'}</div>
+            </td>
+            <td class="py-3 px-3">
+              <div>${b.phone || '—'}</div>
+              <div class="text-[10px] text-slate-500 truncate max-w-[120px]">${b.email || '—'}</div>
+            </td>
+            <td class="py-3 px-3 font-semibold">${b.itemsSummary}</td>
+            <td class="py-3 px-3 whitespace-nowrap">${b.schedule || (b.pickupDate + ' to ' + b.returnDate)}</td>
+            <td class="py-3 px-3 font-bold text-emerald-400">Rs. ${Number(b.totalLkr).toLocaleString('en-LK')}</td>
+            <td class="py-3 px-3">
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold ${isP ? 'bg-amber-950 text-amber-300 border border-amber-800' : isR ? 'bg-slate-800 text-slate-400' : 'bg-sky-950 text-sky-300 border border-sky-800'}">
+                ${isP ? '🔒 Out' : isR ? '✓ Returned' : '⏳ Pending'}
+              </span>
+            </td>
+            <td class="py-3 px-3 whitespace-nowrap">
+              <div class="flex items-center gap-1.5">
+                <button type="button" onclick="sendCustomerThankYouWhatsApp('${b.orderId}')" class="px-2 py-1 rounded bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-bold cursor-pointer" title="Send WhatsApp Reply">💬 WA</button>
+                <button type="button" onclick="openSlipModal('${b.orderId}')" class="px-2 py-1 rounded bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-bold cursor-pointer" title="View Agreement Slip">📄</button>
+                <button type="button" onclick="toggleOrderStatus('${b.orderId}')" class="px-2 py-1 rounded text-[10px] font-bold ${isP ? 'bg-slate-700 text-white' : 'bg-amber-600 text-white'} cursor-pointer">
+                  ${isP ? '✓ Return' : '🔒 Pickup'}
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // WhatsApp Thank You Sender
+    function sendCustomerThankYouWhatsApp(orderId) {
+      const b = _adminBookings.find(item => item.orderId === orderId);
+      if (!b) return;
+
+      const raw = (b.phone || '').replace(/[^0-9]/g, '');
+      let lkPhone = raw;
+      if (raw.startsWith('0')) lkPhone = '94' + raw.substring(1);
+      else if (!raw.startsWith('94') && raw.length === 9) lkPhone = '94' + raw;
+
+      const msg =
+        `*THANK YOU FOR RESERVING WITH DRONIEX RENT STORE — GALLE!* 🚁\n` +
+        `──────────────────────\n` +
+        `Dear *${b.customerName || 'Valued Customer'}*,\n` +
+        `Thank you for your reservation! Your equipment booking has been successfully confirmed and logged in our store system.\n\n` +
+        `📌 *Tracking Reference ID:* ${b.orderId}\n` +
+        `📦 *Reserved Equipment:* ${b.itemsSummary}\n` +
+        `📅 *Rental Period:* ${b.schedule}\n` +
+        `💰 *Total Rental Fee:* Rs. ${Number(b.totalLkr).toLocaleString('en-LK')}\n` +
+        `💳 *Payment Method:* ${b.paymentMethod || 'Pay at Store Pickup'}\n\n` +
+        `👤 *Hirer Details:* ${b.customerName} | NIC: ${b.nic || '—'} | Phone: ${b.phone}\n` +
+        `──────────────────────\n` +
+        `📍 *Store Pickup Location:*\n` +
+        `No. 131, D.J. Wimalasurendra Mawatha, Galwadugoda, Galle 80000.\n` +
+        `📞 *Store Hotlines:* 070 187 5455 / 071 351 0551\n` +
+        `🌐 *Live Order Tracker:* https://droniex-rent-store.vercel.app\n\n` +
+        `_Please present your Tracking ID and original NIC/Passport upon store pickup. Thank you!_`;
+
+      const targetPhone = lkPhone || '94701875455';
+      window.open(`https://wa.me/${targetPhone}?text=` + encodeURIComponent(msg), '_blank', 'noopener,noreferrer');
+    }
+
+    // Toggle Pickup / Return
+    async function toggleOrderStatus(orderId) {
+      const b = _adminBookings.find(item => item.orderId === orderId);
+      if (!b) return;
+
+      const wasPickedUp = b.bookingState === 'picked_up' || (b.status || '').includes('Picked Up');
+      if (wasPickedUp) {
+        b.bookingState = 'returned';
+        b.status = 'Returned & Completed';
+      } else {
+        b.bookingState = 'picked_up';
+        b.status = '🔒 Picked Up · Reserved Until ' + (b.returnDate || 'Return');
+      }
+
+      // Sync update to Firebase
+      try {
+        await fetch(FIREBASE_BASE + '/reservations/' + orderId + '.json', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ bookingState: b.bookingState, status: b.status })
+        });
+      } catch (e) {}
+
+      renderDashboard();
+      showToast('Order ' + orderId + ' updated: ' + (wasPickedUp ? 'Returned' : 'Picked Up'));
+    }
+
+    // Calendar Functions
+    const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+    function changeMonth(delta) {
+      currentCalMonth += delta;
+      if (currentCalMonth > 11) { currentCalMonth = 0; currentCalYear++; }
+      else if (currentCalMonth < 0) { currentCalMonth = 11; currentCalYear--; }
+      renderCalendar();
+    }
+
+    function resetToToday() {
+      const n = new Date();
+      currentCalYear = n.getFullYear();
+      currentCalMonth = n.getMonth();
+      renderCalendar();
+    }
+
+    function filterGear(val) {
+      calFilter = val;
+      renderCalendar();
+    }
+
+    function getBookingsOnDate(dateStr, filter) {
+      return _adminBookings.filter(b => {
+        if (!b.pickupDate) return false;
+        const s = b.pickupDate;
+        const e = b.returnDate || s;
+        if (!(s <= dateStr && dateStr <= e)) return false;
+        if (filter !== 'all') {
+          if (b.itemId !== filter && !(b.itemsSummary || '').toLowerCase().includes(filter.replace('dji-', '').replace('-', ' '))) {
+            return false;
+          }
+        }
+        return true;
+      });
+    }
+
+    function renderCalendar() {
+      const label = document.getElementById('calMonthLabel');
+      const grid = document.getElementById('calendarGrid');
+      if (!label || !grid) return;
+
+      label.textContent = MONTHS[currentCalMonth] + ' ' + currentCalYear;
+
+      const firstDay = new Date(currentCalYear, currentCalMonth, 1).getDay();
+      const offset = (firstDay + 6) % 7; // Mon = 0
+      const daysInMonth = new Date(currentCalYear, currentCalMonth + 1, 0).getDate();
+      const prevDays = new Date(currentCalYear, currentCalMonth, 0).getDate();
+      const todayStr = new Date().toISOString().slice(0, 10);
+
+      let html = '';
+      for (let i = offset - 1; i >= 0; i--) {
+        const d = prevDays - i;
+        html += `<div class="min-h-[90px] p-2 bg-slate-950/40 text-slate-600"><span class="text-xs">${d}</span></div>`;
+      }
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dateStr = currentCalYear + '-' + String(currentCalMonth + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
+        const dayB = getBookingsOnDate(dateStr, calFilter);
+        const isToday = (dateStr === todayStr);
+
+        let pillsHtml = '';
+        if (dayB.length > 0) {
+          pillsHtml = dayB.slice(0, 3).map(b => {
+            const isP = b.bookingState === 'picked_up' || (b.status || '').includes('Picked Up');
+            const cust = (b.customerName || 'Cust').split(' ')[0];
+            return `
+              <div class="px-1.5 py-0.5 rounded text-[10px] font-bold truncate ${isP ? 'bg-amber-950 text-amber-300 border border-amber-800' : 'bg-sky-950 text-sky-300 border border-sky-800'}">
+                ${isP ? '🔒' : '⏳'} ${cust}
+              </div>
+            `;
+          }).join('');
+        } else {
+          pillsHtml = '<div class="text-[10px] text-emerald-500 font-semibold pt-1">🟢 Available</div>';
+        }
+
+        html += `
+          <div class="min-h-[100px] p-2 bg-slate-900 hover:bg-slate-800/80 transition cursor-pointer flex flex-col justify-between" onclick="openDayModal('${dateStr}')">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-black ${isToday ? 'w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center' : 'text-slate-200'}">${day}</span>
+              ${dayB.length > 0 ? `<span class="text-[10px] px-1 rounded bg-blue-950 text-blue-400 font-bold">${dayB.length}</span>` : ''}
+            </div>
+            <div class="space-y-1 mt-1 flex-1">${pillsHtml}</div>
+          </div>
+        `;
+      }
+
+      const totalCells = offset + daysInMonth;
+      const remaining = (totalCells % 7 === 0) ? 0 : (7 - (totalCells % 7));
+      for (let n = 1; n <= remaining; n++) {
+        html += `<div class="min-h-[90px] p-2 bg-slate-950/40 text-slate-600"><span class="text-xs">${n}</span></div>`;
+      }
+
+      grid.innerHTML = html;
+      renderUpcomingFeed();
+    }
+
+    function renderUpcomingFeed() {
+      const feed = document.getElementById('upcomingFeed');
+      if (!feed) return;
+
+      const today = new Date();
+      const next7 = [];
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(today);
+        d.setDate(today.getDate() + i);
+        next7.push(d.toISOString().slice(0, 10));
+      }
+
+      const active = _adminBookings.filter(b => b.pickupDate && next7.some(dt => b.pickupDate <= dt && dt <= (b.returnDate || b.pickupDate)));
+      feed.innerHTML = `
+        <div class="flex items-center justify-between border-b border-slate-700 pb-2">
+          <span class="text-sm font-bold text-white">⚡ Upcoming Activity (Next 7 Days)</span>
+          <span class="text-xs text-blue-400 font-bold">${active.length} Bookings</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+          ${active.length === 0 ? '<div class="col-span-3 text-slate-500 text-xs text-center py-2">No upcoming rentals in next 7 days.</div>' : active.map(b => `
+            <div class="p-2.5 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-between text-xs">
+              <div class="truncate">
+                <div class="font-bold text-white truncate">${b.itemsSummary}</div>
+                <div class="text-[10px] text-slate-400">${b.customerName} (${b.phone})</div>
+                <div class="text-[10px] text-blue-400 font-mono">${b.schedule}</div>
+              </div>
+              <button type="button" onclick="sendCustomerThankYouWhatsApp('${b.orderId}')" class="px-2 py-1 rounded bg-emerald-600 text-white font-bold text-[10px]">💬 WA</button>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function openDayModal(dateStr) {
+      const modal = document.getElementById('dayModal');
+      const title = document.getElementById('dayModalTitle');
+      const content = document.getElementById('dayModalContent');
+      if (!modal || !title || !content) return;
+
+      const dateObj = new Date(dateStr + 'T00:00:00');
+      title.textContent = dateObj.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+      const dayB = getBookingsOnDate(dateStr, 'all');
+      content.innerHTML = `
+        <div class="space-y-3">
+          <div class="font-bold text-slate-300">Reservations on this Date (${dayB.length})</div>
+          ${dayB.length === 0 ? '<div class="text-center py-6 text-slate-500">All equipment available for hire on this date.</div>' : dayB.map(b => `
+            <div class="p-3.5 rounded-2xl bg-slate-800 border border-slate-700 space-y-2">
+              <div class="flex items-center justify-between border-b border-slate-700 pb-1.5">
+                <span class="font-mono font-bold text-blue-400">${b.orderId}</span>
+                <span class="font-bold text-white">${b.customerName}</span>
+              </div>
+              <div class="grid grid-cols-2 gap-1 text-[11px] text-slate-300">
+                <div>Phone: <strong>${b.phone}</strong></div>
+                <div>NIC: <strong>${b.nic || '—'}</strong></div>
+                <div>Gear: <strong>${b.itemsSummary}</strong></div>
+                <div>Dates: <strong>${b.schedule}</strong></div>
+                <div>Total: <strong class="text-emerald-400">Rs. ${Number(b.totalLkr).toLocaleString('en-LK')}</strong></div>
+                <div>Payment: <strong>${b.paymentMethod || 'Store'}</strong></div>
+              </div>
+              <div class="flex gap-2 pt-1 border-t border-slate-700">
+                <button type="button" onclick="sendCustomerThankYouWhatsApp('${b.orderId}')" class="px-3 py-1 rounded-xl bg-emerald-600 text-white font-bold text-xs">💬 WA Reply</button>
+                <button type="button" onclick="closeDayModal(); openSlipModal('${b.orderId}');" class="px-3 py-1 rounded-xl bg-blue-600 text-white font-bold text-xs">📄 View Slip</button>
+                <button type="button" onclick="toggleOrderStatus('${b.orderId}'); openDayModal('${dateStr}');" class="px-3 py-1 rounded-xl bg-slate-700 text-white font-bold text-xs">Toggle Status</button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeDayModal() {
+      const modal = document.getElementById('dayModal');
+      if (modal) { modal.classList.add('hidden'); modal.classList.remove('flex'); }
+    }
+
+    // Rental Slip Modal
+    function openSlipModal(orderId) {
+      const b = _adminBookings.find(item => item.orderId === orderId);
+      if (!b) return;
+
+      const modal = document.getElementById('slipModal');
+      const content = document.getElementById('slipContent');
+      if (!modal || !content) return;
+
+      content.innerHTML = `
+        <div class="flex items-center justify-between border-b border-slate-200 pb-4">
+          <div>
+            <div class="text-xl font-black text-slate-900">DronieX Rent Store — Galle</div>
+            <div class="text-xs text-slate-500">No. 131, D.J. Wimalasurendra Mawatha, Galwadugoda, Galle 80000</div>
+            <div class="text-xs text-slate-500">Hotlines: 070 187 5455 / 071 351 0551</div>
+          </div>
+          <div class="text-right">
+            <div class="text-xs font-bold uppercase text-blue-600">Rental Agreement</div>
+            <div class="text-base font-black font-mono text-slate-900 mt-0.5">${b.orderId}</div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 text-xs">
+          <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-1">
+            <div class="font-bold text-blue-600 uppercase text-[10px]">Hirer Information</div>
+            <div class="font-bold text-slate-900 text-sm">${b.customerName}</div>
+            <div>NIC / Passport: <span class="font-mono font-bold">${b.nic || '—'}</span></div>
+            <div>Phone: <span class="font-mono font-bold">${b.phone}</span></div>
+            <div>Address: ${b.address || 'Galle, Sri Lanka'}</div>
+          </div>
+
+          <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-1">
+            <div class="font-bold text-blue-600 uppercase text-[10px]">Schedule &amp; Fee</div>
+            <div>Schedule: <span class="font-bold">${b.schedule}</span></div>
+            <div>Payment: ${b.paymentMethod || 'Pay on Store'}</div>
+            <div class="text-base font-black text-emerald-600 pt-1">Total Fee: Rs. ${Number(b.totalLkr).toLocaleString('en-LK')}</div>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+          <div class="font-bold text-slate-900 text-sm">${b.itemsSummary}</div>
+          <div class="text-[11px] text-slate-500 mt-1">Package: ${b.packageName || 'Standard Equipment Rental'}</div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-8 pt-6 border-t border-slate-200 text-center text-xs">
+          <div>
+            <div class="font-bold text-slate-900">Customer Signature</div>
+            <div class="text-[10px] text-slate-400">Accepted terms &amp; received gear intact</div>
+          </div>
+          <div>
+            <div class="font-bold text-slate-900">DronieX Officer Signature</div>
+            <div class="text-[10px] text-slate-400">Verified NIC &amp; Inspection Passed</div>
+          </div>
+        </div>
+      `;
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeSlipModal() {
+      const modal = document.getElementById('slipModal');
+      if (modal) { modal.classList.add('hidden'); modal.classList.remove('flex'); }
+    }
+
+    // CSV Export
+    function exportOrdersToCsv() {
+      if (_adminBookings.length === 0) {
+        showToast('No orders available to export.');
+        return;
+      }
+      const headers = ['Order ID', 'Customer Name', 'Phone', 'NIC', 'Email', 'Equipment', 'Schedule', 'Days', 'Total LKR', 'Payment', 'Status', 'Address'];
+      const rows = _adminBookings.map(b => [
+        b.orderId || '',
+        '"' + (b.customerName || '').replace(/"/g, '""') + '"',
+        b.phone || '',
+        b.nic || '',
+        b.email || '',
+        '"' + (b.itemsSummary || '').replace(/"/g, '""') + '"',
+        '"' + (b.schedule || '').replace(/"/g, '""') + '"',
+        b.rentalDays || 1,
+        b.totalLkr || 0,
+        b.paymentMethod || 'Store',
+        '"' + (b.status || '').replace(/"/g, '""') + '"',
+        '"' + (b.address || '').replace(/"/g, '""') + '"'
+      ]);
+
+      const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', 'DronieX_Reservations_' + new Date().toISOString().slice(0, 10) + '.csv');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast('Exported ' + _adminBookings.length + ' reservation(s) to Excel CSV!');
+    }
+
+    // Init on Load
+    window.addEventListener('DOMContentLoaded', () => {
+      const isAuthed = sessionStorage.getItem('droniex_admin_auth') === ADMIN_SECURITY_PIN;
+      if (isAuthed) {
+        unlockAdminDashboard();
+      } else {
+        const input = document.getElementById('gatePinInput');
+        if (input) setTimeout(() => input.focus(), 150);
+      }
+    });
+  </script>
+</body>
+</html>

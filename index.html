@@ -257,10 +257,7 @@
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
           Open Daily 8:00 AM – 8:00 PM
         </span>
-        <button type="button" onclick="switchView('admin')" class="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-semibold flex items-center gap-1 transition cursor-pointer" title="Staff Portal (Authorized Access)">
-          <svg class="w-3 h-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-          <span>Staff Login</span>
-        </button>
+
         <button type="button" onclick="toggleTheme()" class="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-semibold flex items-center gap-1.5 transition px-2 py-0.5 rounded-md hover:bg-slate-200/50 dark:hover:bg-slate-800 cursor-pointer" title="Toggle Light / Dark Mode">
           <span id="themeLabelText">🌙 Dark Mode</span>
         </button>
@@ -275,7 +272,7 @@
       
       <!-- Brand Logo & Hidden Nav Bindings -->
       <div class="flex items-center gap-3">
-        <button type="button" onclick="switchView('catalog')" class="flex items-center gap-2.5 text-left group flex-shrink-0 cursor-pointer">
+        <button type="button" onclick="handleLogoClick(event)" class="flex items-center gap-2.5 text-left group flex-shrink-0 cursor-pointer" title="DronieX Store Galle">
           <div class="w-10 h-10 rounded-xl overflow-hidden p-0.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-xs group-hover:border-blue-400 transition-all duration-200">
             <img src="droniex-logo.jpg" alt="DronieX Rent Store Galle Logo" class="w-full h-full object-cover rounded-[10px]" onerror="this.onerror=null;this.src='droniex-logo.jpg'" />
           </div>
@@ -936,6 +933,22 @@
           </div>
         </div>
 
+        <!-- ADMIN VIEW SWITCHER TABS: TABLE vs CALENDAR -->
+        <div class="flex items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-3">
+          <div class="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl">
+            <button type="button" onclick="setAdminViewMode('table')" id="adminViewModeTableBtn" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-blue-600 text-white shadow-xs transition flex items-center gap-1.5 cursor-pointer">
+              <span>📋 Orders Table</span>
+            </button>
+            <button type="button" onclick="setAdminViewMode('calendar')" id="adminViewModeCalendarBtn" class="px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition flex items-center gap-1.5 cursor-pointer">
+              <span>📅 Booking Calendar</span>
+            </button>
+          </div>
+          <div class="text-xs text-slate-500 dark:text-slate-400 hidden sm:flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>Real-time Multi-Device Schedule</span>
+          </div>
+        </div>
+
         <!-- KPI SUMMARY BENTO CARDS -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <div class="bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 rounded-2xl p-4 flex items-center justify-between shadow-2xs">
@@ -968,6 +981,8 @@
           </div>
         </div>
 
+        <!-- WRAPPER 1: ORDERS TABLE VIEW -->
+        <div id="adminTableViewWrapper" class="space-y-6">
         <!-- SEARCH & STATUS FILTER TOOLBAR -->
         <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-slate-50/60 dark:bg-slate-800/40 p-3 rounded-2xl border border-slate-200/80 dark:border-slate-800">
           <div class="relative flex-1 max-w-md">
@@ -1005,6 +1020,77 @@
               <!-- Rendered dynamically by renderAdminOrdersTable() -->
             </tbody>
           </table>
+        </div>
+        </div>
+
+        <!-- =========================================================================
+             WRAPPER 2: ADMIN INTERACTIVE BOOKING CALENDAR VIEW
+             ========================================================================= -->
+        <div id="adminBookingCalendarContainer" class="hidden space-y-6">
+          <!-- Calendar Header Controls: Navigation, Filters, and Legend -->
+          <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 bg-slate-50/80 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-200 dark:border-slate-700/80">
+            <!-- Month Nav -->
+            <div class="flex items-center gap-2">
+              <button type="button" onclick="changeAdminCalendarMonth(-1)" class="p-2 rounded-xl bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 hover:bg-slate-100 text-slate-800 dark:text-slate-100 text-xs font-bold shadow-xs transition cursor-pointer" title="Previous Month">
+                ◀ Prev
+              </button>
+              <h3 id="adminCalendarMonthLabel" class="text-base sm:text-lg font-black text-slate-900 dark:text-white min-w-[150px] text-center">
+                November 2026
+              </h3>
+              <button type="button" onclick="changeAdminCalendarMonth(1)" class="p-2 rounded-xl bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 hover:bg-slate-100 text-slate-800 dark:text-slate-100 text-xs font-bold shadow-xs transition cursor-pointer" title="Next Month">
+                Next ▶
+              </button>
+              <button type="button" onclick="resetAdminCalendarToToday()" class="px-3 py-1.5 rounded-xl bg-blue-50 dark:bg-blue-950/70 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 text-xs font-bold hover:bg-blue-100 transition shadow-xs cursor-pointer">
+                Today
+              </button>
+            </div>
+
+            <!-- Gear Filter & Legend -->
+            <div class="flex flex-wrap items-center gap-3">
+              <!-- Filter Dropdown -->
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-slate-500 font-semibold">Filter Gear:</span>
+                <select id="adminCalendarGearFilterSelect" onchange="filterAdminCalendarGear(this.value)" class="text-xs font-bold bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-1.5 text-slate-800 dark:text-slate-100 focus:outline-none focus:border-blue-500">
+                  <option value="all">All Equipment (3 Items)</option>
+                  <option value="dji-mini-4-pro-combo">🚁 DJI Mini 4 Pro Drone</option>
+                  <option value="dji-osmo-mobile-se">📱 DJI Osmo Mobile SE</option>
+                  <option value="dji-osmo-mobile-7p">📱 DJI Osmo Mobile 7P</option>
+                </select>
+              </div>
+
+              <!-- Color Legend -->
+              <div class="flex items-center gap-2 text-[10px] text-slate-600 dark:text-slate-400">
+                <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Available</span>
+                <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Out on Rental</span>
+                <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-sky-500"></span> Pending</span>
+                <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span> Returned</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Calendar Grid Card -->
+          <div class="border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden bg-white dark:bg-slate-900 shadow-xs">
+            <!-- Weekday Headers -->
+            <div class="grid grid-cols-7 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/70 text-center py-2.5 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              <div>Mon</div>
+              <div>Tue</div>
+              <div>Wed</div>
+              <div>Thu</div>
+              <div>Fri</div>
+              <div>Sat</div>
+              <div class="text-rose-500">Sun</div>
+            </div>
+
+            <!-- Days Grid -->
+            <div id="adminCalendarDaysGrid" class="grid grid-cols-7 divide-x divide-y divide-slate-100 dark:divide-slate-800/80 bg-slate-100/40 dark:bg-slate-800/30">
+              <!-- Rendered dynamically by renderAdminBookingCalendar() -->
+            </div>
+          </div>
+
+          <!-- Bottom: Upcoming Pickups & Returns in Next 7 Days Widget -->
+          <div id="adminUpcomingScheduleWidget" class="bg-slate-50/70 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 sm:p-5 space-y-3">
+            <!-- Rendered dynamically -->
+          </div>
         </div>
       </section>
 
@@ -1181,7 +1267,7 @@
         <ul class="space-y-1.5">
           <li><button type="button" onclick="switchView('verify')" class="hover:text-white transition">Online Equipment Reservation</button></li>
           <li><button type="button" onclick="openTrackModal()" class="hover:text-white transition">Track My Booking</button></li>
-          <li><button type="button" onclick="switchView('admin')" class="hover:text-white transition">Customer Reviews &amp; Store Admin</button></li>
+          <li><a href="https://maps.app.goo.gl/uDF84DTuVNTLxa6w9" target="_blank" rel="noopener noreferrer" class="hover:text-white transition">Customer Reviews &amp; Ratings (5.0 ★)</a></li>
           <li><a href="https://www.caa.lk/" target="_blank" rel="noopener noreferrer" class="hover:text-white transition">CAASL Drone Safety Guidelines ↗</a></li>
         </ul>
       </div>
@@ -1207,7 +1293,7 @@
       </div>
     </div>
     <div class="border-t border-slate-800/80 py-4 text-center text-[11px] text-slate-500">
-      © 2026 DronieX Rent Store — Galle. All Rights Reserved.
+      © 2026 DronieX Rent Store — Galle. All Rights Reserved. <button type="button" onclick="openAdminPinModal()" class="text-slate-400/20 hover:text-slate-400 text-[10px] transition cursor-default ml-1.5" title="Staff Gateway">🔒</button>
     </div>
   </footer>
 
@@ -1795,6 +1881,395 @@
       } catch (e) {}
     }
 
+
+    // =========================================================================
+    // STORE ADMIN INTERACTIVE BOOKING CALENDAR SYSTEM
+    // =========================================================================
+    let adminCalendarYear = 2026;
+    let adminCalendarMonth = 10; // 0-indexed: 10 = November
+    let adminCalendarGearFilter = 'all';
+    let adminViewMode = 'table'; // 'table' or 'calendar'
+    let adminSelectedDateStr = '';
+
+    const MONTH_NAMES = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+
+    function setAdminViewMode(mode) {
+      adminViewMode = mode;
+      const tableWrap = document.getElementById('adminTableViewWrapper');
+      const calWrap = document.getElementById('adminBookingCalendarContainer');
+      const tableBtn = document.getElementById('adminViewModeTableBtn');
+      const calBtn = document.getElementById('adminViewModeCalendarBtn');
+
+      if (mode === 'calendar') {
+        if (tableWrap) tableWrap.classList.add('hidden');
+        if (calWrap) calWrap.classList.remove('hidden');
+        if (calBtn) {
+          calBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold bg-blue-600 text-white shadow-xs transition flex items-center gap-1.5 cursor-pointer';
+        }
+        if (tableBtn) {
+          tableBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition flex items-center gap-1.5 cursor-pointer';
+        }
+        renderAdminBookingCalendar();
+      } else {
+        if (calWrap) calWrap.classList.add('hidden');
+        if (tableWrap) tableWrap.classList.remove('hidden');
+        if (tableBtn) {
+          tableBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold bg-blue-600 text-white shadow-xs transition flex items-center gap-1.5 cursor-pointer';
+        }
+        if (calBtn) {
+          calBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition flex items-center gap-1.5 cursor-pointer';
+        }
+        renderAdminOrdersTable();
+      }
+    }
+
+    function changeAdminCalendarMonth(delta) {
+      adminCalendarMonth += delta;
+      if (adminCalendarMonth > 11) {
+        adminCalendarMonth = 0;
+        adminCalendarYear++;
+      } else if (adminCalendarMonth < 0) {
+        adminCalendarMonth = 11;
+        adminCalendarYear--;
+      }
+      renderAdminBookingCalendar();
+    }
+
+    function resetAdminCalendarToToday() {
+      const now = new Date();
+      adminCalendarYear = now.getFullYear();
+      adminCalendarMonth = now.getMonth();
+      renderAdminBookingCalendar();
+    }
+
+    function filterAdminCalendarGear(gearId) {
+      adminCalendarGearFilter = gearId;
+      renderAdminBookingCalendar();
+    }
+
+    function getBookingsForDay(dateStr, gearFilter = 'all') {
+      return (appState.bookings || []).filter(b => {
+        if (!b || !b.pickupDate) return false;
+        const start = b.pickupDate;
+        const end = b.returnDate || b.pickupDate;
+        if (!(start <= dateStr && dateStr <= end)) return false;
+        if (gearFilter !== 'all') {
+          const it = findItemForBooking(b);
+          if (it && it.id !== gearFilter && b.itemId !== gearFilter) return false;
+        }
+        return true;
+      });
+    }
+
+    function getGearShortName(b) {
+      const s = (b.itemsSummary || '').toLowerCase();
+      if (s.includes('mini 4 pro') || s.includes('drone')) return '🚁 Mini 4 Pro';
+      if (s.includes('7p')) return '📱 Osmo 7P';
+      if (s.includes('osmo') || s.includes('se')) return '📱 Osmo SE';
+      return '📦 Equipment';
+    }
+
+    function renderAdminBookingCalendar() {
+      const monthLabel = document.getElementById('adminCalendarMonthLabel');
+      const grid = document.getElementById('adminCalendarDaysGrid');
+      if (!monthLabel || !grid) return;
+
+      monthLabel.textContent = MONTH_NAMES[adminCalendarMonth] + ' ' + adminCalendarYear;
+
+      const firstDay = new Date(adminCalendarYear, adminCalendarMonth, 1).getDay();
+      // Monday as 0: (day + 6) % 7
+      const startingDayOffset = (firstDay + 6) % 7;
+      const daysInMonth = new Date(adminCalendarYear, adminCalendarMonth + 1, 0).getDate();
+      const prevMonthDays = new Date(adminCalendarYear, adminCalendarMonth, 0).getDate();
+
+      const todayStr = new Date().toISOString().slice(0, 10);
+      let cellsHtml = '';
+
+      // 1. Leading days from previous month
+      for (let i = startingDayOffset - 1; i >= 0; i--) {
+        const d = prevMonthDays - i;
+        const m = adminCalendarMonth === 0 ? 12 : adminCalendarMonth;
+        const y = adminCalendarMonth === 0 ? adminCalendarYear - 1 : adminCalendarYear;
+        const dateStr = y + '-' + String(m).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+        cellsHtml += `
+          <div class="min-h-[95px] p-2 bg-slate-50/50 dark:bg-slate-900/40 text-slate-300 dark:text-slate-600 cursor-pointer hover:bg-slate-100/50 dark:hover:bg-slate-800/40 transition" onclick="openAdminDayDetailsModal('${dateStr}')">
+            <span class="text-xs font-semibold">${d}</span>
+          </div>
+        `;
+      }
+
+      // 2. Active days of current month
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dateStr = adminCalendarYear + '-' + String(adminCalendarMonth + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
+        const dayBookings = getBookingsForDay(dateStr, adminCalendarGearFilter);
+        const isToday = (dateStr === todayStr);
+
+        let bookingsHtml = '';
+        if (dayBookings.length > 0) {
+          bookingsHtml = dayBookings.slice(0, 3).map(b => {
+            const isPickedUp = b.bookingState === 'picked_up' || (b.status && b.status.includes('Picked Up'));
+            const isReturned = b.bookingState === 'returned' || (b.status && b.status.includes('Returned'));
+            const shortName = getGearShortName(b);
+            const custShort = (b.customerName || 'Customer').split(' ')[0];
+
+            let chipStyle = 'bg-sky-50 dark:bg-sky-950/80 text-sky-800 dark:text-sky-300 border-sky-200 dark:border-sky-800';
+            let icon = '⏳';
+            if (isPickedUp) {
+              chipStyle = 'bg-amber-50 dark:bg-amber-950/80 text-amber-900 dark:text-amber-200 border-amber-300 dark:border-amber-700';
+              icon = '🔒';
+            } else if (isReturned) {
+              chipStyle = 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700';
+              icon = '✓';
+            }
+
+            return `
+              <div class="px-1.5 py-0.5 rounded-lg border text-[10px] font-bold truncate ${chipStyle}" title="${b.orderId} - ${b.itemsSummary} (${b.customerName})">
+                ${icon} ${shortName} · ${custShort}
+              </div>
+            `;
+          }).join('');
+
+          if (dayBookings.length > 3) {
+            bookingsHtml += `<div class="text-[9px] font-bold text-blue-600 dark:text-blue-400">+ ${dayBookings.length - 3} more</div>`;
+          }
+        } else {
+          bookingsHtml = `
+            <div class="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400/80 pt-1 flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+              <span>Available</span>
+            </div>
+          `;
+        }
+
+        cellsHtml += `
+          <div class="min-h-[105px] p-2 bg-white dark:bg-slate-900 hover:bg-blue-50/40 dark:hover:bg-slate-800/60 transition cursor-pointer flex flex-col justify-between group" onclick="openAdminDayDetailsModal('${dateStr}')">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-black ${isToday ? 'w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-xs' : 'text-slate-800 dark:text-slate-200'}">${day}</span>
+              ${isToday ? '<span class="text-[9px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">Today</span>' : ''}
+              ${dayBookings.length > 0 ? `<span class="text-[10px] font-black px-1.5 py-0.2 rounded-full bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300">${dayBookings.length}</span>` : ''}
+            </div>
+            <div class="space-y-1 mt-1 flex-1">
+              ${bookingsHtml}
+            </div>
+          </div>
+        `;
+      }
+
+      // 3. Trailing days for grid completeness (42 cells total)
+      const totalCells = startingDayOffset + daysInMonth;
+      const remainingCells = (totalCells % 7 === 0) ? 0 : (7 - (totalCells % 7));
+      for (let nextDay = 1; nextDay <= remainingCells; nextDay++) {
+        const m = adminCalendarMonth === 11 ? 1 : adminCalendarMonth + 2;
+        const y = adminCalendarMonth === 11 ? adminCalendarYear + 1 : adminCalendarYear;
+        const dateStr = y + '-' + String(m).padStart(2, '0') + '-' + String(nextDay).padStart(2, '0');
+        cellsHtml += `
+          <div class="min-h-[95px] p-2 bg-slate-50/50 dark:bg-slate-900/40 text-slate-300 dark:text-slate-600 cursor-pointer hover:bg-slate-100/50 dark:hover:bg-slate-800/40 transition" onclick="openAdminDayDetailsModal('${dateStr}')">
+            <span class="text-xs font-semibold">${nextDay}</span>
+          </div>
+        `;
+      }
+
+      grid.innerHTML = cellsHtml;
+      renderUpcomingScheduleWidget();
+    }
+
+    function renderUpcomingScheduleWidget() {
+      const widget = document.getElementById('adminUpcomingScheduleWidget');
+      if (!widget) return;
+
+      const today = new Date();
+      const next7Days = [];
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(today);
+        d.setDate(today.getDate() + i);
+        next7Days.push(d.toISOString().slice(0, 10));
+      }
+
+      const activeIn7Days = (appState.bookings || []).filter(b => {
+        if (!b || !b.pickupDate) return false;
+        const s = b.pickupDate;
+        const e = b.returnDate || b.pickupDate;
+        return next7Days.some(dt => s <= dt && dt <= e);
+      });
+
+      widget.innerHTML = `
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-700 pb-2.5">
+          <div class="flex items-center gap-2">
+            <span class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+              <span>⚡</span> Upcoming Activity (Next 7 Days)
+            </span>
+            <span class="px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 text-[10px] font-bold">
+              ${activeIn7Days.length} Active Booking${activeIn7Days.length !== 1 ? 's' : ''}
+            </span>
+          </div>
+          <span class="text-[11px] text-slate-500 dark:text-slate-400">Click any reservation for quick actions</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 pt-1">
+          ${activeIn7Days.length === 0 ? `
+            <div class="col-span-3 text-center py-4 text-xs text-slate-500">No gear rentals scheduled in the next 7 days. All units ready for reservation.</div>
+          ` : activeIn7Days.map(b => {
+            const isPickedUp = b.bookingState === 'picked_up' || (b.status && b.status.includes('Picked Up'));
+            return `
+              <div class="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-between gap-2 shadow-2xs hover:border-blue-300 transition cursor-pointer" onclick="openOrderSlipModal('${b.orderId}')">
+                <div class="truncate">
+                  <div class="font-bold text-slate-900 dark:text-white text-xs truncate">${b.itemsSummary}</div>
+                  <div class="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">${b.customerName} (${b.phone})</div>
+                  <div class="text-[10px] font-mono text-blue-600 dark:text-blue-400">${b.schedule || (b.pickupDate + ' to ' + b.returnDate)}</div>
+                </div>
+                <div class="flex flex-col items-end gap-1 flex-shrink-0">
+                  <span class="px-2 py-0.5 rounded text-[9px] font-bold ${isPickedUp ? 'bg-amber-100 text-amber-800' : 'bg-sky-100 text-sky-800'}">
+                    ${isPickedUp ? '🔒 Out' : '⏳ Pending'}
+                  </span>
+                  <button type="button" onclick="event.stopPropagation(); sendCustomerThankYouWhatsApp('${b.orderId}')" class="px-2 py-0.5 rounded bg-emerald-600 text-white text-[9px] font-bold hover:bg-emerald-700 transition cursor-pointer">
+                    💬 WA
+                  </button>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+    }
+
+    function openAdminDayDetailsModal(dateStr) {
+      adminSelectedDateStr = dateStr;
+      const modal = document.getElementById('adminDayDetailsModal');
+      const title = document.getElementById('adminDayDetailsTitle');
+      const content = document.getElementById('adminDayDetailsContent');
+      if (!modal || !title || !content) return;
+
+      const dateObj = new Date(dateStr + 'T00:00:00');
+      const formattedDate = dateObj.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      title.textContent = formattedDate;
+
+      const dayBookings = getBookingsForDay(dateStr, 'all');
+
+      // Equipment items breakdown
+      const gearBreakdownHtml = (appState.items || []).map(item => {
+        const itemBookings = dayBookings.filter(b => {
+          const it = findItemForBooking(b);
+          return (it && it.id === item.id) || b.itemId === item.id;
+        });
+
+        const isBooked = itemBookings.length > 0;
+        const activeBooking = itemBookings[0];
+
+        return `
+          <div class="p-3.5 rounded-2xl border ${isBooked ? 'bg-amber-50/70 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800' : 'bg-emerald-50/70 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800'} flex items-center justify-between gap-3">
+            <div>
+              <div class="font-bold text-slate-900 dark:text-white text-xs flex items-center gap-1.5">
+                <span>${item.id.includes('drone') ? '🚁' : '📱'}</span>
+                <span>${item.title}</span>
+              </div>
+              <div class="text-[11px] mt-0.5 ${isBooked ? 'text-amber-800 dark:text-amber-300 font-semibold' : 'text-emerald-700 dark:text-emerald-300 font-semibold'}">
+                ${isBooked ? '🔒 Booked / Out on Rental (Hirer: ' + (activeBooking.customerName || 'Customer') + ')' : '🟢 100% Available for Store Handover'}
+              </div>
+            </div>
+            ${isBooked ? `
+              <span class="px-2 py-1 rounded-xl bg-amber-200 dark:bg-amber-900 text-amber-900 dark:text-amber-100 text-[10px] font-bold uppercase">Reserved</span>
+            ` : `
+              <span class="px-2 py-1 rounded-xl bg-emerald-200 dark:bg-emerald-900 text-emerald-900 dark:text-emerald-100 text-[10px] font-bold uppercase">Free</span>
+            `}
+          </div>
+        `;
+      }).join('');
+
+      // Bookings on this day
+      let bookingsListHtml = '';
+      if (dayBookings.length === 0) {
+        bookingsListHtml = `
+          <div class="text-center py-6 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-1">
+            <div class="text-xl">✨</div>
+            <div class="font-bold text-slate-800 dark:text-slate-200 text-xs">All Equipment Available on this Date</div>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 max-w-xs mx-auto">No customer reservations overlap with ${formattedDate}.</p>
+          </div>
+        `;
+      } else {
+        bookingsListHtml = dayBookings.map(b => {
+          const originalIdx = appState.bookings.indexOf(b);
+          const isPickedUp = b.bookingState === 'picked_up' || (b.status && b.status.includes('Picked Up'));
+          const isReturned = b.bookingState === 'returned' || (b.status && b.status.includes('Returned'));
+
+          return `
+            <div class="bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 space-y-3">
+              <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700/80 pb-2">
+                <div>
+                  <span class="font-mono font-black text-blue-600 dark:text-blue-400 text-xs">${b.orderId}</span>
+                  <div class="font-bold text-slate-900 dark:text-white text-xs mt-0.5">${b.customerName}</div>
+                </div>
+                <span class="px-2.5 py-1 rounded-xl text-[10px] font-bold ${
+                  isPickedUp
+                    ? 'bg-amber-100 text-amber-800 border border-amber-300'
+                    : isReturned
+                      ? 'bg-slate-200 text-slate-700'
+                      : 'bg-sky-100 text-sky-800 border border-sky-300'
+                }">
+                  ${isPickedUp ? '🔒 Picked Up' : isReturned ? '✓ Returned' : '⏳ Pending Pickup'}
+                </span>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2 text-[11px]">
+                <div><span class="text-slate-400">Phone:</span> <strong class="text-slate-800 dark:text-slate-200">${b.phone || '—'}</strong></div>
+                <div><span class="text-slate-400">NIC:</span> <strong class="font-mono text-slate-800 dark:text-slate-200">${b.nic || '—'}</strong></div>
+                <div><span class="text-slate-400">Equipment:</span> <strong class="text-slate-800 dark:text-slate-200">${b.itemsSummary}</strong></div>
+                <div><span class="text-slate-400">Schedule:</span> <strong class="text-slate-800 dark:text-slate-200">${b.schedule}</strong></div>
+                <div><span class="text-slate-400">Total Fee:</span> <strong class="text-emerald-600 font-bold">${formatMoney(b.totalLkr)}</strong></div>
+                <div><span class="text-slate-400">Payment:</span> <strong class="text-blue-600">${b.paymentMethod || 'Pay on Store'}</strong></div>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-2 pt-1 border-t border-slate-200 dark:border-slate-700/80">
+                <button type="button" onclick="sendCustomerThankYouWhatsApp('${b.orderId}')" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-xs flex items-center gap-1.5 cursor-pointer">
+                  <span>💬 WA Reply</span>
+                </button>
+                <button type="button" onclick="closeAdminDayDetailsModal(); openOrderSlipModal('${b.orderId}');" class="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition shadow-xs flex items-center gap-1.5 cursor-pointer">
+                  <span>📄 View Slip</span>
+                </button>
+                <button type="button" onclick="toggleOrderStatus(${originalIdx}); openAdminDayDetailsModal('${dateStr}');" class="px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-xs cursor-pointer ${
+                  isPickedUp
+                    ? 'bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-white'
+                    : 'bg-amber-600 hover:bg-amber-700 text-white'
+                }">
+                  ${isPickedUp ? '✓ Mark Returned' : '🔒 Mark Picked Up'}
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      content.innerHTML = `
+        <div class="space-y-4">
+          <div>
+            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Store Hardware Status on this Date</div>
+            <div class="space-y-2">
+              ${gearBreakdownHtml}
+            </div>
+          </div>
+
+          <div class="pt-2 border-t border-slate-200 dark:border-slate-800">
+            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Customer Reservations Active on this Day</div>
+            <div class="space-y-3">
+              ${bookingsListHtml}
+            </div>
+          </div>
+        </div>
+      `;
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeAdminDayDetailsModal() {
+      const modal = document.getElementById('adminDayDetailsModal');
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+    }
+
     async function syncAdminOrdersFromFirebase(isManual) {
       const syncStatusEl = document.getElementById('adminCloudSyncStatus');
       if (syncStatusEl) syncStatusEl.textContent = 'Syncing...';
@@ -1848,6 +2323,7 @@
         saveState();
         renderAdminOrdersTable();
         renderAdminRateTable();
+        renderAdminBookingCalendar();
         if (invLockChanged) {
           renderCatalog();
         }
@@ -1870,17 +2346,56 @@
     // VIEW SWITCHING & LANGUAGE / CURRENCY CONTROLS
     // =========================================================================
     // =========================================================================
-    // STORE ADMIN AUTHENTICATION & PIN SECURITY (PIN: 1121)
+    // STORE ADMIN AUTHENTICATION, PIN SECURITY & BRUTE-FORCE LOCKOUT
     // =========================================================================
     const ADMIN_SECURITY_PIN = '1121';
+    let _pinFailedAttempts = parseInt(sessionStorage.getItem('droniex_pin_fails') || '0', 10);
+    let _pinLockoutExpiry = parseInt(sessionStorage.getItem('droniex_pin_lockout_until') || '0', 10);
+
+    let _logoClicks = 0;
+    let _logoClickTimer = null;
+    function handleLogoClick(e) {
+      _logoClicks++;
+      clearTimeout(_logoClickTimer);
+      _logoClickTimer = setTimeout(() => { _logoClicks = 0; }, 800);
+      if (_logoClicks >= 3) {
+        _logoClicks = 0;
+        openAdminPinModal();
+      } else {
+        switchView('catalog');
+      }
+    }
+
+    function checkAdminRoute() {
+      const hash = window.location.hash;
+      const search = window.location.search;
+      if (hash === '#admin' || hash === '#staff' || search.includes('admin') || search.includes('staff')) {
+        const isAuthed = sessionStorage.getItem('droniex_admin_auth') === ADMIN_SECURITY_PIN;
+        if (isAuthed) {
+          doSwitchToAdmin();
+        } else {
+          openAdminPinModal();
+        }
+      }
+    }
 
     function openAdminPinModal() {
       const modal = document.getElementById('adminPinModal');
       const input = document.getElementById('adminPinInput');
       const err = document.getElementById('adminPinError');
-      if (err) {
-        err.classList.add('hidden');
-        err.innerText = '';
+
+      const now = Date.now();
+      if (_pinLockoutExpiry && now < _pinLockoutExpiry) {
+        const remainingSec = Math.ceil((_pinLockoutExpiry - now) / 1000);
+        if (err) {
+          err.innerText = 'Security Lockout: Too many attempts! Please wait ' + remainingSec + 's.';
+          err.classList.remove('hidden');
+        }
+      } else {
+        if (err) {
+          err.classList.add('hidden');
+          err.innerText = '';
+        }
       }
       if (input) input.value = '';
       if (modal) {
@@ -1896,22 +2411,52 @@
         modal.classList.add('hidden');
         modal.classList.remove('flex');
       }
+      if (window.location.hash === '#admin' || window.location.hash === '#staff') {
+        history.replaceState(null, '', window.location.pathname);
+      }
     }
 
     function verifyAdminPin() {
+      const now = Date.now();
+      if (_pinLockoutExpiry && now < _pinLockoutExpiry) {
+        const remainingSec = Math.ceil((_pinLockoutExpiry - now) / 1000);
+        const err = document.getElementById('adminPinError');
+        if (err) {
+          err.innerText = 'Security Lockout: Locked for ' + remainingSec + ' more seconds.';
+          err.classList.remove('hidden');
+        }
+        return;
+      }
+
       const input = document.getElementById('adminPinInput');
       const err = document.getElementById('adminPinError');
       const enteredPin = (input ? input.value : '').trim();
 
       if (enteredPin === ADMIN_SECURITY_PIN) {
+        _pinFailedAttempts = 0;
+        _pinLockoutExpiry = 0;
+        sessionStorage.removeItem('droniex_pin_fails');
+        sessionStorage.removeItem('droniex_pin_lockout_until');
         sessionStorage.setItem('droniex_admin_auth', '1121');
         closeAdminPinModal();
         doSwitchToAdmin();
         showToast('Store Admin Dashboard Unlocked (PIN Verified)');
       } else {
-        if (err) {
-          err.innerText = 'Incorrect PIN code! Access denied.';
-          err.classList.remove('hidden');
+        _pinFailedAttempts++;
+        sessionStorage.setItem('droniex_pin_fails', _pinFailedAttempts.toString());
+        if (_pinFailedAttempts >= 4) {
+          _pinLockoutExpiry = Date.now() + 300 * 1000; // 5 minute lockout
+          sessionStorage.setItem('droniex_pin_lockout_until', _pinLockoutExpiry.toString());
+          if (err) {
+            err.innerText = 'Security Lockout: 4 failed attempts. Access locked for 5 minutes.';
+            err.classList.remove('hidden');
+          }
+        } else {
+          const remaining = 4 - _pinFailedAttempts;
+          if (err) {
+            err.innerText = 'Incorrect PIN code! (' + remaining + ' attempt' + (remaining > 1 ? 's' : '') + ' remaining)';
+            err.classList.remove('hidden');
+          }
         }
         if (input) {
           input.value = '';
@@ -1924,6 +2469,9 @@
 
     function lockAdminSession() {
       sessionStorage.removeItem('droniex_admin_auth');
+      if (window.location.hash === '#admin' || window.location.hash === '#staff') {
+        history.replaceState(null, '', window.location.pathname);
+      }
       switchView('catalog');
       showToast('Store Admin session locked');
     }
@@ -1997,6 +2545,8 @@
       }
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+
+    window.addEventListener('hashchange', checkAdminRoute);
 
     // Secret keyboard shortcut: Ctrl + Shift + A opens Admin PIN prompt
     window.addEventListener('keydown', (e) => {
@@ -3956,6 +4506,7 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       loadSavedState();
+      checkAdminRoute();
       updateVerifiedStatusUI();
       renderCategoryPills();
       updateRentalSchedule();
@@ -4221,6 +4772,27 @@
           </button>
         </div>
       </form>
+    </div>
+  </div>
+  <!-- =========================================================================
+       ADMIN CALENDAR DAY INSPECTION MODAL
+       ========================================================================= -->
+  <div id="adminDayDetailsModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden items-center justify-center p-4 no-print">
+    <div class="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-6 py-4 bg-slate-50 dark:bg-slate-800/50">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center text-sm font-bold">📅</div>
+          <div>
+            <h3 id="adminDayDetailsTitle" class="text-base font-black text-slate-900 dark:text-white">Day Schedule &amp; Bookings</h3>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400">Inventory availability &amp; handover status for this date</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeAdminDayDetailsModal()" class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center justify-center text-xs transition cursor-pointer">✕</button>
+      </div>
+
+      <div id="adminDayDetailsContent" class="overflow-y-auto flex-1 p-6 space-y-4 custom-scrollbar text-xs">
+        <!-- Rendered dynamically by openAdminDayDetailsModal() -->
+      </div>
     </div>
   </div>
 </body>
