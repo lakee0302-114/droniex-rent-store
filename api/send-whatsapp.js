@@ -68,13 +68,18 @@ module.exports = async (req, res) => {
     if (rawDigits.startsWith('0')) targetPhone = '94' + rawDigits.substring(1);
     else if (!rawDigits.startsWith('94') && rawDigits.length === 9) targetPhone = '94' + rawDigits;
 
+    let cleanInstanceId = instanceId.replace(/[^a-zA-Z0-9]/g, '');
+    if (!cleanInstanceId.toLowerCase().startsWith('instance')) {
+      cleanInstanceId = 'instance' + cleanInstanceId;
+    }
+
     // 3. Dispatch POST request to UltraMsg API
     const params = new URLSearchParams();
     params.append('token', token);
     params.append('to', targetPhone);
     params.append('body', message);
 
-    const ultraUrl = `https://api.ultramsg.com/${instanceId}/messages/chat`;
+    const ultraUrl = `https://api.ultramsg.com/${cleanInstanceId}/messages/chat`;
     const ultraRes = await fetch(ultraUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
