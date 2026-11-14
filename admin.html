@@ -737,9 +737,10 @@
               <div class="flex items-center gap-1.5">
                 <button type="button" onclick="sendCustomerThankYouWhatsApp('${b.orderId}')" class="px-2 py-1 rounded bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-bold cursor-pointer" title="Send WhatsApp Reply">💬 WA</button>
                 <button type="button" onclick="openSlipModal('${b.orderId}')" class="px-2 py-1 rounded bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-bold cursor-pointer" title="View Agreement Slip">📄</button>
-                <button type="button" onclick="toggleOrderStatus('${b.orderId}')" class="px-2 py-1 rounded text-[10px] font-bold ${isP ? 'bg-slate-700 text-white' : 'bg-amber-600 text-white'} cursor-pointer">
+                <button type="button" onclick="toggleOrderStatus('${b.orderId}')" class="px-2 py-1 rounded text-[10px] font-bold ${isP ? 'bg-slate-700 hover:bg-slate-600 text-white' : 'bg-amber-600 hover:bg-amber-500 text-white'} cursor-pointer">
                   ${isP ? '✓ Return' : '🔒 Pickup'}
                 </button>
+                <button type="button" onclick="deleteAdminOrder('${b.orderId}')" class="px-2 py-1 rounded bg-rose-600/80 hover:bg-rose-600 text-white text-[10px] font-bold cursor-pointer transition" title="Permanently Delete Reservation">🗑️</button>
               </div>
             </td>
           </tr>
@@ -834,6 +835,60 @@
 
       renderDashboard();
       showToast('Order ' + orderId + ' updated: ' + (wasPickedUp ? 'Returned (Item Available Now)' : 'Picked Up (Item Locked on Store)'));
+    }
+
+    // Delete Reservation with Confirmation Dialog
+    async function deleteAdminOrder(orderId, dateStr) {
+      const b = _adminBookings.find(item => item.orderId === orderId);
+      if (!b) return;
+
+      const custName = b.customerName || 'Customer';
+      const confirmed = window.confirm(
+        `Are you sure you want to permanently delete reservation ${orderId} (${custName})?\n\nThis action cannot be undone.`
+      );
+      if (!confirmed) return;
+
+      // If this booking locked an item as picked_up, unlock it
+      const targetItem = findItemForAdminBooking(b);
+      const isPickedUp = b.bookingState === 'picked_up' || (b.status || '').includes('Picked Up');
+      if (targetItem && (targetItem.activeOrderId === orderId || isPickedUp)) {
+        const otherActive = _adminBookings.find(other =>
+          other.orderId !== orderId &&
+          findItemForAdminBooking(other)?.id === targetItem.id &&
+          (other.bookingState === 'picked_up' || (other.status || '').includes('Picked Up'))
+        );
+        if (!otherActive) {
+          targetItem.available = true;
+          targetItem.reservedUntilDate = '';
+          targetItem.reservedFromDate = '';
+          targetItem.activeOrderId = '';
+        } else {
+          targetItem.available = false;
+          targetItem.reservedUntilDate = otherActive.returnDate || '';
+          targetItem.activeOrderId = otherActive.orderId;
+        }
+      }
+
+      // Remove from memory
+      _adminBookings = _adminBookings.filter(item => item.orderId !== orderId);
+
+      // Permanently delete from Firebase Realtime Database
+      try {
+        await fetch(FIREBASE_BASE + '/reservations/' + orderId + '.json', {
+          method: 'DELETE'
+        });
+      } catch (e) {
+        console.warn('Firebase delete error:', e);
+      }
+
+      // Sync inventory availability to Firebase Cloud
+      await syncAdminInventoryToCloud();
+
+      renderDashboard();
+      if (dateStr) {
+        openDayModal(dateStr);
+      }
+      showToast(`Reservation ${orderId} permanently deleted!`);
     }
 
     // Calendar Functions
@@ -996,7 +1051,8 @@
               <div class="flex gap-2 pt-1 border-t border-slate-700">
                 <button type="button" onclick="sendCustomerThankYouWhatsApp('${b.orderId}')" class="px-3 py-1 rounded-xl bg-emerald-600 text-white font-bold text-xs">💬 WA Reply</button>
                 <button type="button" onclick="closeDayModal(); openSlipModal('${b.orderId}');" class="px-3 py-1 rounded-xl bg-blue-600 text-white font-bold text-xs">📄 View Slip</button>
-                <button type="button" onclick="toggleOrderStatus('${b.orderId}'); openDayModal('${dateStr}');" class="px-3 py-1 rounded-xl bg-slate-700 text-white font-bold text-xs">Toggle Status</button>
+                <button type="button" onclick="toggleOrderStatus('${b.orderId}'); openDayModal('${dateStr}');" class="px-3 py-1 rounded-xl bg-slate-700 hover:bg-slate-600 text-white font-bold text-xs cursor-pointer">Toggle Status</button>
+                <button type="button" onclick="deleteAdminOrder('${b.orderId}', '${dateStr}');" class="px-3 py-1 rounded-xl bg-rose-600/80 hover:bg-rose-600 text-white font-bold text-xs cursor-pointer transition" title="Delete Reservation">🗑️ Delete</button>
               </div>
             </div>
           `).join('')}
