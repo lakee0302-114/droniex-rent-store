@@ -58,11 +58,11 @@
 
       <!-- FIREBASE EMAIL & PASSWORD AUTH PANEL -->
       <div id="authPanelFirebase" class="space-y-4">
-        <div class="flex items-center justify-between text-xs border-b border-slate-800 pb-2">
-          <span id="firebaseAuthSubTitle" class="font-bold text-slate-300">Staff Account Sign In</span>
-          <div id="firebaseActionToggle" onclick="handleRegisterAdminClick()" class="text-blue-400 text-[11px] cursor-pointer hover:underline">
-            New staff member? <span class="font-bold">Register Admin</span>
-          </div>
+        <div class="text-xs border-b border-slate-800 pb-2.5 text-center">
+          <span id="firebaseAuthSubTitle" class="font-bold text-slate-300 flex items-center justify-center gap-1.5">
+            <span>🛡️</span>
+            <span>Authorized Staff Account Sign In</span>
+          </span>
         </div>
 
         <form onsubmit="event.preventDefault(); submitFirebaseAdminAuth();" class="space-y-3.5">
@@ -92,47 +92,6 @@
           <span>← Return to Customer Storefront</span>
         </a>
       </div>
-    </div>
-  </div>
-
-  <!-- =========================================================================
-       MODAL: STORE OWNER AUTHORIZATION PIN GATE (RESTRICTS ADMIN REGISTRATION)
-       ========================================================================= -->
-  <div id="adminRegisterPinGateModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs hidden items-center justify-center p-4">
-    <div class="relative bg-slate-900 border border-slate-800 rounded-3xl max-w-sm w-full p-6 space-y-4 shadow-2xl text-center">
-      <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400 mx-auto flex items-center justify-center text-xl shadow-inner">
-        🛡️
-      </div>
-      <div>
-        <h3 class="font-black text-white text-base">Store Owner Authorization</h3>
-        <p class="text-xs text-slate-400 mt-1">
-          Staff registration is restricted. Enter the Store Owner Authorization PIN to register a new admin:
-        </p>
-      </div>
-
-      <form onsubmit="event.preventDefault(); verifyRegisterAdminPin();" class="space-y-4">
-        <div>
-          <input
-            type="password"
-            id="registerGatePinInput"
-            maxlength="8"
-            inputmode="numeric"
-            placeholder="••••"
-            class="w-full text-center tracking-[0.5em] text-2xl font-black bg-slate-800 border-2 border-slate-700 focus:border-amber-400 rounded-2xl py-3 px-4 text-white placeholder-slate-600 focus:outline-none focus:ring-4 focus:ring-amber-500/20 transition"
-            autocomplete="off"
-          />
-          <p id="registerGatePinError" class="hidden text-xs text-rose-400 font-bold mt-2.5 text-center"></p>
-        </div>
-
-        <div class="flex gap-2.5 pt-1">
-          <button type="button" onclick="closeRegisterPinModal()" class="flex-1 py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white font-bold text-xs transition cursor-pointer">
-            Cancel
-          </button>
-          <button type="submit" class="flex-1 py-2.5 px-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs shadow-lg transition cursor-pointer">
-            Authorize &amp; Proceed →
-          </button>
-        </div>
-      </form>
     </div>
   </div>
 
@@ -431,59 +390,36 @@
         </div>
       </section>
 
-      <!-- STORE SECURITY & ADMIN REGISTRATION PIN SETTINGS -->
-      <section class="bg-slate-800/80 border border-slate-700/80 rounded-3xl p-6 sm:p-7 space-y-5">
+      <!-- STORE ACCESS CONTROL & STAFF MANAGEMENT -->
+      <section class="bg-slate-800/80 border border-slate-700/80 rounded-3xl p-6 sm:p-7 space-y-4">
         <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-700/80 pb-4">
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center text-xl">
-              🛡️
+            <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl">
+              🔒
             </div>
             <div>
-              <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Store Access Control</span>
-              <h2 class="text-xl font-black text-white mt-0.5">Admin Staff Registration Security PIN</h2>
+              <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Strict Access Control</span>
+              <h2 class="text-xl font-black text-white mt-0.5">Admin Staff Access &amp; Security</h2>
               <p class="text-xs text-slate-400 mt-1">
-                Controls the "Register Admin" gate. Without this secret PIN, nobody can create a new staff account on the login page.
+                Public registration is completely disabled. Only accounts created by the Store Owner can sign in.
               </p>
             </div>
           </div>
           <div class="flex items-center gap-2">
-            <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-950/80 border border-amber-800 text-amber-300">
-              🛡️ PIN Protection Active
+            <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-950/80 border border-emerald-800 text-emerald-300">
+              ✓ Public Sign-Up Locked
             </span>
           </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 items-center">
-          <div class="space-y-2">
-            <label class="block text-xs font-bold text-slate-300">Store Owner Authorization PIN</label>
-            <div class="flex items-center gap-2.5">
-              <input
-                type="text"
-                id="ownerPinConfigInput"
-                maxlength="8"
-                placeholder="1121"
-                class="flex-1 px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white font-mono tracking-widest focus:border-amber-400 focus:outline-none"
-              />
-              <button
-                type="button"
-                onclick="saveStoreOwnerPin()"
-                class="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs transition cursor-pointer"
-              >
-                Save New PIN
-              </button>
-            </div>
-            <p class="text-[11px] text-slate-400">Share this PIN only with authorized staff members you wish to grant Admin access to.</p>
+        <div class="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 text-xs text-slate-300 space-y-2">
+          <div class="font-bold text-white flex items-center gap-2">
+            <span>👥</span>
+            <span>How to Add or Remove Staff Members</span>
           </div>
-
-          <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-4 text-xs text-slate-400 space-y-2">
-            <div class="font-bold text-slate-300 flex items-center gap-1.5">
-              <span>💡</span>
-              <span>Need 100% Locked Registration?</span>
-            </div>
-            <p class="text-[11px] leading-relaxed">
-              You can also manage staff accounts directly in <a href="https://console.firebase.google.com" target="_blank" rel="noopener noreferrer" class="text-blue-400 underline">Firebase Console</a> (Authentication &gt; Users &gt; Add user). No outsider can ever sign up without your explicit approval.
-            </p>
-          </div>
+          <p class="text-[11px] text-slate-400 leading-relaxed">
+            To grant a new staff member admin access, open <a href="https://console.firebase.google.com" target="_blank" rel="noopener noreferrer" class="text-blue-400 underline font-semibold">Firebase Console</a> &gt; <strong>droniex-rent-store</strong> &gt; <strong>Authentication</strong> &gt; <strong>Users</strong> &gt; click <strong>"Add user"</strong>. Enter their staff email and a secure password. Only accounts you manually create will ever be allowed to log into this portal.
+          </p>
         </div>
       </section>
 
@@ -564,92 +500,9 @@
     }
 
     // =========================================================================
-    // PURE FIREBASE AUTHENTICATION WITH STORE OWNER REGISTRATION PIN GATE
+    // PURE FIREBASE AUTHENTICATION (STAFF LOGIN ONLY - PUBLIC SIGN-UP LOCKED)
     // =========================================================================
     const FIREBASE_API_KEY = 'AIzaSyCksMhbBk0wIzXmmx-a1RJSmwRYWAqlPWg';
-    let _firebaseAction = 'signIn';
-    let _storeOwnerPin = '1121';
-    let _isRegisterAuthorized = false;
-
-    function handleRegisterAdminClick() {
-      if (_firebaseAction === 'signUp') {
-        _isRegisterAuthorized = false;
-        toggleFirebaseAction('signIn');
-      } else {
-        openRegisterPinModal();
-      }
-    }
-
-    function openRegisterPinModal() {
-      const modal = document.getElementById('adminRegisterPinGateModal');
-      const input = document.getElementById('registerGatePinInput');
-      const err = document.getElementById('registerGatePinError');
-      if (err) { err.textContent = ''; err.classList.add('hidden'); }
-      if (input) input.value = '';
-      if (modal) {
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        setTimeout(() => { if (input) input.focus(); }, 120);
-      }
-    }
-
-    function closeRegisterPinModal() {
-      const modal = document.getElementById('adminRegisterPinGateModal');
-      if (modal) {
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-      }
-    }
-
-    function verifyRegisterAdminPin() {
-      const input = document.getElementById('registerGatePinInput');
-      const err = document.getElementById('registerGatePinError');
-      const enteredPin = (input ? input.value : '').trim();
-
-      if (!enteredPin) {
-        if (err) {
-          err.textContent = 'Please enter the authorization PIN.';
-          err.classList.remove('hidden');
-        }
-        return;
-      }
-
-      if (enteredPin === _storeOwnerPin) {
-        _isRegisterAuthorized = true;
-        closeRegisterPinModal();
-        toggleFirebaseAction('signUp');
-        showToast('✓ Store Owner Authorization Verified! You can now register a staff account.');
-      } else {
-        if (err) {
-          err.textContent = '❌ Incorrect Authorization PIN! Only authorized store owners can register new staff.';
-          err.classList.remove('hidden');
-        }
-        if (input) {
-          input.value = '';
-          input.focus();
-        }
-      }
-    }
-
-    function toggleFirebaseAction(action) {
-      _firebaseAction = action;
-      const btn = document.getElementById('firebaseSubmitBtn');
-      const toggleText = document.getElementById('firebaseActionToggle');
-      const title = document.getElementById('firebaseAuthSubTitle');
-      const err = document.getElementById('firebaseAuthError');
-      if (err) err.classList.add('hidden');
-
-      if (action === 'signUp') {
-        btn.textContent = 'Create Admin Account & Log In →';
-        toggleText.innerHTML = 'Already have an account? <span class="font-bold">Sign In</span>';
-        if (title) title.innerHTML = 'Register New Admin Account <span class="text-amber-400 text-xs font-bold ml-1">🛡️ Owner Verified</span>';
-      } else {
-        _isRegisterAuthorized = false;
-        btn.textContent = 'Sign In to Admin Portal →';
-        toggleText.innerHTML = 'New staff member? <span class="font-bold">Register Admin</span>';
-        if (title) title.textContent = 'Staff Account Sign In';
-      }
-    }
 
     async function submitFirebaseAdminAuth() {
       const emailInput = document.getElementById('authEmailInput');
@@ -676,14 +529,6 @@
         return;
       }
 
-      if (_firebaseAction === 'signUp' && !_isRegisterAuthorized) {
-        if (err) {
-          err.textContent = '❌ Store Owner Authorization PIN is required to register an admin account!';
-          err.classList.remove('hidden');
-        }
-        return;
-      }
-
       if (btn) {
         btn.disabled = true;
         btn.innerHTML = '<span class="animate-spin mr-1.5">⏳</span> Authenticating with Firebase...';
@@ -691,9 +536,7 @@
       if (err) err.classList.add('hidden');
 
       try {
-        const endpoint = _firebaseAction === 'signUp'
-          ? 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' + FIREBASE_API_KEY
-          : 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=' + FIREBASE_API_KEY;
+        const endpoint = 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=' + FIREBASE_API_KEY;
 
         const res = await fetch(endpoint, {
           method: 'POST',
@@ -704,7 +547,6 @@
         const data = await res.json();
 
         if (res.ok && data && data.idToken) {
-          _isRegisterAuthorized = false;
           sessionStorage.setItem('droniex_admin_auth', 'firebase');
           sessionStorage.setItem('droniex_admin_email', data.email || email);
           sessionStorage.setItem('droniex_admin_token', data.idToken);
@@ -715,11 +557,9 @@
           const code = data?.error?.message || '';
 
           if (code.includes('EMAIL_NOT_FOUND')) {
-            msg = 'No admin account found with this email. Click "Register Admin" to create one.';
+            msg = 'No authorized admin account found with this email. Please contact the store owner for access.';
           } else if (code.includes('INVALID_PASSWORD') || code.includes('INVALID_LOGIN_CREDENTIALS')) {
             msg = 'Incorrect password! Please check and try again.';
-          } else if (code.includes('EMAIL_EXISTS')) {
-            msg = 'An account with this email already exists. Switch to Sign In.';
           } else if (code.includes('CONFIGURATION_NOT_FOUND') || code.includes('OPERATION_NOT_ALLOWED')) {
             msg = 'Email/Password sign-in is not enabled yet in your Firebase Console. Please open console.firebase.google.com -> Authentication -> Sign-in method -> enable Email/Password.';
           } else if (code.includes('TOO_MANY_ATTEMPTS')) {
@@ -741,7 +581,7 @@
       } finally {
         if (btn) {
           btn.disabled = false;
-          btn.textContent = _firebaseAction === 'signUp' ? 'Create Admin Account & Log In →' : 'Sign In to Admin Portal →';
+          btn.textContent = 'Sign In to Admin Portal →';
         }
       }
     }
@@ -1872,7 +1712,7 @@
 
     // Init on Load
     window.addEventListener('DOMContentLoaded', () => {
-      loadSecurityConfig();
+      
       updateNotificationUI();
       const auth = sessionStorage.getItem('droniex_admin_auth');
       if (auth === 'firebase' || auth === '1121') {
