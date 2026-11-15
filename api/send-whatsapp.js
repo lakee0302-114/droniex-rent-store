@@ -75,13 +75,14 @@ module.exports = async (req, res) => {
       cleanInstanceId = 'instance' + cleanInstanceId;
     }
 
+    const ultraUrl = `https://api.ultramsg.com/${cleanInstanceId}/messages/chat`;
+
     // 3. Dispatch POST request to UltraMsg API for Customer
     const params = new URLSearchParams();
     params.append('token', token);
     params.append('to', targetPhone);
     params.append('body', message);
 
-    const ultraUrl = `https://api.ultramsg.com/${cleanInstanceId}/messages/chat`;
     const ultraRes = await fetch(ultraUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -90,12 +91,14 @@ module.exports = async (req, res) => {
 
     const result = await ultraRes.json();
 
-    // 4. Also notify Store Owner (0740309322 / 94740309322) if notifyAdmin is requested
+    // 4. Always notify Store Owner (0740309322) when notifyAdmin is true!
+    // Awaited properly so Vercel Serverless runtime does not terminate before completion
+    let adminResult = null;
     let storeAdminPhone = (adminAlertPhone || '0740309322').toString().replace(/[^0-9]/g, '');
     if (storeAdminPhone.startsWith('0')) storeAdminPhone = '94' + storeAdminPhone.substring(1);
     else if (!storeAdminPhone.startsWith('94') && storeAdminPhone.length === 9) storeAdminPhone = '94' + storeAdminPhone;
 
-    if (notifyAdmin && targetPhone !== storeAdminPhone) {
+    if (notifyAdmin) {
       try {
         const adminParams = new URLSearchParams();
         adminParams.append('token', token);
@@ -113,11 +116,12 @@ module.exports = async (req, res) => {
           `👉 *Admin Portal:* https://droniex-rent-store.vercel.app/admin.html`;
         adminParams.append('body', adminBody);
 
-        fetch(ultraUrl, {
+        const adminRes = await fetch(ultraUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: adminParams.toString()
-        }).catch(err => console.warn('Admin WA dispatch error:', err));
+        });
+        adminResult = await adminRes.json();
       } catch (adminErr) {
         console.warn('Admin notification error:', adminErr);
       }
@@ -129,7 +133,9 @@ module.exports = async (req, res) => {
         provider: 'ultramsg',
         messageId: result.id,
         targetPhone: targetPhone,
-        orderId: orderId || ''
+        orderId: orderId || '',
+        adminAlertSent: Boolean(adminResult && (adminResult.sent === 'true' || adminResult.sent === true || adminResult.id)),
+        adminPhone: storeAdminPhone
       });
     } else {
       return res.status(200).json({
