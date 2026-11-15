@@ -30,6 +30,7 @@ module.exports = async (req, res) => {
     const FIREBASE_CONFIG_URL = 'https://droniex-rent-store-default-rtdb.asia-southeast1.firebasedatabase.app/config/whatsapp.json';
     let instanceId = process.env.ULTRAMSG_INSTANCE_ID || '';
     let token = process.env.ULTRAMSG_TOKEN || '';
+    let adminAlertPhone = '0740309322';
     let enabled = true;
 
     try {
@@ -40,6 +41,7 @@ module.exports = async (req, res) => {
           if (config.instanceId) instanceId = config.instanceId.trim();
           if (config.token) token = config.token.trim();
           if (config.enabled !== undefined) enabled = Boolean(config.enabled);
+          if (config.adminAlertPhone) adminAlertPhone = config.adminAlertPhone.toString().trim();
         }
       }
     } catch (fbErr) {
@@ -88,20 +90,25 @@ module.exports = async (req, res) => {
 
     const result = await ultraRes.json();
 
-    // 4. Also notify Store Owner Hotline (0701875455 / 94701875455) if notifyAdmin is requested
-    if (notifyAdmin && targetPhone !== '94701875455') {
+    // 4. Also notify Store Owner (0740309322 / 94740309322) if notifyAdmin is requested
+    let storeAdminPhone = (adminAlertPhone || '0740309322').toString().replace(/[^0-9]/g, '');
+    if (storeAdminPhone.startsWith('0')) storeAdminPhone = '94' + storeAdminPhone.substring(1);
+    else if (!storeAdminPhone.startsWith('94') && storeAdminPhone.length === 9) storeAdminPhone = '94' + storeAdminPhone;
+
+    if (notifyAdmin && targetPhone !== storeAdminPhone) {
       try {
         const adminParams = new URLSearchParams();
         adminParams.append('token', token);
-        adminParams.append('to', '94701875455');
+        adminParams.append('to', storeAdminPhone);
         const adminBody =
-          `🚨 *NEW ONLINE RESERVATION RECEIVED!*\n` +
+          `🚨 *NEW ONLINE RESERVATION RECEIVED!* 🚁\n` +
           `━━━━━━━━━━━━━━━━━━━━━\n` +
           `📋 *Order ID:* ${orderId || 'New'}\n` +
           `👤 *Customer:* ${customerName || 'Customer'}\n` +
           `📞 *Contact:* +${targetPhone}\n` +
           `📦 *Gear:* ${gear || 'Equipment'}\n` +
-          `💰 *Total:* Rs. ${totalAmount ? Number(totalAmount).toLocaleString('en-LK') : '—'}\n` +
+          `💰 *Total Amount:* Rs. ${totalAmount ? Number(totalAmount).toLocaleString('en-LK') : '—'}\n` +
+          `💳 *Payment Method:* Pay at Store\n` +
           `━━━━━━━━━━━━━━━━━━━━━\n` +
           `👉 *Admin Portal:* https://droniex-rent-store.vercel.app/admin.html`;
         adminParams.append('body', adminBody);
