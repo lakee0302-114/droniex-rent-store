@@ -1243,7 +1243,7 @@
           if (currentStatusFilter === 'pending' && !isPend) return false;
         }
         if (search) {
-          const haystack = [b.orderId, b.customerName, b.phone, b.nic, b.itemsSummary].filter(Boolean).join(' ').toLowerCase();
+          const haystack = [b.orderId, b.customerName, b.phone, b.whatsapp, b.nic, b.itemsSummary].filter(Boolean).join(' ').toLowerCase();
           if (!haystack.includes(search)) return false;
         }
         return true;
@@ -1267,6 +1267,7 @@
             </td>
             <td class="py-3 px-3">
               <div>${b.phone || '—'}</div>
+              ${b.whatsapp && b.whatsapp !== b.phone ? `<div class="text-[11px] text-emerald-400 font-medium flex items-center gap-1 mt-0.5"><span>💬</span><span>${b.whatsapp}</span></div>` : ''}
               <div class="text-[10px] text-slate-500 truncate max-w-[120px]">${b.email || '—'}</div>
             </td>
             <td class="py-3 px-3 font-semibold">${b.itemsSummary}</td>
@@ -1297,11 +1298,13 @@
       const b = _adminBookings.find(item => item.orderId === orderId);
       if (!b) return;
 
-      const raw = (b.phone || '').replace(/[^0-9]/g, '');
+      const targetNumber = b.whatsapp || b.phone || '';
+      const raw = targetNumber.replace(/[^0-9]/g, '');
       let lkPhone = raw;
       if (raw.startsWith('0')) lkPhone = '94' + raw.substring(1);
       else if (!raw.startsWith('94') && raw.length === 9) lkPhone = '94' + raw;
 
+      const waDisplay = (b.whatsapp && b.whatsapp !== b.phone) ? ` | WA: ${b.whatsapp}` : '';
       const msg =
         `*THANK YOU FOR RESERVING WITH DRONIEX RENT STORE — GALLE!* 🚁\n` +
         `──────────────────────\n` +
@@ -1312,7 +1315,7 @@
         `📅 *Rental Period:* ${b.schedule}\n` +
         `💰 *Total Rental Fee:* Rs. ${Number(b.totalLkr).toLocaleString('en-LK')}\n` +
         `💳 *Payment Method:* ${b.paymentMethod || 'Pay at Store Pickup'}\n\n` +
-        `👤 *Hirer Details:* ${b.customerName} | NIC: ${b.nic || '—'} | Phone: ${b.phone}\n` +
+        `👤 *Hirer Details:* ${b.customerName} | NIC: ${b.nic || '—'} | Phone: ${b.phone}${waDisplay}\n` +
         `──────────────────────\n` +
         `📍 *Store Pickup Location:*\n` +
         `No. 131, D.J. Wimalasurendra Mawatha, Galwadugoda, Galle 80000.\n` +
@@ -1555,7 +1558,7 @@
             <div class="p-2.5 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-between text-xs">
               <div class="truncate">
                 <div class="font-bold text-white truncate">${b.itemsSummary}</div>
-                <div class="text-[10px] text-slate-400">${b.customerName} (${b.phone})</div>
+                <div class="text-[10px] text-slate-400">${b.customerName} (${b.phone})${b.whatsapp && b.whatsapp !== b.phone ? ` <span class="text-emerald-400 font-semibold">[WA: ${b.whatsapp}]</span>` : ''}</div>
                 <div class="text-[10px] text-blue-400 font-mono">${b.schedule}</div>
               </div>
               <button type="button" onclick="sendCustomerThankYouWhatsApp('${b.orderId}')" class="px-2 py-1 rounded bg-emerald-600 text-white font-bold text-[10px]">💬 WA</button>
@@ -1585,7 +1588,7 @@
                 <span class="font-bold text-white">${b.customerName}</span>
               </div>
               <div class="grid grid-cols-2 gap-1 text-[11px] text-slate-300">
-                <div>Phone: <strong>${b.phone}</strong></div>
+                <div>Phone: <strong>${b.phone}</strong>${b.whatsapp && b.whatsapp !== b.phone ? ` <span class="text-emerald-400 font-semibold text-xs">[WA: ${b.whatsapp}]</span>` : ''}</div>
                 <div>NIC: <strong>${b.nic || '—'}</strong></div>
                 <div>Gear: <strong>${b.itemsSummary}</strong></div>
                 <div>Dates: <strong>${b.schedule}</strong></div>
@@ -1639,7 +1642,7 @@
             <div class="font-bold text-blue-600 uppercase text-[10px]">Hirer Information</div>
             <div class="font-bold text-slate-900 text-sm">${b.customerName}</div>
             <div>NIC / Passport: <span class="font-mono font-bold">${b.nic || '—'}</span></div>
-            <div>Phone: <span class="font-mono font-bold">${b.phone}</span></div>
+            <div>Phone: <span class="font-mono font-bold">${b.phone}</span>${b.whatsapp && b.whatsapp !== b.phone ? ` <span class="text-emerald-600 font-semibold text-[11px]">(WA: ${b.whatsapp})</span>` : ''}</div>
             <div>Address: ${b.address || 'Galle, Sri Lanka'}</div>
           </div>
 
@@ -1683,11 +1686,12 @@
         showToast('No orders available to export.');
         return;
       }
-      const headers = ['Order ID', 'Customer Name', 'Phone', 'NIC', 'Email', 'Equipment', 'Schedule', 'Days', 'Total LKR', 'Payment', 'Status', 'Address'];
+      const headers = ['Order ID', 'Customer Name', 'Phone', 'WhatsApp', 'NIC', 'Email', 'Equipment', 'Schedule', 'Days', 'Total LKR', 'Payment', 'Status', 'Address'];
       const rows = _adminBookings.map(b => [
         b.orderId || '',
         '"' + (b.customerName || '').replace(/"/g, '""') + '"',
         b.phone || '',
+        b.whatsapp || b.phone || '',
         b.nic || '',
         b.email || '',
         '"' + (b.itemsSummary || '').replace(/"/g, '""') + '"',

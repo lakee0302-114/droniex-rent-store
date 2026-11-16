@@ -20,9 +20,10 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const { phone, message, orderId, test, notifyAdmin, customerName, gear, totalAmount } = req.body || {};
+    const { phone, whatsapp, message, orderId, test, notifyAdmin, customerName, customerPhone, gear, totalAmount } = req.body || {};
 
-    if (!phone || !message) {
+    const targetInput = (whatsapp || phone || '').toString().trim();
+    if (!targetInput || !message) {
       return res.status(400).json({ error: 'Phone and message are required' });
     }
 
@@ -64,11 +65,20 @@ module.exports = async (req, res) => {
       });
     }
 
-    // 2. Format Sri Lankan phone number (e.g. 947XXXXXXXX)
-    const rawDigits = phone.toString().replace(/[^0-9]/g, '');
+    // 2. Format Sri Lankan phone number for customer WhatsApp (e.g. 947XXXXXXXX)
+    const rawDigits = targetInput.replace(/[^0-9]/g, '');
     let targetPhone = rawDigits;
     if (rawDigits.startsWith('0')) targetPhone = '94' + rawDigits.substring(1);
     else if (!rawDigits.startsWith('94') && rawDigits.length === 9) targetPhone = '94' + rawDigits;
+
+    // Optional: Format calling phone for store admin alert reference
+    let callingPhoneFormatted = '';
+    if (customerPhone) {
+      const cDigits = customerPhone.toString().replace(/[^0-9]/g, '');
+      if (cDigits.startsWith('0')) callingPhoneFormatted = '94' + cDigits.substring(1);
+      else if (!cDigits.startsWith('94') && cDigits.length === 9) callingPhoneFormatted = '94' + cDigits;
+      else callingPhoneFormatted = cDigits;
+    }
 
     let cleanInstanceId = instanceId.replace(/[^a-zA-Z0-9]/g, '');
     if (!cleanInstanceId.toLowerCase().startsWith('instance')) {
@@ -77,7 +87,7 @@ module.exports = async (req, res) => {
 
     const ultraUrl = `https://api.ultramsg.com/${cleanInstanceId}/messages/chat`;
 
-    // 3. Dispatch POST request to UltraMsg API for Customer
+    // 3. Dispatch POST request to UltraMsg API for Customer (WhatsApp number)
     const params = new URLSearchParams();
     params.append('token', token);
     params.append('to', targetPhone);
@@ -100,6 +110,13 @@ module.exports = async (req, res) => {
 
     if (notifyAdmin) {
       try {
+        let contactDetailsText = `📞 *Contact (Phone & WA):* +${targetPhone}\n`;
+        if (callingPhoneFormatted && callingPhoneFormatted !== targetPhone) {
+          contactDetailsText =
+            `📞 *Calling Phone:* +${callingPhoneFormatted}\n` +
+            `💬 *WhatsApp Number:* +${targetPhone}\n`;
+        }
+
         const adminParams = new URLSearchParams();
         adminParams.append('token', token);
         adminParams.append('to', storeAdminPhone);
@@ -108,7 +125,7 @@ module.exports = async (req, res) => {
           `━━━━━━━━━━━━━━━━━━━━━\n` +
           `📋 *Order ID:* ${orderId || 'New'}\n` +
           `👤 *Customer:* ${customerName || 'Customer'}\n` +
-          `📞 *Contact:* +${targetPhone}\n` +
+          contactDetailsText +
           `📦 *Gear:* ${gear || 'Equipment'}\n` +
           `💰 *Total Amount:* Rs. ${totalAmount ? Number(totalAmount).toLocaleString('en-LK') : '—'}\n` +
           `💳 *Payment Method:* Pay at Store\n` +
