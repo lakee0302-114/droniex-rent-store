@@ -255,7 +255,7 @@
               <tr class="border-b border-slate-800 bg-slate-800/80 text-slate-400 uppercase text-[11px]">
                 <th class="py-3 px-3">Order ID</th>
                 <th class="py-3 px-3">Customer Name</th>
-                <th class="py-3 px-3">Contact</th>
+                <th class="py-3 px-3">Phone &amp; WhatsApp</th>
                 <th class="py-3 px-3">Equipment Reserved</th>
                 <th class="py-3 px-3">Rental Dates</th>
                 <th class="py-3 px-3">Total Amount</th>
@@ -1266,9 +1266,18 @@
               <div class="text-[10px] text-slate-400">NIC: ${b.nic || '—'}</div>
             </td>
             <td class="py-3 px-3">
-              <div>${b.phone || '—'}</div>
-              ${b.whatsapp && b.whatsapp !== b.phone ? `<div class="text-[11px] text-emerald-400 font-medium flex items-center gap-1 mt-0.5"><span>💬</span><span>${b.whatsapp}</span></div>` : ''}
-              <div class="text-[10px] text-slate-500 truncate max-w-[120px]">${b.email || '—'}</div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-slate-400 text-xs">📞</span>
+                <span class="font-medium text-white">${b.phone || '—'}</span>
+              </div>
+              <div class="flex items-center gap-1.5 text-emerald-400 font-bold mt-1 text-xs">
+                <span>💬</span>
+                <a href="https://wa.me/${(b.whatsapp || b.phone || '').replace(/[^0-9]/g, '')}" target="_blank" rel="noopener noreferrer" class="hover:underline flex items-center gap-1 font-mono" title="Open WhatsApp Chat">
+                  <span>WA:</span>
+                  <span>${b.whatsapp || b.phone || '—'}</span>
+                </a>
+              </div>
+              <div class="text-[10px] text-slate-500 truncate max-w-[130px] mt-0.5">${b.email || '—'}</div>
             </td>
             <td class="py-3 px-3 font-semibold">${b.itemsSummary}</td>
             <td class="py-3 px-3 whitespace-nowrap">${b.schedule || (b.pickupDate + ' to ' + b.returnDate)}</td>
@@ -1558,7 +1567,7 @@
             <div class="p-2.5 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-between text-xs">
               <div class="truncate">
                 <div class="font-bold text-white truncate">${b.itemsSummary}</div>
-                <div class="text-[10px] text-slate-400">${b.customerName} (${b.phone})${b.whatsapp && b.whatsapp !== b.phone ? ` <span class="text-emerald-400 font-semibold">[WA: ${b.whatsapp}]</span>` : ''}</div>
+                <div class="text-[10px] text-slate-400">${b.customerName} (📞 ${b.phone || '—'} | <span class="text-emerald-400 font-semibold">💬 WA: ${b.whatsapp || b.phone || '—'}</span>)</div>
                 <div class="text-[10px] text-blue-400 font-mono">${b.schedule}</div>
               </div>
               <button type="button" onclick="sendCustomerThankYouWhatsApp('${b.orderId}')" class="px-2 py-1 rounded bg-emerald-600 text-white font-bold text-[10px]">💬 WA</button>
@@ -1588,7 +1597,8 @@
                 <span class="font-bold text-white">${b.customerName}</span>
               </div>
               <div class="grid grid-cols-2 gap-1 text-[11px] text-slate-300">
-                <div>Phone: <strong>${b.phone}</strong>${b.whatsapp && b.whatsapp !== b.phone ? ` <span class="text-emerald-400 font-semibold text-xs">[WA: ${b.whatsapp}]</span>` : ''}</div>
+                <div>Phone: <strong>${b.phone || '—'}</strong></div>
+                <div>WhatsApp: <strong class="text-emerald-400 font-semibold">${b.whatsapp || b.phone || '—'}</strong></div>
                 <div>NIC: <strong>${b.nic || '—'}</strong></div>
                 <div>Gear: <strong>${b.itemsSummary}</strong></div>
                 <div>Dates: <strong>${b.schedule}</strong></div>
@@ -1642,7 +1652,8 @@
             <div class="font-bold text-blue-600 uppercase text-[10px]">Hirer Information</div>
             <div class="font-bold text-slate-900 text-sm">${b.customerName}</div>
             <div>NIC / Passport: <span class="font-mono font-bold">${b.nic || '—'}</span></div>
-            <div>Phone: <span class="font-mono font-bold">${b.phone}</span>${b.whatsapp && b.whatsapp !== b.phone ? ` <span class="text-emerald-600 font-semibold text-[11px]">(WA: ${b.whatsapp})</span>` : ''}</div>
+            <div>Phone: <span class="font-mono font-bold">${b.phone || '—'}</span></div>
+            <div class="text-emerald-600 font-bold">WhatsApp: <span class="font-mono">${b.whatsapp || b.phone || '—'}</span></div>
             <div>Address: ${b.address || 'Galle, Sri Lanka'}</div>
           </div>
 
