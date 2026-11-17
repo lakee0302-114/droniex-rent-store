@@ -315,6 +315,80 @@
         </div>
       </div>
     
+      <!-- SECTION: NTFY PHONE PUSH NOTIFICATIONS (SILENT & 100% FREE LIFETIME) -->
+      <section class="bg-slate-800/80 border border-slate-700/80 rounded-3xl p-6 sm:p-7 space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-700/80 pb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-amber-950/80 border border-amber-800 flex items-center justify-center text-amber-400 font-bold text-lg">
+              🔕
+            </div>
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Silent Phone Push Alerts (100% Free Lifetime)</span>
+              <h2 class="text-xl font-black text-white mt-0.5">ntfy Phone Lock-Screen Alerts (No Sound)</h2>
+              <p class="text-xs text-slate-400 mt-1">
+                Receive instant silent pop-up notifications on your phone lock screen every time a customer books gear. No sound, zero cost, no trial.
+              </p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="ntfyGatewayStatusBadge" class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-950 border border-emerald-800 text-emerald-300">
+              🟢 ntfy Live (Topic: droniex_orders_0740309322)
+            </span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div class="space-y-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1.5 flex items-center gap-1.5">
+                <span>🔔</span>
+                <span>ntfy Topic Channel Name</span>
+              </label>
+              <input type="text" id="ntfyConfigTopic" value="droniex_orders_0740309322" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white font-mono focus:border-amber-500 focus:outline-none" />
+              <p class="text-[11px] text-slate-400 mt-1">Your private alert channel (Default: <strong class="text-amber-400 font-mono">droniex_orders_0740309322</strong>).</p>
+            </div>
+
+            <div class="flex items-center justify-between p-3.5 rounded-2xl bg-slate-800/80 border border-slate-700">
+              <div>
+                <div class="text-xs font-bold text-white">Silent Notifications (No Sound)</div>
+                <div class="text-[11px] text-slate-400">Display popup alert on phone screen silently without ringing</div>
+              </div>
+              <input type="checkbox" id="ntfyConfigSilent" class="w-4 h-4 rounded text-amber-600 focus:ring-amber-500" checked />
+            </div>
+
+            <div class="flex items-center justify-between p-3.5 rounded-2xl bg-slate-800/80 border border-slate-700">
+              <div>
+                <div class="text-xs font-bold text-white">Enable Phone Push Alerts</div>
+                <div class="text-[11px] text-slate-400">Dispatch push alert to your phone on new reservation</div>
+              </div>
+              <input type="checkbox" id="ntfyConfigEnabled" class="w-4 h-4 rounded text-amber-600 focus:ring-amber-500" checked />
+            </div>
+
+            <div class="flex items-center gap-3 pt-2">
+              <button type="button" onclick="saveNtfySettings()" class="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-slate-950 text-xs font-extrabold transition shadow-xs cursor-pointer">
+                <span>💾 Save ntfy Settings</span>
+              </button>
+              <button type="button" onclick="testNtfyNotification()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 text-xs font-bold transition cursor-pointer">
+                <span>🧪 Send Silent Test Notification</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="bg-slate-800/40 p-5 rounded-2xl border border-slate-700 space-y-3 text-xs text-slate-300">
+            <div class="font-bold text-white flex items-center gap-2">
+              <span>📱</span>
+              <span>15-Second Setup on Your Phone</span>
+            </div>
+            <ol class="space-y-2.5 list-decimal list-inside text-[11px] leading-relaxed text-slate-400">
+              <li>Install the free <strong class="text-white">ntfy</strong> app from <a href="https://play.google.com/store/apps/details?id=io.heckel.ntfy" target="_blank" class="text-amber-400 underline font-semibold">Google Play Store</a> (or open <a href="https://ntfy.sh/droniex_orders_0740309322" target="_blank" class="text-amber-400 underline font-semibold">ntfy.sh/droniex_orders_0740309322</a> on phone).</li>
+              <li>In the ntfy app, tap the <strong class="text-white">+ (Subscribe)</strong> button.</li>
+              <li>Type this Topic name: <code class="bg-slate-900 text-amber-300 px-1 py-0.5 rounded font-mono font-bold">droniex_orders_0740309322</code> and tap <strong class="text-white">Subscribe</strong>.</li>
+              <li>Click <strong class="text-white">Send Silent Test Notification</strong> on the left to see your silent alert appear on your phone screen!</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
       <!-- SECTION: WHATSAPP AUTOMATION (ULTRAMSG GATEWAY) -->
       <section class="bg-slate-800/80 border border-slate-700/80 rounded-3xl p-6 sm:p-7 space-y-6">
         <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-700/80 pb-4">
@@ -1397,10 +1471,93 @@
       }
     }
 
+    // =========================================================================
+    // NTFY PHONE PUSH NOTIFICATION SYSTEM (SILENT & 100% FREE LIFETIME)
+    // =========================================================================
+    async function loadNtfySettings() {
+      try {
+        const res = await fetch(FIREBASE_BASE + '/config/ntfy.json');
+        if (!res.ok) return;
+        const cfg = await res.json();
+        if (cfg) {
+          const topEl = document.getElementById('ntfyConfigTopic');
+          const silEl = document.getElementById('ntfyConfigSilent');
+          const enEl = document.getElementById('ntfyConfigEnabled');
+          const badgeEl = document.getElementById('ntfyGatewayStatusBadge');
+
+          if (topEl && cfg.topic) topEl.value = cfg.topic;
+          if (silEl && cfg.silent !== undefined) silEl.checked = Boolean(cfg.silent);
+          if (enEl && cfg.enabled !== undefined) enEl.checked = Boolean(cfg.enabled);
+
+          if (badgeEl) {
+            if (cfg.enabled !== false) {
+              badgeEl.className = 'px-3 py-1 rounded-full text-xs font-bold bg-emerald-950 border border-emerald-800 text-emerald-300';
+              badgeEl.textContent = '🟢 ntfy Live (Topic: ' + (cfg.topic || 'droniex_orders_0740309322') + ')';
+            } else {
+              badgeEl.className = 'px-3 py-1 rounded-full text-xs font-bold bg-amber-950 border border-amber-800 text-amber-300';
+              badgeEl.textContent = '🟡 ntfy Paused';
+            }
+          }
+        }
+      } catch (e) {}
+    }
+
+    async function saveNtfySettings() {
+      const topEl = document.getElementById('ntfyConfigTopic');
+      const silEl = document.getElementById('ntfyConfigSilent');
+      const enEl = document.getElementById('ntfyConfigEnabled');
+      const badgeEl = document.getElementById('ntfyGatewayStatusBadge');
+
+      const topic = (topEl ? topEl.value : '').trim() || 'droniex_orders_0740309322';
+      const silent = silEl ? silEl.checked : true;
+      const enabled = enEl ? enEl.checked : true;
+
+      try {
+        await fetch(FIREBASE_BASE + '/config/ntfy.json', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ topic, silent, enabled, updatedAt: new Date().toISOString() })
+        });
+
+        if (badgeEl) {
+          if (enabled) {
+            badgeEl.className = 'px-3 py-1 rounded-full text-xs font-bold bg-emerald-950 border border-emerald-800 text-emerald-300';
+            badgeEl.textContent = '🟢 ntfy Live (Topic: ' + topic + ')';
+          } else {
+            badgeEl.className = 'px-3 py-1 rounded-full text-xs font-bold bg-amber-950 border border-amber-800 text-amber-300';
+            badgeEl.textContent = '🟡 ntfy Paused';
+          }
+        }
+        showToast('✓ ntfy Push Notification Settings Saved to Firebase!');
+      } catch (e) {
+        showToast('Error saving ntfy settings to cloud');
+      }
+    }
+
+    async function testNtfyNotification() {
+      showToast('Dispatching silent test notification to ntfy...');
+      try {
+        const res = await fetch('/api/send-whatsapp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ testNtfy: true })
+        });
+        const data = await res.json();
+        if (data && data.success) {
+          showToast('✓ Silent test notification dispatched to topic: ' + (data.ntfyTopic || 'droniex_orders_0740309322') + '! Check your phone.');
+        } else {
+          alert('ntfy Error: ' + (data.ntfyError || 'Failed to dispatch test notification.'));
+        }
+      } catch (e) {
+        alert('Test failed: ' + e.message);
+      }
+    }
+
     function renderDashboard() {
-      loadTelegramSettings();
-      loadEmailSettings();
+      loadNtfySettings();
       loadWhatsAppGatewaySettings();
+      loadEmailSettings();
+      loadTelegramSettings();
       updateKpis();
       renderGearStatusGrid();
       renderOrdersTable();

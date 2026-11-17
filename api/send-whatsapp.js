@@ -1,5 +1,5 @@
-// Vercel Serverless Function: Automated WhatsApp & Email Notification Engine
-// Supports: UltraMsg WhatsApp, Brevo / Resend Email Confirmation, Direct wa.me links
+// Vercel Serverless Function: DronieX Multi-Channel Notification Engine
+// Supports: ntfy Silent Push Notifications (Phone Lock-Screen), UltraMsg WhatsApp, Brevo Email, Direct wa.me
 // Path: /api/send-whatsapp
 
 module.exports = async (req, res) => {
@@ -19,6 +19,7 @@ module.exports = async (req, res) => {
       message,
       orderId,
       test,
+      testNtfy,
       testEmail,
       notifyAdmin,
       customerName,
@@ -29,7 +30,7 @@ module.exports = async (req, res) => {
     } = req.body || {};
 
     const targetInput = (whatsapp || phone || '').toString().trim();
-    if (!targetInput && !test && !testEmail) {
+    if (!targetInput && !test && !testNtfy && !testEmail) {
       return res.status(400).json({ error: 'Phone or WhatsApp number is required' });
     }
 
@@ -39,11 +40,13 @@ module.exports = async (req, res) => {
     let adminAlertPhone = '0740309322';
     let waEnabled = true;
     let emailConfig = {};
+    let ntfyConfig = {};
 
     try {
-      const [waRes, emRes] = await Promise.all([
+      const [waRes, emRes, ntRes] = await Promise.all([
         fetch(FIREBASE_BASE + '/config/whatsapp.json'),
-        fetch(FIREBASE_BASE + '/config/email.json')
+        fetch(FIREBASE_BASE + '/config/email.json'),
+        fetch(FIREBASE_BASE + '/config/ntfy.json')
       ]);
       if (waRes.ok) {
         const config = await waRes.json();
@@ -54,9 +57,8 @@ module.exports = async (req, res) => {
           if (config.adminAlertPhone) adminAlertPhone = config.adminAlertPhone.toString().trim();
         }
       }
-      if (emRes.ok) {
-        emailConfig = (await emRes.json()) || {};
-      }
+      if (emRes.ok) emailConfig = (await emRes.json()) || {};
+      if (ntRes.ok) ntfyConfig = (await ntRes.json()) || {};
     } catch (fbErr) {
       console.warn('Firebase config fetch error:', fbErr);
     }
@@ -101,7 +103,51 @@ module.exports = async (req, res) => {
       `📍 *Store Pickup: Galwadugoda, Galle (Hotline: 070 187 5455)*\n` +
       `👉 *Admin Portal:* https://droniex-rent-store.vercel.app/admin.html`;
 
-    // 1. Dispatch to UltraMsg (WhatsApp Gateway)
+    // =========================================================================
+    // 1. DISPATCH SILENT PHONE PUSH NOTIFICATION (ntfy.sh - 100% Free Lifetime)
+    // =========================================================================
+    let ntfySent = false;
+    let ntfyError = null;
+    const ntfyTopic = (ntfyConfig.topic || 'droniex_orders_0740309322').trim();
+    const ntfyEnabled = ntfyConfig.enabled !== false;
+    const ntfyPriority = (ntfyConfig.silent !== false) ? 'low' : 'default'; // low = silent (no sound, notifications only)
+
+    if (ntfyTopic && (ntfyEnabled || testNtfy)) {
+      try {
+        const ntfyTitle = testNtfy ? 'DronieX Silent Phone Alert Test' : `New Order: ${orderId || 'Reservation'}`;
+        const cPhone = customerPhone || phone || '—';
+        const ntfyBody = testNtfy
+          ? 'Helo Lakditha! Your silent phone notification system is 100% connected to DronieX Store. You will receive lock-screen alerts for every booking.'
+          : `📋 Order: ${orderId || 'New'}\n👤 Customer: ${customerName || 'Customer'}\n📞 Contact: ${cPhone}\n📦 Gear: ${gear || 'Equipment'}\n💰 Fee: Rs. ${totalAmount ? Number(totalAmount).toLocaleString('en-LK') : '—'}\n📅 Dates: ${schedule || 'Upcoming'}`;
+
+        const ntfyRes = await fetch(`https://ntfy.sh/${encodeURIComponent(ntfyTopic)}`, {
+          method: 'POST',
+          headers: {
+            'Title': ntfyTitle,
+            'Priority': ntfyPriority,
+            'Tags': 'bell_slash,package',
+            'Click': 'https://droniex-rent-store.vercel.app/admin.html'
+          },
+          body: ntfyBody
+        });
+        ntfySent = ntfyRes.ok;
+      } catch (nErr) {
+        ntfyError = nErr.message;
+      }
+    }
+
+    if (testNtfy) {
+      return res.status(200).json({
+        success: ntfySent,
+        ntfySent,
+        ntfyTopic,
+        ntfyError: ntfyError || (ntfySent ? null : 'Failed to post to ntfy')
+      });
+    }
+
+    // =========================================================================
+    // 2. DISPATCH TO ULTRAMSG (WHATSAPP GATEWAY)
+    // =========================================================================
     let ultraResult = null;
     let adminResult = null;
     let ultraSent = false;
@@ -162,7 +208,9 @@ module.exports = async (req, res) => {
       }
     }
 
-    // 2. Dispatch to Brevo / Resend Email
+    // =========================================================================
+    // 3. DISPATCH EMAIL CONFIRMATION (BREVO / RESEND)
+    // =========================================================================
     let emailSent = false;
     let emailError = null;
     const emailApiKey = (emailConfig.apiKey || process.env.EMAIL_API_KEY || process.env.BREVO_API_KEY || '').trim();
@@ -202,7 +250,6 @@ module.exports = async (req, res) => {
         </div>
       `;
 
-      // If Brevo API key (starts with xkeysib- or specified)
       if (emailApiKey.startsWith('xkeysib-') || emailConfig.provider === 'brevo') {
         try {
           const recipients = [];
@@ -231,71 +278,35 @@ module.exports = async (req, res) => {
         } catch (bErr) {
           emailError = bErr.message;
         }
-      } else {
-        // Resend
-        try {
-          const toList = testEmail ? [storeEmail] : [targetEmail || storeEmail];
-          const rRes = await fetch('https://api.resend.com/emails', {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${emailApiKey}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              from: 'DronieX Store <onboarding@resend.dev>',
-              to: toList,
-              subject: testEmail ? '✈️ DronieX Email Service Test' : `DronieX Equipment Rental Confirmation [${orderId || 'Booking'}]`,
-              html: emailHtml
-            })
-          });
-          emailSent = rRes.ok;
-          if (!emailSent) {
-            const rData = await rRes.json();
-            emailError = JSON.stringify(rData);
-          }
-        } catch (rErr) {
-          emailError = rErr.message;
-        }
       }
-    }
-
-    // Direct WhatsApp URLs (100% Free fallback)
-    const directStoreWaUrl = `https://wa.me/94701875455?text=${encodeURIComponent(message || adminBody)}`;
-    const directCustomerWaUrl = targetPhone ? `https://wa.me/${targetPhone}?text=${encodeURIComponent(message || '')}` : '';
-
-    if (ultraSent || emailSent) {
-      return res.status(200).json({
-        success: true,
-        ultraSent,
-        emailSent,
-        orderId: orderId || '',
-        targetPhone,
-        adminPhone: storeAdminPhone,
-        directStoreWaUrl,
-        directCustomerWaUrl,
-        message: ultraSent ? 'WhatsApp message dispatched successfully via UltraMsg!' : 'Email dispatched successfully!'
-      });
     }
 
     if (testEmail) {
       return res.status(200).json({
         success: emailSent,
         emailSent,
-        emailError: emailError || 'Email could not be delivered. Check Brevo API key.'
+        emailError: emailError || (emailSent ? null : 'Failed to dispatch test email.')
       });
     }
 
+    // Direct WhatsApp URLs (100% Free fallback)
+    const directStoreWaUrl = `https://wa.me/94701875455?text=${encodeURIComponent(message || adminBody)}`;
+    const directCustomerWaUrl = targetPhone ? `https://wa.me/${targetPhone}?text=${encodeURIComponent(message || '')}` : '';
+
     return res.status(200).json({
-      success: false,
-      reason: ultraError ? 'gateway_error' : 'no_gateway_configured',
-      details: ultraResult || adminResult || ultraError || emailError || 'UltraMsg instance ID & Token not active',
+      success: Boolean(ultraSent || emailSent || ntfySent),
+      ultraSent,
+      emailSent,
+      ntfySent,
+      orderId: orderId || '',
+      targetPhone,
+      adminPhone: storeAdminPhone,
       directStoreWaUrl,
       directCustomerWaUrl,
-      targetPhone,
-      adminPhone: storeAdminPhone
+      message: 'Notification processing complete'
     });
   } catch (err) {
-    console.error('WhatsApp/Email API error:', err);
+    console.error('Notification API error:', err);
     return res.status(500).json({ success: false, error: err.message });
   }
 };
