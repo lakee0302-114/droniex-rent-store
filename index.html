@@ -4217,6 +4217,8 @@
             whatsapp: lkPhone,
             customerPhone: lkCallingPhone,
             customerName: booking.customerName,
+            email: booking.email,
+            schedule: booking.schedule,
             message: thankYouMsg,
             notifyAdmin: true,
             gear: booking.itemsSummary,
@@ -4227,9 +4229,14 @@
         const statusBox = document.getElementById('orderSuccessAutoWaStatus');
         if (result && result.success) {
           if (statusBox) {
-            const statusMsg = result.ultraSent
-              ? `Official confirmation &amp; Tracking ID auto-sent to your WhatsApp (+${result.targetPhone || lkPhone})!`
-              : `✓ Booking logged &amp; Store Owner alerted via WhatsApp!`;
+            let statusMsg = '✓ Reservation logged &amp; confirmed!';
+            if (result.emailSent && result.telegramSent) {
+              statusMsg = '✓ Confirmation sent to your Email &amp; Store Owner alerted via Telegram!';
+            } else if (result.telegramSent) {
+              statusMsg = '✓ Store Owner alerted via Telegram &amp; Gear Reserved!';
+            } else if (result.emailSent) {
+              statusMsg = `✓ Confirmation invoice sent to your email (${booking.email || 'Customer'})!`;
+            }
             statusBox.innerHTML = `
               <div class="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-semibold flex items-center gap-2">
                 <span>✓</span>
@@ -4237,19 +4244,19 @@
               </div>
             `;
           }
-          showToast('✓ WhatsApp confirmation processed successfully!');
+          showToast('✓ Reservation submitted &amp; owner alerted!');
         } else {
           if (statusBox) {
             statusBox.innerHTML = `
               <div class="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-[11px] flex items-center gap-1.5">
                 <span>💬</span>
-                <span>Click the button below to forward your booking details to Store WhatsApp.</span>
+                <span>Reservation received! You can contact store WhatsApp below if needed.</span>
               </div>
             `;
           }
         }
       } catch (e) {
-        console.warn('Auto WhatsApp dispatch caught exception (fallback active):', e);
+        console.warn('Auto notification dispatch caught exception (fallback active):', e);
       }
     }
 

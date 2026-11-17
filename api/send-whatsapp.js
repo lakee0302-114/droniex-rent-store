@@ -1,196 +1,252 @@
-// Vercel Serverless Function: Automated WhatsApp Messaging (UltraMsg + CallMeBot Gateway)
-// Path: /api/send-whatsapp
+// Vercel Serverless Function: DronieX Multi-Channel Notification Engine
+// Supports: Telegram Bot Alerts (Store Owner), Email Confirmations (Customer & Owner), WhatsApp Direct Links
+
+function escapeTgHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
 
 module.exports = async (req, res) => {
-  // CORS support
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-
-  if (req.method === 'GET') {
-    return res.status(200).json({ status: 'ok', service: 'DronieX WhatsApp Gateway API' });
-  }
-
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+  if (req.method === 'OPTIONS') return res.status(200).end();
+  if (req.method === 'GET') return res.status(200).json({ status: 'ok', service: 'DronieX Notification API' });
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   try {
-    const { phone, whatsapp, message, orderId, test, notifyAdmin, customerName, customerPhone, gear, totalAmount } = req.body || {};
+    const {
+      orderId,
+      customerName,
+      phone,
+      whatsapp,
+      email,
+      customerPhone,
+      gear,
+      schedule,
+      totalAmount,
+      message,
+      notifyAdmin,
+      test,
+      testTelegram,
+      testEmail
+    } = req.body || {};
 
-    const targetInput = (whatsapp || phone || '').toString().trim();
-    if (!targetInput || !message) {
-      return res.status(400).json({ error: 'Phone and message are required' });
-    }
+    const FIREBASE_BASE = 'https://droniex-rent-store-default-rtdb.asia-southeast1.firebasedatabase.app';
 
-    // 1. Fetch WhatsApp Gateway credentials from Firebase Realtime Database
-    const FIREBASE_CONFIG_URL = 'https://droniex-rent-store-default-rtdb.asia-southeast1.firebasedatabase.app/config/whatsapp.json';
-    let instanceId = process.env.ULTRAMSG_INSTANCE_ID || '';
-    let token = process.env.ULTRAMSG_TOKEN || '';
-    let callmebotKey = process.env.CALLMEBOT_API_KEY || '';
-    let adminAlertPhone = '0740309322';
-    let enabled = true;
+    // 1. Fetch configs from Firebase
+    let telegramConfig = {};
+    let emailConfig = {};
+    let waConfig = {};
 
     try {
-      const fbRes = await fetch(FIREBASE_CONFIG_URL);
-      if (fbRes.ok) {
-        const config = await fbRes.json();
-        if (config) {
-          if (config.instanceId) instanceId = config.instanceId.trim();
-          if (config.token) token = config.token.trim();
-          if (config.callmebotKey) callmebotKey = config.callmebotKey.toString().trim();
-          if (config.enabled !== undefined) enabled = Boolean(config.enabled);
-          if (config.adminAlertPhone) adminAlertPhone = config.adminAlertPhone.toString().trim();
-        }
-      }
-    } catch (fbErr) {
-      console.warn('Firebase config fetch error:', fbErr);
+      const [tgRes, emRes, waRes] = await Promise.all([
+        fetch(FIREBASE_BASE + '/config/telegram.json'),
+        fetch(FIREBASE_BASE + '/config/email.json'),
+        fetch(FIREBASE_BASE + '/config/whatsapp.json')
+      ]);
+      if (tgRes.ok) telegramConfig = (await tgRes.json()) || {};
+      if (emRes.ok) emailConfig = (await emRes.json()) || {};
+      if (waRes.ok) waConfig = (await waRes.json()) || {};
+    } catch (cfgErr) {
+      console.warn('Config fetch error:', cfgErr);
     }
 
-    if (!enabled && !test) {
-      return res.status(200).json({
-        success: false,
-        reason: 'disabled',
-        message: 'WhatsApp auto-send is disabled in settings.'
-      });
-    }
+    let telegramSent = false;
+    let telegramError = null;
+    let emailSent = false;
+    let emailError = null;
 
-    // 2. Format Sri Lankan phone number for customer WhatsApp (e.g. 947XXXXXXXX)
-    const rawDigits = targetInput.replace(/[^0-9]/g, '');
-    let targetPhone = rawDigits;
-    if (rawDigits.startsWith('0')) targetPhone = '94' + rawDigits.substring(1);
-    else if (!rawDigits.startsWith('94') && rawDigits.length === 9) targetPhone = '94' + rawDigits;
+    // =========================================================================
+    // 2. DISPATCH TELEGRAM ALERT TO STORE OWNER (100% Free Lifetime)
+    // =========================================================================
+    const tgBotToken = (telegramConfig.botToken || process.env.TELEGRAM_BOT_TOKEN || '').trim();
+    const tgChatId = (telegramConfig.chatId || process.env.TELEGRAM_CHAT_ID || '').toString().trim();
+    const tgEnabled = telegramConfig.enabled !== false;
 
-    // Format calling phone for store admin alert reference
-    let callingPhoneFormatted = '';
-    if (customerPhone) {
-      const cDigits = customerPhone.toString().replace(/[^0-9]/g, '');
-      if (cDigits.startsWith('0')) callingPhoneFormatted = '94' + cDigits.substring(1);
-      else if (!cDigits.startsWith('94') && cDigits.length === 9) callingPhoneFormatted = '94' + cDigits;
-      else callingPhoneFormatted = cDigits;
-    }
-
-    let storeAdminPhone = (adminAlertPhone || '0740309322').toString().replace(/[^0-9]/g, '');
-    if (storeAdminPhone.startsWith('0')) storeAdminPhone = '94' + storeAdminPhone.substring(1);
-    else if (!storeAdminPhone.startsWith('94') && storeAdminPhone.length === 9) storeAdminPhone = '94' + storeAdminPhone;
-
-    let contactDetailsText = `📞 *Contact (Phone & WA):* +${targetPhone}\n`;
-    if (callingPhoneFormatted && callingPhoneFormatted !== targetPhone) {
-      contactDetailsText =
-        `📞 *Calling Phone:* +${callingPhoneFormatted}\n` +
-        `💬 *WhatsApp Number:* +${targetPhone}\n`;
-    }
-
-    const adminBody =
-      `🚨 *NEW ONLINE RESERVATION RECEIVED!* 🚁\n` +
-      `━━━━━━━━━━━━━━━━━━━━━\n` +
-      `📋 *Order ID:* ${orderId || 'New'}\n` +
-      `👤 *Customer:* ${customerName || 'Customer'}\n` +
-      contactDetailsText +
-      `📦 *Gear:* ${gear || 'Equipment'}\n` +
-      `💰 *Total Amount:* Rs. ${totalAmount ? Number(totalAmount).toLocaleString('en-LK') : '—'}\n` +
-      `💳 *Payment Method:* Pay at Store\n` +
-      `━━━━━━━━━━━━━━━━━━━━━\n` +
-      `👉 *Admin Portal:* https://droniex-rent-store.vercel.app/admin.html`;
-
-    // 3. Dispatch to CallMeBot (100% Free Lifetime WhatsApp alert for store owner)
-    let callmebotSent = false;
-    let callmebotResult = null;
-    if ((notifyAdmin || test) && callmebotKey) {
-      try {
-        const cmbPhone = storeAdminPhone.startsWith('+') ? storeAdminPhone : '+' + storeAdminPhone;
-        const cmbTextToSend = test ? message : adminBody;
-        const cmbUrl = `https://api.callmebot.com/whatsapp.php?phone=${encodeURIComponent(cmbPhone)}&text=${encodeURIComponent(cmbTextToSend)}&apikey=${encodeURIComponent(callmebotKey)}`;
-        const cmbRes = await fetch(cmbUrl);
-        const cmbText = await cmbRes.text();
-        callmebotSent = cmbRes.ok;
-        callmebotResult = cmbText;
-        console.log('CallMeBot result:', cmbRes.status, cmbText);
-      } catch (cmbErr) {
-        console.warn('CallMeBot dispatch error:', cmbErr);
-      }
-    }
-
-    // 4. Dispatch to UltraMsg (if instanceId and token are configured)
-    let ultraResult = null;
-    let adminResult = null;
-    let ultraSent = false;
-
-    if (instanceId && token) {
-      let cleanInstanceId = instanceId.replace(/[^a-zA-Z0-9]/g, '');
-      if (!cleanInstanceId.toLowerCase().startsWith('instance')) {
-        cleanInstanceId = 'instance' + cleanInstanceId;
-      }
-      const ultraUrl = `https://api.ultramsg.com/${cleanInstanceId}/messages/chat`;
-
-      try {
-        const params = new URLSearchParams();
-        params.append('token', token);
-        params.append('to', targetPhone);
-        params.append('body', message);
-
-        const ultraRes = await fetch(ultraUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: params.toString()
-        });
-        ultraResult = await ultraRes.json();
-        ultraSent = Boolean(ultraResult && (ultraResult.sent === 'true' || ultraResult.sent === true || ultraResult.id || ultraResult.message === 'ok'));
-      } catch (uErr) {
-        console.warn('UltraMsg customer dispatch error:', uErr);
-      }
-
-      if (notifyAdmin) {
+    if (tgBotToken && tgChatId && (tgEnabled || testTelegram)) {
+      if (testTelegram) {
         try {
-          const adminParams = new URLSearchParams();
-          adminParams.append('token', token);
-          adminParams.append('to', storeAdminPhone);
-          adminParams.append('body', adminBody);
+          const testMsg =
+            `✈️ <b>DronieX Telegram Alert Test!</b>\n\n` +
+            `Your automated store notification bot is <b>100% operational</b> and connected to DronieX Rent Store — Galle. 🚁\n\n` +
+            `• <i>Store:</i> No. 131, D.J. Wimalasurendra Mawatha, Galwadugoda, Galle\n` +
+            `• <i>Hotline:</i> 070 187 5455\n` +
+            `• <i>Timestamp:</i> ${new Date().toLocaleString('en-LK', { timeZone: 'Asia/Colombo' })}`;
 
-          const adminRes = await fetch(ultraUrl, {
+          const tgRes = await fetch(`https://api.telegram.org/bot${encodeURIComponent(tgBotToken)}/sendMessage`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: adminParams.toString()
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              chat_id: tgChatId,
+              text: testMsg,
+              parse_mode: 'HTML',
+              disable_web_page_preview: true
+            })
           });
-          adminResult = await adminRes.json();
-        } catch (adminErr) {
-          console.warn('UltraMsg admin notification error:', adminErr);
+          const tgData = await tgRes.json();
+          telegramSent = Boolean(tgData && tgData.ok);
+          if (!telegramSent) telegramError = tgData.description || 'Telegram API returned error';
+        } catch (tgErr) {
+          telegramError = tgErr.message;
+        }
+      } else if (notifyAdmin || test) {
+        try {
+          const cPhone = customerPhone || phone || '—';
+          const cWa = whatsapp || phone || '—';
+          const tgOrderText =
+            `🚨 <b>NEW ONLINE RESERVATION RECEIVED!</b> 🚁\n` +
+            `━━━━━━━━━━━━━━━━━━━━━\n` +
+            `📋 <b>Order ID:</b> <code>${escapeTgHtml(orderId || 'New')}</code>\n` +
+            `👤 <b>Customer:</b> ${escapeTgHtml(customerName || 'Customer')}\n` +
+            `📞 <b>Phone:</b> ${escapeTgHtml(cPhone)}\n` +
+            `💬 <b>WhatsApp:</b> ${escapeTgHtml(cWa)}\n` +
+            (email ? `✉️ <b>Email:</b> ${escapeTgHtml(email)}\n` : '') +
+            `📦 <b>Gear:</b> ${escapeTgHtml(gear || 'Equipment')}\n` +
+            `📅 <b>Schedule:</b> ${escapeTgHtml(schedule || 'Upcoming')}\n` +
+            `💰 <b>Total Amount:</b> Rs. ${totalAmount ? Number(totalAmount).toLocaleString('en-LK') : '—'}\n` +
+            `💳 <b>Payment Method:</b> Pay at Store Pickup\n` +
+            `━━━━━━━━━━━━━━━━━━━━━\n` +
+            `📍 <i>Store: Galwadugoda, Galle (Hotline: 070 187 5455)</i>\n` +
+            `👉 <a href="https://droniex-rent-store.vercel.app/admin.html">Open Admin Portal</a>`;
+
+          const tgRes = await fetch(`https://api.telegram.org/bot${encodeURIComponent(tgBotToken)}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              chat_id: tgChatId,
+              text: tgOrderText,
+              parse_mode: 'HTML',
+              disable_web_page_preview: true
+            })
+          });
+          const tgData = await tgRes.json();
+          telegramSent = Boolean(tgData && tgData.ok);
+          if (!telegramSent) telegramError = tgData.description;
+        } catch (tgErr) {
+          telegramError = tgErr.message;
         }
       }
     }
 
-    const directStoreWaUrl = `https://wa.me/94701875455?text=${encodeURIComponent(message)}`;
-    const directCustomerWaUrl = `https://wa.me/${targetPhone}?text=${encodeURIComponent(message)}`;
+    // =========================================================================
+    // 3. DISPATCH EMAIL CONFIRMATION (Brevo or Resend)
+    // =========================================================================
+    const emailApiKey = (emailConfig.apiKey || process.env.EMAIL_API_KEY || process.env.BREVO_API_KEY || process.env.RESEND_API_KEY || '').trim();
+    const storeEmail = (emailConfig.storeEmail || 'lakditha2008@gmail.com').trim();
+    const emailEnabled = emailConfig.enabled !== false;
+    const targetCustomerEmail = (email || '').trim();
 
-    if (ultraSent || callmebotSent) {
-      return res.status(200).json({
-        success: true,
-        ultraSent,
-        callmebotSent,
-        orderId: orderId || '',
-        targetPhone,
-        adminPhone: storeAdminPhone,
-        directStoreWaUrl,
-        directCustomerWaUrl
-      });
+    if (emailApiKey && (emailEnabled || testEmail)) {
+      const emailHtml = `
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 16px; background-color: #ffffff; color: #1e293b;">
+          <div style="text-align: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 16px; margin-bottom: 20px;">
+            <h1 style="color: #0284c7; font-size: 22px; font-weight: 800; margin: 0;">DronieX Rent Store — Galle</h1>
+            <p style="color: #64748b; font-size: 12px; margin-top: 4px;">Official Equipment Booking Confirmation</p>
+          </div>
+
+          <p style="font-size: 14px; line-height: 1.6;">Dear <strong>${customerName || 'Valued Customer'}</strong>,</p>
+          <p style="font-size: 13px; line-height: 1.6; color: #475569;">Thank you for choosing DronieX! Your equipment reservation has been confirmed and logged in our store database.</p>
+
+          <div style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 16px; margin: 20px 0; font-size: 13px; line-height: 1.8;">
+            <div><strong>📋 Tracking Reference ID:</strong> <span style="font-family: monospace; color: #0284c7; font-weight: bold;">${orderId || 'New'}</span></div>
+            <div><strong>📦 Equipment Reserved:</strong> ${gear || 'Equipment'}</div>
+            <div><strong>📅 Rental Period:</strong> ${schedule || 'Upcoming'}</div>
+            <div><strong>💰 Total Rental Fee:</strong> <span style="color: #059669; font-weight: bold;">Rs. ${totalAmount ? Number(totalAmount).toLocaleString('en-LK') : '—'}</span></div>
+            <div><strong>💳 Payment Method:</strong> Pay at Store Pickup</div>
+          </div>
+
+          <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 14px; margin: 20px 0; font-size: 12px; line-height: 1.6; color: #166534;">
+            <strong>📍 Store Pickup Location:</strong><br />
+            No. 131, D.J. Wimalasurendra Mawatha, Galwadugoda, Galle 80000.<br />
+            <strong>📞 Store Hotlines:</strong> 070 187 5455 / 071 351 0551<br />
+            <em>Please present your Tracking ID and original NIC/Passport upon store pickup.</em>
+          </div>
+
+          <div style="text-align: center; border-top: 1px solid #e2e8f0; padding-top: 16px; margin-top: 24px; font-size: 11px; color: #94a3b8;">
+            Track your order anytime online at <a href="https://droniex-rent-store.vercel.app" style="color: #0284c7; text-decoration: none;">droniex-rent-store.vercel.app</a>
+          </div>
+        </div>
+      `;
+
+      // Check if Brevo (api-key starts with xkeysib or provider is brevo)
+      if (emailApiKey.startsWith('xkeysib-') || emailConfig.provider === 'brevo') {
+        try {
+          const recipients = [];
+          if (targetCustomerEmail) recipients.push({ email: targetCustomerEmail, name: customerName || 'Customer' });
+          if (testEmail || !targetCustomerEmail) recipients.push({ email: storeEmail, name: 'Store Owner' });
+
+          const bRes = await fetch('https://api.brevo.com/v3/smtp/email', {
+            method: 'POST',
+            headers: {
+              'api-key': emailApiKey,
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+              sender: { name: 'DronieX Rent Store', email: storeEmail || 'droniex.rent@gmail.com' },
+              to: recipients,
+              subject: testEmail ? '✈️ DronieX Email Service Test' : `DronieX Equipment Rental Confirmation [${orderId || 'Booking'}]`,
+              htmlContent: emailHtml
+            })
+          });
+          emailSent = bRes.ok;
+          if (!emailSent) {
+            const bData = await bRes.json();
+            emailError = JSON.stringify(bData);
+          }
+        } catch (bErr) {
+          emailError = bErr.message;
+        }
+      } else {
+        // Resend
+        try {
+          const toList = testEmail ? [storeEmail] : [targetCustomerEmail || storeEmail];
+          const rRes = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${emailApiKey}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              from: 'DronieX Store <onboarding@resend.dev>',
+              to: toList,
+              subject: testEmail ? '✈️ DronieX Email Service Test' : `DronieX Equipment Rental Confirmation [${orderId || 'Booking'}]`,
+              html: emailHtml
+            })
+          });
+          emailSent = rRes.ok;
+          if (!emailSent) {
+            const rData = await rRes.json();
+            emailError = JSON.stringify(rData);
+          }
+        } catch (rErr) {
+          emailError = rErr.message;
+        }
+      }
     }
 
-    // If neither gateway sent, return helpful details along with direct 1-click WhatsApp URLs
+    // Direct WhatsApp URLs (100% Free fallback)
+    const directStoreWaUrl = `https://wa.me/94701875455?text=${encodeURIComponent(message || 'Hello DronieX Store')}`;
+    const directCustomerWaUrl = phone ? `https://wa.me/${phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(message || '')}` : '';
+
     return res.status(200).json({
-      success: false,
-      reason: ultraResult?.error ? 'gateway_expired_or_stopped' : 'no_gateway_active',
-      details: ultraResult || 'UltraMsg stopped / CallMeBot not configured',
-      callmebotSent,
+      success: Boolean(telegramSent || emailSent || testTelegram || testEmail),
+      telegramSent,
+      telegramError,
+      emailSent,
+      emailError,
+      orderId: orderId || '',
       directStoreWaUrl,
       directCustomerWaUrl,
-      targetPhone
+      message: telegramSent ? 'Owner alerted via Telegram' : 'Notification processed'
     });
   } catch (err) {
-    console.error('send-whatsapp error:', err);
+    console.error('Notification dispatch error:', err);
     return res.status(500).json({ success: false, error: err.message });
   }
 };

@@ -315,24 +315,25 @@
         </div>
       </div>
     
-      <!-- SECTION: WHATSAPP AUTOMATION (ULTRAMSG GATEWAY) -->
-      <section class="bg-slate-800/60 border border-slate-700 rounded-3xl p-6 sm:p-8 space-y-6">
-        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-700 pb-4">
+      <!-- SECTION: TELEGRAM ALERT BOT & EMAIL NOTIFICATIONS -->
+      <section class="bg-slate-800/80 border border-slate-700/80 rounded-3xl p-6 sm:p-7 space-y-6">
+        <!-- Telegram Bot Header -->
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-700/80 pb-4">
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-2xl bg-emerald-950/80 border border-emerald-800 flex items-center justify-center text-emerald-400 font-bold text-lg">
-              💬
+            <div class="w-10 h-10 rounded-2xl bg-sky-950/80 border border-sky-800 flex items-center justify-center text-sky-400 font-bold text-lg">
+              ✈️
             </div>
             <div>
-              <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Option A · Automated Messaging</span>
-              <h2 class="text-xl font-black text-white mt-0.5">WhatsApp Auto-Send Gateway (UltraMsg)</h2>
+              <span class="text-xs font-bold uppercase tracking-wider text-sky-400">Instant Alert Engine</span>
+              <h2 class="text-xl font-black text-white mt-0.5">Telegram Alert Bot (100% Free Lifetime for Store Owner)</h2>
               <p class="text-xs text-slate-400 mt-1">
-                Send customer booking confirmations and Thank You messages 100% automatically in the background from your store WhatsApp (070 187 5455).
+                Receive instant push sound notifications on your phone via Telegram every time a customer submits a booking. Zero fees, no expiration.
               </p>
             </div>
           </div>
           <div class="flex items-center gap-2">
-            <span id="waGatewayStatusBadge" class="px-3 py-1 rounded-full text-xs font-bold bg-slate-800 text-slate-400 border border-slate-700">
-              ⚪ Standby (Enter API Credentials)
+            <span id="tgGatewayStatusBadge" class="px-3 py-1 rounded-full text-xs font-bold bg-slate-800 text-slate-400 border border-slate-700">
+              ⚪ Standby (Enter Bot Token &amp; Chat ID)
             </span>
           </div>
         </div>
@@ -340,63 +341,112 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div class="space-y-4">
             <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1.5">UltraMsg Instance ID</label>
-              <input type="text" id="waConfigInstanceId" placeholder="e.g. instance102345" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white font-mono focus:border-emerald-500 focus:outline-none" />
-              <p class="text-[11px] text-slate-400 mt-1">Found in your UltraMsg.com dashboard.</p>
-            </div>
-
-            <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1.5">UltraMsg API Token</label>
-              <input type="password" id="waConfigToken" placeholder="••••••••••••••••" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white font-mono focus:border-emerald-500 focus:outline-none" />
-              <p class="text-[11px] text-slate-400 mt-1">Private authentication token.</p>
+              <label class="block text-xs font-bold text-slate-300 mb-1.5 flex items-center gap-1.5">
+                <span>🤖</span>
+                <span>Telegram Bot Token</span>
+              </label>
+              <input type="text" id="tgConfigBotToken" placeholder="e.g. 7123456789:AAHk4_..." class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white font-mono focus:border-sky-500 focus:outline-none" />
+              <p class="text-[11px] text-slate-400 mt-1">Obtained from Telegram's official <strong class="text-sky-400">@BotFather</strong>.</p>
             </div>
 
             <div>
               <label class="block text-xs font-bold text-slate-300 mb-1.5 flex items-center gap-1.5">
-                <span>📲</span>
-                <span>Store Owner Alert WhatsApp Phone</span>
+                <span>🆔</span>
+                <span>Your Telegram Chat ID</span>
               </label>
-              <input type="text" id="waConfigAlertPhone" placeholder="0740309322" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white font-mono focus:border-emerald-500 focus:outline-none" />
-              <p class="text-[11px] text-slate-400 mt-1">Customer order alerts will be sent to this WhatsApp number (Default: 0740309322).</p>
-            </div>
-
-            <div class="p-3.5 rounded-2xl bg-emerald-950/30 border border-emerald-800/60 space-y-2">
-              <label class="block text-xs font-bold text-emerald-400 mb-1 flex items-center gap-1.5">
-                <span>⚡</span>
-                <span>CallMeBot API Key (100% Free Lifetime Owner Alerts)</span>
-              </label>
-              <input type="text" id="waConfigCallMeBotKey" placeholder="e.g. 1234567" class="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-emerald-700/60 text-xs text-white font-mono focus:border-emerald-400 focus:outline-none" />
-              <p class="text-[11px] text-slate-400 leading-relaxed">
-                Send WhatsApp message: <code class="bg-slate-900 text-emerald-400 px-1 py-0.5 rounded font-mono">I allow callmebot to send me messages</code> from <strong>0740309322</strong> to <a href="https://wa.me/34911065875?text=I%20allow%20callmebot%20to%20send%20me%20messages" target="_blank" rel="noopener noreferrer" class="text-blue-400 underline font-semibold">+34 911 06 58 75</a>. Paste the key received here and Save!
-              </p>
+              <input type="text" id="tgConfigChatId" placeholder="e.g. 123456789" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white font-mono focus:border-sky-500 focus:outline-none" />
+              <p class="text-[11px] text-slate-400 mt-1">Your personal numeric Telegram user ID from <strong class="text-sky-400">@userinfobot</strong>.</p>
             </div>
 
             <div class="flex items-center justify-between p-3.5 rounded-2xl bg-slate-800/80 border border-slate-700">
               <div>
-                <div class="text-xs font-bold text-white">Auto-Send on New Reservation</div>
-                <div class="text-[11px] text-slate-400">Dispatch WhatsApp reply immediately when an order is received</div>
+                <div class="text-xs font-bold text-white">Instant Alert on New Reservation</div>
+                <div class="text-[11px] text-slate-400">Ping store owner with sound notification on Telegram</div>
               </div>
-              <input type="checkbox" id="waConfigEnabled" class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500" checked />
+              <input type="checkbox" id="tgConfigEnabled" class="w-4 h-4 rounded text-sky-600 focus:ring-sky-500" checked />
             </div>
 
-            <div class="flex items-center gap-3 pt-2">
-              <button type="button" onclick="saveWhatsAppGatewaySettings()" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition shadow-xs cursor-pointer">
-                <span>💾 Save &amp; Activate Gateway</span>
+            <div class="flex items-center gap-3 pt-1">
+              <button type="button" onclick="saveTelegramSettings()" class="px-5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold transition shadow-xs cursor-pointer">
+                <span>💾 Save Telegram Settings</span>
               </button>
-              <button type="button" onclick="testWhatsAppGatewayMessage()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition cursor-pointer">
-                <span>🧪 Send Test Message</span>
+              <button type="button" onclick="testTelegramAlert()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-300 text-xs font-bold transition cursor-pointer">
+                <span>🧪 Send Test Alert</span>
               </button>
             </div>
           </div>
 
-          <div class="bg-slate-800/40 p-5 rounded-2xl border border-slate-700 space-y-3.5 text-xs text-slate-300">
-            <div class="font-bold text-white">🚀 3-Minute Quick Setup Guide (Option A)</div>
-            <ol class="space-y-2 list-decimal list-inside text-[11px] leading-relaxed text-slate-400">
-              <li>Create a free account on <a href="https://ultramsg.com" target="_blank" class="text-blue-400 underline">UltraMsg.com</a>.</li>
-              <li>Under Instances, open your instance and <strong>scan the QR code</strong> using WhatsApp on your phone (070 187 5455).</li>
-              <li>Paste your <strong>Instance ID</strong> and <strong>Token</strong> on the left, then click <strong>Save &amp; Activate</strong>.</li>
-              <li>Click <strong>Send Test Message</strong> to confirm messages deliver to WhatsApp!</li>
+          <div class="bg-slate-800/40 p-5 rounded-2xl border border-slate-700 space-y-3 text-xs text-slate-300">
+            <div class="font-bold text-white flex items-center gap-2">
+              <span>🚀</span>
+              <span>1-Minute Telegram Setup Guide</span>
+            </div>
+            <ol class="space-y-2.5 list-decimal list-inside text-[11px] leading-relaxed text-slate-400">
+              <li>Open the <strong class="text-white">Telegram app</strong> on your phone.</li>
+              <li>Search for <strong class="text-sky-400">@BotFather</strong>, send <code class="bg-slate-900 text-sky-300 px-1 py-0.5 rounded font-mono">/newbot</code>, give your bot a name (e.g. <em>DronieX Alerts</em>), and choose a username (e.g. <em>droniex_alert_bot</em>).</li>
+              <li>Copy the <strong class="text-white">HTTP API Token</strong> and paste it into the <strong>Telegram Bot Token</strong> field on the left.</li>
+              <li>Open your newly created bot in Telegram and click <strong class="text-white">Start</strong>.</li>
+              <li>Search for <strong class="text-sky-400">@userinfobot</strong> in Telegram and send any message; it will reply with your numeric <strong class="text-white">Id</strong>. Paste that into <strong>Your Telegram Chat ID</strong>.</li>
+              <li>Click <strong class="text-white">Save</strong> and then <strong class="text-sky-400">Send Test Alert</strong> to see your phone buzz instantly!</li>
             </ol>
+          </div>
+        </div>
+
+        <!-- EMAIL CONFIRMATION SETTINGS (Customer Invoices) -->
+        <div class="pt-6 border-t border-slate-700/80">
+          <div class="flex flex-wrap items-center justify-between gap-4 pb-4">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-emerald-950/80 border border-emerald-800 flex items-center justify-center text-emerald-400 font-bold text-base">
+                ✉️
+              </div>
+              <div>
+                <h3 class="text-base font-bold text-white">Customer Email Confirmation System</h3>
+                <p class="text-[11px] text-slate-400">Automatically send official booking confirmation slips to customer email inboxes.</p>
+              </div>
+            </div>
+            <span id="emailGatewayStatusBadge" class="px-3 py-1 rounded-full text-xs font-bold bg-slate-800 text-slate-400 border border-slate-700">
+              ⚪ Standby
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div class="space-y-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-300 mb-1.5">Store Owner Alert Email</label>
+                <input type="email" id="emailConfigStoreEmail" placeholder="lakditha2008@gmail.com" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white font-mono focus:border-emerald-500 focus:outline-none" />
+                <p class="text-[11px] text-slate-400 mt-1">Order receipt copies will be delivered here.</p>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-300 mb-1.5">Email Service API Key (Brevo / Resend)</label>
+                <input type="password" id="emailConfigApiKey" placeholder="••••••••••••••••" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white font-mono focus:border-emerald-500 focus:outline-none" />
+                <p class="text-[11px] text-slate-400 mt-1">Free API Key from <a href="https://brevo.com" target="_blank" class="text-blue-400 underline">Brevo.com</a> (300 free emails/day) or Resend.</p>
+              </div>
+
+              <div class="flex items-center justify-between p-3.5 rounded-2xl bg-slate-800/80 border border-slate-700">
+                <div>
+                  <div class="text-xs font-bold text-white">Auto-Send Customer Booking Email</div>
+                  <div class="text-[11px] text-slate-400">Dispatch confirmation slip immediately when order is submitted</div>
+                </div>
+                <input type="checkbox" id="emailConfigEnabled" class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500" checked />
+              </div>
+
+              <div class="flex items-center gap-3 pt-1">
+                <button type="button" onclick="saveEmailSettings()" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition shadow-xs cursor-pointer">
+                  <span>💾 Save Email Settings</span>
+                </button>
+                <button type="button" onclick="testEmailNotification()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition cursor-pointer">
+                  <span>🧪 Send Test Email</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="bg-slate-800/40 p-5 rounded-2xl border border-slate-700 space-y-2 text-xs text-slate-300">
+              <div class="font-bold text-white">💡 Free Email Setup (Brevo.com)</div>
+              <p class="text-[11px] text-slate-400 leading-relaxed">
+                You can create a free account on <a href="https://brevo.com" target="_blank" class="text-blue-400 underline font-semibold">Brevo.com</a> (formerly Sendinblue). Generate an API key under <em>SMTP &amp; API</em> and paste it here. It gives <strong>300 free emails per day (9,000/month)</strong> to any customer email address with zero domain verification needed!
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -1165,7 +1215,176 @@
       }
     }
 
+    // =========================================================================
+    // TELEGRAM INSTANT ALERT BOT (100% Free Lifetime for Store Owner)
+    // =========================================================================
+    async function loadTelegramSettings() {
+      try {
+        const res = await fetch(FIREBASE_BASE + '/config/telegram.json');
+        if (!res.ok) return;
+        const cfg = await res.json();
+        if (cfg) {
+          const tokEl = document.getElementById('tgConfigBotToken');
+          const chatEl = document.getElementById('tgConfigChatId');
+          const enEl = document.getElementById('tgConfigEnabled');
+          const badgeEl = document.getElementById('tgGatewayStatusBadge');
+
+          if (tokEl && cfg.botToken) tokEl.value = cfg.botToken;
+          if (chatEl && cfg.chatId) chatEl.value = cfg.chatId;
+          if (enEl && cfg.enabled !== undefined) enEl.checked = Boolean(cfg.enabled);
+
+          if (badgeEl) {
+            if (cfg.botToken && cfg.chatId && cfg.enabled !== false) {
+              badgeEl.className = 'px-3 py-1 rounded-full text-xs font-bold bg-sky-950 border border-sky-800 text-sky-300';
+              badgeEl.textContent = '🟢 Telegram Bot Active';
+            } else if (cfg.enabled === false) {
+              badgeEl.className = 'px-3 py-1 rounded-full text-xs font-bold bg-amber-950 border border-amber-800 text-amber-300';
+              badgeEl.textContent = '🟡 Alerts Paused';
+            } else {
+              badgeEl.className = 'px-3 py-1 rounded-full text-xs font-bold bg-slate-800 text-slate-400 border border-slate-700';
+              badgeEl.textContent = '⚪ Standby (Enter Bot Token & Chat ID)';
+            }
+          }
+        }
+      } catch (e) {}
+    }
+
+    async function saveTelegramSettings() {
+      const tokEl = document.getElementById('tgConfigBotToken');
+      const chatEl = document.getElementById('tgConfigChatId');
+      const enEl = document.getElementById('tgConfigEnabled');
+      const badgeEl = document.getElementById('tgGatewayStatusBadge');
+
+      const botToken = (tokEl ? tokEl.value : '').trim();
+      const chatId = (chatEl ? chatEl.value : '').trim();
+      const enabled = enEl ? enEl.checked : true;
+
+      try {
+        await fetch(FIREBASE_BASE + '/config/telegram.json', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ botToken, chatId, enabled, updatedAt: new Date().toISOString() })
+        });
+
+        if (badgeEl) {
+          if (botToken && chatId && enabled) {
+            badgeEl.className = 'px-3 py-1 rounded-full text-xs font-bold bg-sky-950 border border-sky-800 text-sky-300';
+            badgeEl.textContent = '🟢 Telegram Bot Active';
+          } else {
+            badgeEl.className = 'px-3 py-1 rounded-full text-xs font-bold bg-slate-800 text-slate-400 border border-slate-700';
+            badgeEl.textContent = '⚪ Standby (Enter Bot Token & Chat ID)';
+          }
+        }
+        showToast('✓ Telegram Alert Bot Settings Saved to Firebase!');
+      } catch (e) {
+        showToast('Error saving settings to cloud');
+      }
+    }
+
+    async function testTelegramAlert() {
+      showToast('Dispatching test Telegram alert...');
+      try {
+        const res = await fetch('/api/send-whatsapp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ testTelegram: true })
+        });
+        const data = await res.json();
+        if (data && data.telegramSent) {
+          showToast('✓ Test alert received in your Telegram! Check your phone.');
+        } else {
+          alert('Telegram Alert Error: ' + (data.telegramError || 'Failed to dispatch alert. Make sure you entered Bot Token, Chat ID, and clicked START in your bot!'));
+        }
+      } catch (e) {
+        alert('Test failed: ' + e.message);
+      }
+    }
+
+    // =========================================================================
+    // CUSTOMER EMAIL CONFIRMATION SYSTEM
+    // =========================================================================
+    async function loadEmailSettings() {
+      try {
+        const res = await fetch(FIREBASE_BASE + '/config/email.json');
+        if (!res.ok) return;
+        const cfg = await res.json();
+        if (cfg) {
+          const storeEmailEl = document.getElementById('emailConfigStoreEmail');
+          const apiKeyEl = document.getElementById('emailConfigApiKey');
+          const enEl = document.getElementById('emailConfigEnabled');
+          const badgeEl = document.getElementById('emailGatewayStatusBadge');
+
+          if (storeEmailEl && cfg.storeEmail) storeEmailEl.value = cfg.storeEmail;
+          if (apiKeyEl && cfg.apiKey) apiKeyEl.value = cfg.apiKey;
+          if (enEl && cfg.enabled !== undefined) enEl.checked = Boolean(cfg.enabled);
+
+          if (badgeEl) {
+            if (cfg.apiKey && cfg.enabled !== false) {
+              badgeEl.className = 'px-3 py-1 rounded-full text-xs font-bold bg-emerald-950 border border-emerald-800 text-emerald-300';
+              badgeEl.textContent = '🟢 Email Active';
+            } else {
+              badgeEl.className = 'px-3 py-1 rounded-full text-xs font-bold bg-slate-800 text-slate-400 border border-slate-700';
+              badgeEl.textContent = '⚪ Standby';
+            }
+          }
+        }
+      } catch (e) {}
+    }
+
+    async function saveEmailSettings() {
+      const storeEmailEl = document.getElementById('emailConfigStoreEmail');
+      const apiKeyEl = document.getElementById('emailConfigApiKey');
+      const enEl = document.getElementById('emailConfigEnabled');
+      const badgeEl = document.getElementById('emailGatewayStatusBadge');
+
+      const storeEmail = (storeEmailEl ? storeEmailEl.value : '').trim() || 'lakditha2008@gmail.com';
+      const apiKey = (apiKeyEl ? apiKeyEl.value : '').trim();
+      const enabled = enEl ? enEl.checked : true;
+
+      try {
+        await fetch(FIREBASE_BASE + '/config/email.json', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ storeEmail, apiKey, enabled, updatedAt: new Date().toISOString() })
+        });
+
+        if (badgeEl) {
+          if (apiKey && enabled) {
+            badgeEl.className = 'px-3 py-1 rounded-full text-xs font-bold bg-emerald-950 border border-emerald-800 text-emerald-300';
+            badgeEl.textContent = '🟢 Email Active';
+          } else {
+            badgeEl.className = 'px-3 py-1 rounded-full text-xs font-bold bg-slate-800 text-slate-400 border border-slate-700';
+            badgeEl.textContent = '⚪ Standby';
+          }
+        }
+        showToast('✓ Email Settings Saved to Firebase!');
+      } catch (e) {
+        showToast('Error saving settings to cloud');
+      }
+    }
+
+    async function testEmailNotification() {
+      showToast('Dispatching test email...');
+      try {
+        const res = await fetch('/api/send-whatsapp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ testEmail: true })
+        });
+        const data = await res.json();
+        if (data && data.emailSent) {
+          showToast('✓ Test email dispatched successfully! Check your inbox.');
+        } else {
+          alert('Email Error: ' + (data.emailError || 'Failed to dispatch email. Please check your API key.'));
+        }
+      } catch (e) {
+        alert('Test failed: ' + e.message);
+      }
+    }
+
     function renderDashboard() {
+      loadTelegramSettings();
+      loadEmailSettings();
       loadWhatsAppGatewaySettings();
       updateKpis();
       renderGearStatusGrid();
