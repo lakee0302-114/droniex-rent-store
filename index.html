@@ -4229,14 +4229,9 @@
         const statusBox = document.getElementById('orderSuccessAutoWaStatus');
         if (result && result.success) {
           if (statusBox) {
-            let statusMsg = '✓ Reservation logged &amp; confirmed!';
-            if (result.emailSent && result.telegramSent) {
-              statusMsg = '✓ Confirmation sent to your Email &amp; Store Owner alerted via Telegram!';
-            } else if (result.telegramSent) {
-              statusMsg = '✓ Store Owner alerted via Telegram &amp; Gear Reserved!';
-            } else if (result.emailSent) {
-              statusMsg = `✓ Confirmation invoice sent to your email (${booking.email || 'Customer'})!`;
-            }
+            const statusMsg = result.ultraSent
+              ? `✓ Official confirmation auto-sent to your WhatsApp (+${result.targetPhone || lkPhone})!`
+              : `✓ Reservation logged online &amp; Store Owner alerted!`;
             statusBox.innerHTML = `
               <div class="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-semibold flex items-center gap-2">
                 <span>✓</span>
@@ -4244,13 +4239,13 @@
               </div>
             `;
           }
-          showToast('✓ Reservation submitted &amp; owner alerted!');
+          showToast('✓ WhatsApp confirmation sent successfully!');
         } else {
           if (statusBox) {
             statusBox.innerHTML = `
               <div class="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-[11px] flex items-center gap-1.5">
                 <span>💬</span>
-                <span>Reservation received! You can contact store WhatsApp below if needed.</span>
+                <span>Reservation received! Tap below to forward booking copy to Store WhatsApp (070 187 5455).</span>
               </div>
             `;
           }
