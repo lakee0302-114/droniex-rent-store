@@ -795,6 +795,11 @@
           </div>
         </div>
 
+        <!-- Live Equipment Availability & Booked Dates Alert Container -->
+        <div id="itemBookedDatesNotice" class="transition-all duration-200">
+          <!-- Populated dynamically by updateEquipmentAvailabilityNotice() -->
+        </div>
+
         <!-- Reservation Form -->
         <form id="kycForm" onsubmit="saveVerification(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
@@ -912,11 +917,16 @@
             </label>
           </div>
 
+          <!-- Date Conflict Warning Alert Container -->
+          <div id="kycDateConflictAlert" class="sm:col-span-2 hidden transition-all duration-200">
+            <!-- Populated dynamically by updateEquipmentAvailabilityNotice() -->
+          </div>
+
           <div class="sm:col-span-2 flex flex-wrap items-center justify-end gap-3 pt-2">
             <button type="button" onclick="resetVerification()" class="px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold border border-slate-200 dark:border-slate-700 transition cursor-pointer">
               Clear Form
             </button>
-            <button type="submit" class="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm transition cursor-pointer">
+            <button type="submit" id="kycSubmitBtn" class="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm transition cursor-pointer">
               Confirm Reservation →
             </button>
           </div>
@@ -1524,6 +1534,19 @@
       <!-- Days Grid -->
       <div id="calendarDaysGrid" class="grid grid-cols-7 gap-1.5 text-center text-xs">
         <!-- Populated dynamically by renderCalendarGrid() -->
+      </div>
+
+      <!-- Calendar Availability Legend -->
+      <div class="flex items-center justify-center gap-3.5 text-[10px] font-bold py-1.5 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700">
+        <span class="inline-flex items-center gap-1.5 text-slate-600 dark:text-slate-300">
+          <span class="w-2.5 h-2.5 rounded-sm bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600"></span> Available
+        </span>
+        <span class="inline-flex items-center gap-1.5 text-blue-600 dark:text-blue-400">
+          <span class="w-2.5 h-2.5 rounded-sm bg-blue-600"></span> Selected
+        </span>
+        <span class="inline-flex items-center gap-1.5 text-rose-600 dark:text-rose-400">
+          <span class="w-2.5 h-2.5 rounded-sm bg-rose-500"></span> Booked
+        </span>
       </div>
 
       <!-- Quick Package Duration Helper -->
@@ -2701,6 +2724,7 @@
       if (viewName === 'verify') {
         populateReservationItemSelect();
         handleReservationItemChange(appState.selectedContractItemId);
+        if (typeof syncAdminOrdersFromFirebase === 'function') syncAdminOrdersFromFirebase();
       } else if (viewName === 'admin') {
         renderAdminOrdersTable();
         renderAdminRateTable();
@@ -3339,6 +3363,123 @@
     }
 
     // =========================================================================
+    // REAL-TIME EQUIPMENT AVAILABILITY & BOOKING CONFLICT DETECTION
+    // =========================================================================
+    function getActiveBookingsForItem(itemId) {
+      if (!itemId) return [];
+      const allBookings = Array.isArray(appState.bookings) ? appState.bookings : [];
+      return allBookings.filter(b => {
+        if (!b || !b.pickupDate || !b.returnDate) return false;
+        const isMatchingItem = (b.itemId && b.itemId === itemId) || (typeof findItemForBooking === 'function' && findItemForBooking(b) && findItemForBooking(b).id === itemId);
+        if (!isMatchingItem) return false;
+        const st = (b.bookingState || b.status || '').toLowerCase();
+        if (st.includes('cancel') || st.includes('return') || st === 'completed') return false;
+        return true;
+      }).sort((a, b) => a.pickupDate.localeCompare(b.pickupDate));
+    }
+
+    function checkReservationDateConflict(itemId, pickDate, retDate) {
+      if (!itemId || !pickDate || !retDate) return null;
+      const activeBookings = getActiveBookingsForItem(itemId);
+      for (const b of activeBookings) {
+        // Full-day overlap check: pickDate <= b.returnDate AND retDate >= b.pickupDate
+        if (pickDate <= b.returnDate && retDate >= b.pickupDate) {
+          return b;
+        }
+      }
+      return null;
+    }
+
+    function handleBookedCalendarDateClick(dateStr) {
+      showToast(`⚠️ ${dateStr} is already reserved by another customer for this equipment! Please choose an available date.`);
+    }
+
+    function updateEquipmentAvailabilityNotice() {
+      const container = document.getElementById('itemBookedDatesNotice');
+      const alertContainer = document.getElementById('kycDateConflictAlert');
+      const submitBtn = document.getElementById('kycSubmitBtn');
+      const targetItemId = appState.selectedContractItemId || (appState.items && appState.items[0] ? appState.items[0].id : '');
+      const targetItem = appState.items.find(i => i.id === targetItemId) || appState.items[0];
+      if (!targetItem) return;
+
+      const activeBookings = getActiveBookingsForItem(targetItem.id);
+
+      if (container) {
+        if (activeBookings.length === 0) {
+          container.innerHTML = `
+            <div class="rounded-2xl bg-emerald-50/90 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/80 p-3.5 flex flex-wrap items-center justify-between gap-2 text-xs">
+              <div class="flex items-center gap-2 text-emerald-800 dark:text-emerald-300 font-bold">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>Available for Booking: All upcoming dates are open for ${targetItem.title}.</span>
+              </div>
+              <span class="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/60 px-2.5 py-0.5 rounded-full">Available</span>
+            </div>
+          `;
+        } else {
+          container.innerHTML = `
+            <div class="rounded-2xl bg-amber-50/90 dark:bg-amber-950/50 border border-amber-300 dark:border-amber-700 p-4 space-y-2.5 text-xs shadow-xs">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2 text-amber-900 dark:text-amber-200 font-extrabold text-xs uppercase tracking-wider">
+                  <span class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-ping"></span>
+                  <span>Reserved Dates Notice (වෙන්කර ඇති දින)</span>
+                </div>
+                <span class="text-[11px] font-bold text-amber-900 dark:text-amber-300 bg-amber-200/80 dark:bg-amber-900/80 px-2.5 py-0.5 rounded-full">
+                  ${activeBookings.length} Active Booking${activeBookings.length > 1 ? 's' : ''}
+                </span>
+              </div>
+              <p class="text-slate-600 dark:text-slate-300 text-xs">
+                Another customer has booked <strong>${targetItem.title}</strong> for the dates below. Please choose dates <strong>outside</strong> these booked dates:
+              </p>
+              <div class="flex flex-wrap gap-2 pt-1">
+                ${activeBookings.map(b => `
+                  <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-rose-300 dark:border-rose-800 text-rose-700 dark:text-rose-400 font-black text-xs shadow-xs">
+                    <svg class="w-3.5 h-3.5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    <span>🔒 ${b.pickupDate} to ${b.returnDate}</span>
+                    <span class="text-[10px] text-slate-500 dark:text-slate-400 font-semibold">(${b.rentalDays || '—'} Days)</span>
+                  </span>
+                `).join('')}
+              </div>
+            </div>
+          `;
+        }
+      }
+
+      // Conflict detection for currently selected pickup/return dates
+      const pickVal = document.getElementById('kycPickupDate')?.value || appState.pickupDate;
+      const retVal = document.getElementById('kycReturnDate')?.value || appState.returnDate;
+      const conflict = checkReservationDateConflict(targetItem.id, pickVal, retVal);
+
+      if (alertContainer) {
+        if (conflict) {
+          alertContainer.classList.remove('hidden');
+          alertContainer.innerHTML = `
+            <div class="rounded-2xl bg-rose-50 dark:bg-rose-950/70 border-2 border-rose-400 dark:border-rose-700 p-4 space-y-2 text-rose-900 dark:text-rose-200">
+              <div class="flex items-center gap-2 font-black text-sm">
+                <span>⚠️</span>
+                <span>Date Conflict! Equipment Already Reserved</span>
+              </div>
+              <p class="text-xs text-rose-800 dark:text-rose-300">
+                <strong>${targetItem.title}</strong> is already booked by another customer from <span class="font-extrabold underline decoration-rose-500">${conflict.pickupDate} to ${conflict.returnDate}</span>.
+                Please choose different dates before or after this reservation to proceed.
+              </p>
+            </div>
+          `;
+          if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+          }
+        } else {
+          alertContainer.classList.add('hidden');
+          alertContainer.innerHTML = '';
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+          }
+        }
+      }
+    }
+
+    // =========================================================================
     // INTERACTIVE POP-UP CALENDAR PICKER
     // =========================================================================
     let activeCalendarInputId = null;
@@ -3398,6 +3539,9 @@
       const firstDay = new Date(calendarViewYear, calendarViewMonth, 1).getDay();
       const daysInMonth = new Date(calendarViewYear, calendarViewMonth + 1, 0).getDate();
 
+      const targetItemId = appState.selectedContractItemId || (appState.items && appState.items[0] ? appState.items[0].id : '');
+      const activeBookings = getActiveBookingsForItem(targetItemId);
+
       let html = '';
       for (let i = 0; i < firstDay; i++) {
         html += `<div></div>`;
@@ -3411,19 +3555,31 @@
         const isSelected = dateStr === selectedDateStr;
         const isPickup = dateStr === appState.pickupDate;
         const isReturn = dateStr === appState.returnDate;
+        const isBooked = activeBookings.some(b => dateStr >= b.pickupDate && dateStr <= b.returnDate);
 
-        html += `
-          <button type="button" onclick="selectCalendarDate('${dateStr}')"
-            class="py-2 rounded-xl font-bold transition ${
-              isSelected
-                ? 'bg-blue-600 text-white shadow-xs font-black'
-                : (isPickup || isReturn)
-                  ? 'bg-blue-50 border border-blue-300 text-blue-700 font-bold'
-                  : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border border-slate-200'
-            }">
-            ${d}
-          </button>
-        `;
+        if (isBooked) {
+          html += `
+            <button type="button" onclick="handleBookedCalendarDateClick('${dateStr}')"
+              title="Reserved by another customer (${dateStr})"
+              class="py-1.5 px-0.5 rounded-xl font-bold transition bg-rose-50 dark:bg-rose-950/60 border border-rose-300 dark:border-rose-800 text-rose-700 dark:text-rose-400 cursor-not-allowed flex flex-col items-center justify-center">
+              <span class="line-through decoration-rose-500 text-xs">${d}</span>
+              <span class="text-[8px] font-black text-rose-600 dark:text-rose-400 uppercase tracking-tighter leading-none mt-0.5">Booked</span>
+            </button>
+          `;
+        } else {
+          html += `
+            <button type="button" onclick="selectCalendarDate('${dateStr}')"
+              class="py-2 rounded-xl font-bold transition ${
+                isSelected
+                  ? 'bg-blue-600 text-white shadow-xs font-black'
+                  : (isPickup || isReturn)
+                    ? 'bg-blue-50 border border-blue-300 text-blue-700 font-bold'
+                    : 'bg-slate-50 hover:bg-slate-100 text-slate-800 dark:text-slate-200 dark:bg-slate-800 border border-slate-200 dark:border-slate-700'
+              }">
+              ${d}
+            </button>
+          `;
+        }
       }
       gridEl.innerHTML = html;
     }
@@ -3613,6 +3769,9 @@
         if (totEl) totEl.textContent = formatMoney(total);
         if (subEl) subEl.textContent = `${packName} (${days} Day${days > 1 ? 's' : ''})`;
       }
+
+      // Update booked dates notice and conflict alert for selected item
+      updateEquipmentAvailabilityNotice();
     }
 
     function syncDatesFromReservationForm() {
@@ -3640,6 +3799,7 @@
       }
       updateRentalSchedule();
       handleReservationItemChange(appState.selectedContractItemId);
+      updateEquipmentAvailabilityNotice();
     }
 
     function syncWhatsAppPhone() {
@@ -3672,6 +3832,17 @@
       e.preventDefault();
       syncDatesFromReservationForm();
       const item = appState.items.find(i => i.id === appState.selectedContractItemId) || appState.items[0];
+
+      // Double-check date conflict before confirming reservation
+      const conflict = checkReservationDateConflict(item.id, appState.pickupDate, appState.returnDate);
+      if (conflict) {
+        showToast(`⚠️ Cannot reserve: ${item.title} is already booked from ${conflict.pickupDate} to ${conflict.returnDate}! Please pick other dates.`);
+        updateEquipmentAvailabilityNotice();
+        const alertEl = document.getElementById('kycDateConflictAlert');
+        if (alertEl) alertEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
       const payMethod = document.getElementById('kycPaymentMethod')?.value || 'Pay on Store';
       const checkoutPayEl = document.getElementById('checkoutPaymentMethod');
       if (checkoutPayEl) checkoutPayEl.value = payMethod;
