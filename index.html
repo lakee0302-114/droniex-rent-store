@@ -4227,20 +4227,23 @@
         const statusBox = document.getElementById('orderSuccessAutoWaStatus');
         if (result && result.success) {
           if (statusBox) {
+            const statusMsg = result.ultraSent
+              ? `Official confirmation &amp; Tracking ID auto-sent to your WhatsApp (+${result.targetPhone || lkPhone})!`
+              : `✓ Booking logged &amp; Store Owner alerted via WhatsApp!`;
             statusBox.innerHTML = `
               <div class="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-semibold flex items-center gap-2">
                 <span>✓</span>
-                <span>Official confirmation &amp; Tracking ID auto-sent to your WhatsApp (+${result.targetPhone || lkPhone})!</span>
+                <span>${statusMsg}</span>
               </div>
             `;
           }
-          showToast('✓ Auto-sent WhatsApp confirmation to ' + (booking.customerName || 'Customer') + ' (+' + (result.targetPhone || lkPhone) + ')!');
+          showToast('✓ WhatsApp confirmation processed successfully!');
         } else {
           if (statusBox) {
             statusBox.innerHTML = `
-              <div class="p-2 rounded-xl bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 text-[11px] flex items-center gap-1.5">
-                <span>ℹ️</span>
-                <span>Click the button below to receive/save details on WhatsApp.</span>
+              <div class="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-[11px] flex items-center gap-1.5">
+                <span>💬</span>
+                <span>Click the button below to forward your booking details to Store WhatsApp.</span>
               </div>
             `;
           }
@@ -4429,9 +4432,14 @@
             </div>
           </div>
         </div>
-
-        
       `;
+
+      // Pre-fill 1-Click WhatsApp Action Button (Option 2)
+      const waActionBtn = document.getElementById('successWhatsAppActionBtn');
+      if (waActionBtn) {
+        const msg = buildCustomerThankYouMessage(booking);
+        waActionBtn.href = 'https://wa.me/94701875455?text=' + encodeURIComponent(msg);
+      }
 
       modal.classList.remove('hidden');
       modal.classList.add('flex');
@@ -5320,6 +5328,15 @@
       <div id="orderSuccessCardDetails" class="bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 rounded-2xl p-4 text-xs space-y-2.5">
         <!-- Populated dynamically by openOrderSuccessModal() -->
       </div>
+
+      <!-- Real-time WhatsApp Notification Status Box -->
+      <div id="orderSuccessAutoWaStatus"></div>
+
+      <!-- 1-Click Direct WhatsApp Confirmation (Option 2: 100% Free Lifetime) -->
+      <a id="successWhatsAppActionBtn" href="https://wa.me/94701875455" target="_blank" rel="noopener noreferrer" class="w-full py-3.5 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer text-center">
+        <span class="text-base">💬</span>
+        <span>Send Booking Confirmation to Store WhatsApp (070 187 5455) →</span>
+      </a>
 
       <div class="space-y-2">
         <button type="button" onclick="printOrderSlipFromSuccess()" class="w-full py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">

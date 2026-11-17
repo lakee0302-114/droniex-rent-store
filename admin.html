@@ -360,6 +360,17 @@
               <p class="text-[11px] text-slate-400 mt-1">Customer order alerts will be sent to this WhatsApp number (Default: 0740309322).</p>
             </div>
 
+            <div class="p-3.5 rounded-2xl bg-emerald-950/30 border border-emerald-800/60 space-y-2">
+              <label class="block text-xs font-bold text-emerald-400 mb-1 flex items-center gap-1.5">
+                <span>⚡</span>
+                <span>CallMeBot API Key (100% Free Lifetime Owner Alerts)</span>
+              </label>
+              <input type="text" id="waConfigCallMeBotKey" placeholder="e.g. 1234567" class="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-emerald-700/60 text-xs text-white font-mono focus:border-emerald-400 focus:outline-none" />
+              <p class="text-[11px] text-slate-400 leading-relaxed">
+                Send WhatsApp message: <code class="bg-slate-900 text-emerald-400 px-1 py-0.5 rounded font-mono">I allow callmebot to send me messages</code> from <strong>0740309322</strong> to <a href="https://wa.me/34911065875?text=I%20allow%20callmebot%20to%20send%20me%20messages" target="_blank" rel="noopener noreferrer" class="text-blue-400 underline font-semibold">+34 911 06 58 75</a>. Paste the key received here and Save!
+              </p>
+            </div>
+
             <div class="flex items-center justify-between p-3.5 rounded-2xl bg-slate-800/80 border border-slate-700">
               <div>
                 <div class="text-xs font-bold text-white">Auto-Send on New Reservation</div>
@@ -1065,11 +1076,16 @@
           if (enEl && cfg.enabled !== undefined) enEl.checked = Boolean(cfg.enabled);
           const alertPhoneEl = document.getElementById('waConfigAlertPhone');
           if (alertPhoneEl) alertPhoneEl.value = cfg.adminAlertPhone || '0740309322';
+          const cmbKeyEl = document.getElementById('waConfigCallMeBotKey');
+          if (cmbKeyEl && cfg.callmebotKey) cmbKeyEl.value = cfg.callmebotKey;
 
           if (badgeEl) {
             if (cfg.instanceId && cfg.token && cfg.enabled !== false) {
               badgeEl.className = 'px-3 py-1 rounded-full text-xs font-bold bg-emerald-950 border border-emerald-800 text-emerald-300';
               badgeEl.textContent = '🟢 Gateway Active (' + cfg.instanceId + ')';
+            } else if (cfg.callmebotKey) {
+              badgeEl.className = 'px-3 py-1 rounded-full text-xs font-bold bg-emerald-950 border border-emerald-800 text-emerald-300';
+              badgeEl.textContent = '🟢 CallMeBot Active (Free Lifetime)';
             } else if (cfg.enabled === false) {
               badgeEl.className = 'px-3 py-1 rounded-full text-xs font-bold bg-amber-950 border border-amber-800 text-amber-300';
               badgeEl.textContent = '🟡 Gateway Paused (Disabled)';
@@ -1090,18 +1106,23 @@
       const enabled = enEl ? enEl.checked : true;
       const alertPhoneEl = document.getElementById('waConfigAlertPhone');
       const adminAlertPhone = (alertPhoneEl ? alertPhoneEl.value : '').trim() || '0740309322';
+      const cmbKeyEl = document.getElementById('waConfigCallMeBotKey');
+      const callmebotKey = (cmbKeyEl ? cmbKeyEl.value : '').trim();
 
       try {
         await fetch(FIREBASE_BASE + '/config/whatsapp.json', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ instanceId, token, enabled, adminAlertPhone, updatedAt: new Date().toISOString() })
+          body: JSON.stringify({ instanceId, token, callmebotKey, enabled, adminAlertPhone, updatedAt: new Date().toISOString() })
         });
 
         if (badgeEl) {
           if (instanceId && token && enabled) {
             badgeEl.className = 'px-3 py-1 rounded-full text-xs font-bold bg-emerald-950 border border-emerald-800 text-emerald-300';
             badgeEl.textContent = '🟢 Gateway Active (' + instanceId + ')';
+          } else if (callmebotKey) {
+            badgeEl.className = 'px-3 py-1 rounded-full text-xs font-bold bg-emerald-950 border border-emerald-800 text-emerald-300';
+            badgeEl.textContent = '🟢 CallMeBot Active (Free Lifetime)';
           } else {
             badgeEl.className = 'px-3 py-1 rounded-full text-xs font-bold bg-slate-800 text-slate-400 border border-slate-700';
             badgeEl.textContent = '⚪ Standby (Enter API Credentials)';
@@ -1131,7 +1152,11 @@
         });
         const data = await res.json();
         if (data && data.success) {
-          showToast('✓ Test WhatsApp message delivered successfully to ' + data.targetPhone + '!');
+          if (data.callmebotSent) {
+            showToast('✓ Test WhatsApp alert delivered to Store Owner via CallMeBot (+' + (data.adminPhone || '94740309322') + ')!');
+          } else {
+            showToast('✓ Test WhatsApp message delivered successfully to ' + data.targetPhone + '!');
+          }
         } else {
           alert('Gateway Response: ' + (data.message || JSON.stringify(data.details || data.reason)));
         }
