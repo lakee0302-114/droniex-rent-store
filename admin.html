@@ -393,6 +393,80 @@
           </div>
         </div>
       </section>
+
+      <!-- SECTION: CUSTOMER & STORE EMAIL CONFIRMATION SYSTEM (BREVO) -->
+      <section class="bg-slate-800/80 border border-slate-700/80 rounded-3xl p-6 sm:p-7 space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-700/80 pb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-sky-950/80 border border-sky-800 flex items-center justify-center text-sky-400 font-bold text-lg">
+              ✉️
+            </div>
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-sky-400">Free Email Engine (Brevo)</span>
+              <h2 class="text-xl font-black text-white mt-0.5">Customer &amp; Owner Email Confirmation System</h2>
+              <p class="text-xs text-slate-400 mt-1">
+                Send professional 4K equipment booking receipts to customer emails and receive store alert copies. 300 free emails per day with Brevo.
+              </p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="emailGatewayStatusBadge" class="px-3 py-1 rounded-full text-xs font-bold bg-slate-800 text-slate-400 border border-slate-700">
+              ⚪ Standby (Enter Brevo API Key)
+            </span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div class="space-y-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1.5 flex items-center gap-1.5">
+                <span>🔑</span>
+                <span>Brevo API Key</span>
+              </label>
+              <input type="password" id="emailConfigApiKey" placeholder="xkeysib-..." class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white font-mono focus:border-sky-500 focus:outline-none" />
+              <p class="text-[11px] text-slate-400 mt-1">Found in your Brevo dashboard under <strong class="text-sky-400">SMTP &amp; API</strong>.</p>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1.5 flex items-center gap-1.5">
+                <span>📧</span>
+                <span>Store Notification &amp; Sender Email</span>
+              </label>
+              <input type="email" id="emailConfigStoreEmail" placeholder="lakditha2008@gmail.com" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white font-mono focus:border-sky-500 focus:outline-none" />
+              <p class="text-[11px] text-slate-400 mt-1">Must match your registered Brevo account email (<strong class="text-white">lakditha2008@gmail.com</strong>).</p>
+            </div>
+
+            <div class="flex items-center justify-between p-3.5 rounded-2xl bg-slate-800/80 border border-slate-700">
+              <div>
+                <div class="text-xs font-bold text-white">Auto-Send Email on New Reservation</div>
+                <div class="text-[11px] text-slate-400">Dispatch confirmation slip to Customer &amp; copy to Owner</div>
+              </div>
+              <input type="checkbox" id="emailConfigEnabled" class="w-4 h-4 rounded text-sky-600 focus:ring-sky-500" checked />
+            </div>
+
+            <div class="flex items-center gap-3 pt-2">
+              <button type="button" onclick="saveEmailSettings()" class="px-5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold transition shadow-xs cursor-pointer">
+                <span>💾 Save Email Settings</span>
+              </button>
+              <button type="button" onclick="testEmailNotification()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-300 text-xs font-bold transition cursor-pointer">
+                <span>🧪 Send Test Email</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="bg-slate-800/40 p-5 rounded-2xl border border-slate-700 space-y-3 text-xs text-slate-300">
+            <div class="font-bold text-white flex items-center gap-2">
+              <span>🚀</span>
+              <span>1-Minute Brevo API Key Guide</span>
+            </div>
+            <ol class="space-y-2.5 list-decimal list-inside text-[11px] leading-relaxed text-slate-400">
+              <li>In your Brevo tab, go directly to: <a href="https://app.brevo.com/settings/keys/api" target="_blank" class="text-sky-400 underline font-semibold">app.brevo.com/settings/keys/api</a>.</li>
+              <li>Click the blue/green button: <strong class="text-white">"Generate a new API key"</strong>.</li>
+              <li>Type name: <code class="bg-slate-900 text-sky-300 px-1 py-0.5 rounded font-mono">DronieX Store</code> and click <strong class="text-white">Generate</strong>.</li>
+              <li>Copy the generated key (starts with <code class="text-sky-300 font-mono">xkeysib-...</code>) and paste it into the <strong>Brevo API Key</strong> field on the left.</li>
+              <li>Click <strong class="text-white">Save Email Settings</strong>, then click <strong class="text-sky-400">Send Test Email</strong> to receive your test invoice!</li>
+            </ol>
+          </div>
         </div>
       </section>
 
