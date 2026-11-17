@@ -2438,6 +2438,15 @@
         renderAdminOrdersTable();
         renderAdminRateTable();
         renderAdminBookingCalendar();
+        if (typeof updateEquipmentAvailabilityNotice === 'function') {
+          updateEquipmentAvailabilityNotice();
+        }
+        if (typeof renderCalendarGrid === 'function') {
+          const calModal = document.getElementById('calendarPopupModal');
+          if (calModal && calModal.classList.contains('flex')) {
+            renderCalendarGrid();
+          }
+        }
         if (invLockChanged) {
           renderCatalog();
           firebaseSyncInventoryToCloud();
