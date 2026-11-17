@@ -4244,8 +4244,8 @@
           if (statusBox) {
             statusBox.innerHTML = `
               <div class="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-[11px] flex items-center gap-1.5">
-                <span>💬</span>
-                <span>Reservation received! Tap below to forward booking copy to Store WhatsApp (070 187 5455).</span>
+                <span>✓</span>
+                <span>Reservation logged in store database! Present your Tracking ID upon pickup at our Galle store.</span>
               </div>
             `;
           }
@@ -4435,13 +4435,6 @@
           </div>
         </div>
       `;
-
-      // Pre-fill 1-Click WhatsApp Action Button (Option 2)
-      const waActionBtn = document.getElementById('successWhatsAppActionBtn');
-      if (waActionBtn) {
-        const msg = buildCustomerThankYouMessage(booking);
-        waActionBtn.href = 'https://wa.me/94701875455?text=' + encodeURIComponent(msg);
-      }
 
       modal.classList.remove('hidden');
       modal.classList.add('flex');
@@ -5331,14 +5324,8 @@
         <!-- Populated dynamically by openOrderSuccessModal() -->
       </div>
 
-      <!-- Real-time WhatsApp Notification Status Box -->
+      <!-- Real-time Order Notification Status Box -->
       <div id="orderSuccessAutoWaStatus"></div>
-
-      <!-- 1-Click Direct WhatsApp Confirmation (Option 2: 100% Free Lifetime) -->
-      <a id="successWhatsAppActionBtn" href="https://wa.me/94701875455" target="_blank" rel="noopener noreferrer" class="w-full py-3.5 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer text-center">
-        <span class="text-base">💬</span>
-        <span>Send Booking Confirmation to Store WhatsApp (070 187 5455) →</span>
-      </a>
 
       <div class="space-y-2">
         <button type="button" onclick="printOrderSlipFromSuccess()" class="w-full py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
