@@ -89,8 +89,15 @@ module.exports = async (req, res) => {
         `💬 *WhatsApp Number:* +${targetPhone}\n`;
     }
 
+    const isSound = (gear || '').toLowerCase().includes('jbl') ||
+                    (gear || '').toLowerCase().includes('sound') ||
+                    (gear || '').toLowerCase().includes('partybox') ||
+                    (gear || '').toLowerCase().includes('mic');
+
+    const alertIcon = isSound ? '🔊 🎵' : '🚁';
+
     const adminBody =
-      `🚨 *NEW ONLINE RESERVATION RECEIVED!* 🚁\n` +
+      `🚨 *NEW ONLINE RESERVATION RECEIVED!* ${alertIcon}\n` +
       `━━━━━━━━━━━━━━━━━━━━━\n` +
       `📋 *Order ID:* ${orderId || 'New'}\n` +
       `👤 *Customer:* ${customerName || 'Customer'}\n` +
@@ -114,7 +121,9 @@ module.exports = async (req, res) => {
 
     if (ntfyTopic && (ntfyEnabled || testNtfy)) {
       try {
-        const ntfyTitle = testNtfy ? 'DronieX Silent Phone Alert Test' : `New Order: ${orderId || 'Reservation'}`;
+        const ntfyTitle = testNtfy
+          ? 'DronieX Silent Phone Alert Test'
+          : (isSound ? `New Sound Order: ${orderId || 'Reservation'}` : `New Order: ${orderId || 'Reservation'}`);
         const cPhone = customerPhone || phone || '—';
         const ntfyBody = testNtfy
           ? 'Helo Lakditha! Your silent phone notification system is 100% connected to DronieX Store. You will receive lock-screen alerts for every booking.'
@@ -125,7 +134,7 @@ module.exports = async (req, res) => {
           headers: {
             'Title': ntfyTitle,
             'Priority': ntfyPriority,
-            'Tags': 'bell_slash,package',
+            'Tags': isSound ? 'bell_slash,loudspeaker' : 'bell_slash,package',
             'Click': 'https://droniex-rent-store.vercel.app/admin.html'
           },
           body: ntfyBody
