@@ -259,12 +259,18 @@
         <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1">Pickup Date</label>
-            <input type="date" id="soundPickupDate" onchange="calculateSoundDuration()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-orange-500 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white font-bold focus:border-orange-600 focus:outline-none transition" />
+            <div class="relative cursor-pointer" onclick="openCalendarPopup('soundPickupDate', 'Select Pickup Date')">
+              <input type="date" id="soundPickupDate" readonly onchange="calculateSoundDuration()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-orange-500 rounded-xl pl-3 pr-10 py-2 text-xs text-slate-900 dark:text-white font-bold cursor-pointer focus:border-orange-600 focus:outline-none transition" />
+              <span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">📅</span>
+            </div>
           </div>
 
           <div>
             <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1">Return Date</label>
-            <input type="date" id="soundReturnDate" onchange="calculateSoundDuration()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-orange-500 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white font-bold focus:border-orange-600 focus:outline-none transition" />
+            <div class="relative cursor-pointer" onclick="openCalendarPopup('soundReturnDate', 'Select Return Date')">
+              <input type="date" id="soundReturnDate" readonly onchange="calculateSoundDuration()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-orange-500 rounded-xl pl-3 pr-10 py-2 text-xs text-slate-900 dark:text-white font-bold cursor-pointer focus:border-orange-600 focus:outline-none transition" />
+              <span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">📅</span>
+            </div>
           </div>
         </div>
 
@@ -834,7 +840,7 @@
             
             <label class="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-orange-500 cursor-pointer transition">
               <div class="flex items-center gap-2.5">
-                <input type="radio" name="soundPackage" value="jbl-partybox-320-combo" checked onchange="updateSoundModalPrice()" class="text-orange-600 focus:ring-orange-500" />
+                <input type="radio" name="soundPackage" value="jbl-partybox-320-combo" checked onchange="updateSoundModalPrice()" class="text-orange-600 focus:ring-orange-500 cursor-pointer" />
                 <div>
                   <div class="font-bold text-slate-900 dark:text-white">JBL PartyBox 320 + Dual Wireless Mics (Combo)</div>
                   <div class="text-[10px] text-slate-500">JBL Party Speaker + Pair of JBL Mics + Receiver</div>
@@ -845,7 +851,7 @@
 
             <label class="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-orange-500 cursor-pointer transition">
               <div class="flex items-center gap-2.5">
-                <input type="radio" name="soundPackage" value="jbl-partybox-320-solo" onchange="updateSoundModalPrice()" class="text-orange-600 focus:ring-orange-500" />
+                <input type="radio" name="soundPackage" value="jbl-partybox-320-solo" onchange="updateSoundModalPrice()" class="text-orange-600 focus:ring-orange-500 cursor-pointer" />
                 <div>
                   <div class="font-bold text-slate-900 dark:text-white">JBL PartyBox Stage 320 Only (Speaker Only)</div>
                   <div class="text-[10px] text-slate-500">JBL Party Speaker with power cord &amp; accessories</div>
@@ -856,7 +862,7 @@
 
             <label class="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-orange-500 cursor-pointer transition">
               <div class="flex items-center gap-2.5">
-                <input type="radio" name="soundPackage" value="jbl-dual-mics-only" onchange="updateSoundModalPrice()" class="text-orange-600 focus:ring-orange-500" />
+                <input type="radio" name="soundPackage" value="jbl-dual-mics-only" onchange="updateSoundModalPrice()" class="text-orange-600 focus:ring-orange-500 cursor-pointer" />
                 <div>
                   <div class="font-bold text-slate-900 dark:text-white">JBL Dual Wireless Microphones (Mics Only)</div>
                   <div class="text-[10px] text-slate-500">Pair of wireless mics with UHF receiver dongle</div>
@@ -868,55 +874,107 @@
           </div>
         </div>
 
-        <!-- Schedule Inputs -->
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1">Pickup Date</label>
-            <input type="date" id="modalPickupDate" required onchange="updateSoundModalPrice()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white font-bold focus:border-orange-600 focus:outline-none" />
+        <!-- Live Equipment Availability & Booked Dates Alert Container -->
+        <div id="soundItemBookedDatesNotice" class="transition-all duration-200">
+          <!-- Populated dynamically by updateSoundAvailabilityNotice() -->
+        </div>
+
+        <!-- Schedule Inputs with Pop-up Calendar and Quick Duration -->
+        <div class="space-y-2">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1">Required Pickup Date *</label>
+              <div class="relative cursor-pointer" onclick="openCalendarPopup('modalPickupDate', 'Select Required Pickup Date')">
+                <input type="date" id="modalPickupDate" readonly required onchange="updateSoundModalPrice()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-orange-500 rounded-xl pl-3 pr-8 py-2 text-xs text-slate-900 dark:text-white font-bold cursor-pointer focus:border-orange-600 focus:outline-none" />
+                <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs">📅</span>
+              </div>
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1">Return Date *</label>
+              <div class="relative cursor-pointer" onclick="openCalendarPopup('modalReturnDate', 'Select Return Date')">
+                <input type="date" id="modalReturnDate" readonly required onchange="updateSoundModalPrice()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-orange-500 rounded-xl pl-3 pr-8 py-2 text-xs text-slate-900 dark:text-white font-bold cursor-pointer focus:border-orange-600 focus:outline-none" />
+                <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs">📅</span>
+              </div>
+            </div>
           </div>
-          <div>
-            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1">Return Date</label>
-            <input type="date" id="modalReturnDate" required onchange="updateSoundModalPrice()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white font-bold focus:border-orange-600 focus:outline-none" />
+
+          <!-- Quick Duration Presets in Modal -->
+          <div class="flex items-center justify-between text-[11px] bg-slate-100 dark:bg-slate-800/60 p-2 rounded-xl border border-slate-200 dark:border-slate-700/80">
+            <span class="text-slate-500 dark:text-slate-400 font-semibold">Quick Duration:</span>
+            <div class="flex items-center gap-1.5">
+              <button type="button" onclick="setQuickModalDays(1)" class="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 hover:bg-orange-50 dark:hover:bg-orange-950 text-slate-700 dark:text-slate-200 hover:text-orange-600 text-xs font-bold border border-slate-200 dark:border-slate-600 transition cursor-pointer">01 Day</button>
+              <button type="button" onclick="setQuickModalDays(2)" class="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 hover:bg-orange-50 dark:hover:bg-orange-950 text-slate-700 dark:text-slate-200 hover:text-orange-600 text-xs font-bold border border-slate-200 dark:border-slate-600 transition cursor-pointer">02 Days</button>
+              <button type="button" onclick="setQuickModalDays(3)" class="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 hover:bg-orange-50 dark:hover:bg-orange-950 text-slate-700 dark:text-slate-200 hover:text-orange-600 text-xs font-bold border border-slate-200 dark:border-slate-600 transition cursor-pointer">03 Days</button>
+              <button type="button" onclick="setQuickModalDays(7)" class="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 hover:bg-orange-50 dark:hover:bg-orange-950 text-slate-700 dark:text-slate-200 hover:text-orange-600 text-xs font-bold border border-slate-200 dark:border-slate-600 transition cursor-pointer">07 Days</button>
+            </div>
           </div>
         </div>
 
-        <!-- Customer Information -->
+        <!-- Date Conflict Warning Alert Container -->
+        <div id="soundDateConflictAlert" class="hidden transition-all duration-200">
+          <!-- Populated dynamically by updateSoundAvailabilityNotice() -->
+        </div>
+
+        <!-- Customer Information (All Main Web Form Fields) -->
         <div class="space-y-3 pt-1">
-          <div class="text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider border-b border-slate-100 dark:border-slate-800 pb-1">
-            Customer Information
+          <div class="text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider border-b border-slate-100 dark:border-slate-800 pb-1 flex items-center justify-between">
+            <span>Customer Details &amp; KYC</span>
+            <span class="text-[10px] text-slate-400 font-normal">Original NIC verified at store pickup</span>
           </div>
 
           <div>
             <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Full Name (as in NIC / Passport) *</label>
-            <input type="text" id="soundCustomerName" required placeholder="e.g. Kasun Madushanka" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2 text-xs text-slate-900 dark:text-white focus:border-orange-600 focus:outline-none" />
+            <input type="text" id="soundCustomerName" required placeholder="e.g. Kasun Perera" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2 text-xs text-slate-900 dark:text-white focus:border-orange-600 focus:outline-none" />
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Calling Phone *</label>
+              <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Phone Number *</label>
               <input type="tel" id="soundCustomerPhone" required placeholder="07XXXXXXXX" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2 text-xs text-slate-900 dark:text-white focus:border-orange-600 focus:outline-none" oninput="syncSoundPhoneToWa(this.value)" />
             </div>
             <div>
               <div class="flex items-center justify-between mb-1">
-                <label class="text-[11px] font-semibold text-slate-600 dark:text-slate-400">WhatsApp Number *</label>
-                <label class="text-[10px] text-orange-600 dark:text-orange-400 font-semibold flex items-center gap-1 cursor-pointer">
-                  <input type="checkbox" id="soundSameAsPhone" checked onchange="toggleSoundSamePhone(this.checked)" class="rounded text-orange-600" />
-                  <span>Same</span>
+                <label class="text-[11px] font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-1">
+                  <span class="text-emerald-500 font-bold">💬</span>
+                  <span>WhatsApp Number *</span>
+                </label>
+                <label class="text-[10px] text-orange-600 dark:text-orange-400 font-semibold flex items-center gap-1 cursor-pointer select-none">
+                  <input type="checkbox" id="soundSameAsPhone" checked onchange="toggleSoundSamePhone(this.checked)" class="rounded text-orange-600 accent-orange-600" />
+                  <span>Same as phone</span>
                 </label>
               </div>
-              <input type="tel" id="soundCustomerWa" required placeholder="07XXXXXXXX" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2 text-xs text-slate-900 dark:text-white focus:border-orange-600 focus:outline-none" />
+              <input type="tel" id="soundCustomerWa" required placeholder="07XXXXXXXX" class="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2 text-xs text-slate-900 dark:text-white focus:border-orange-600 focus:outline-none transition opacity-90 cursor-not-allowed" readonly />
             </div>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">NIC or Passport No. *</label>
-              <input type="text" id="soundCustomerNic" required placeholder="e.g. 2000XXXXXXXX / NXXXXXXX" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2 text-xs text-slate-900 dark:text-white focus:border-orange-600 focus:outline-none" />
+              <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">ID Number (NIC / Passport) *</label>
+              <input type="text" id="soundCustomerNic" required placeholder="e.g. 2000XXXXXXXX or Passport" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2 text-xs text-slate-900 dark:text-white focus:border-orange-600 focus:outline-none" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Email Address *</label>
+              <input type="email" id="soundCustomerEmail" required placeholder="e.g. customer@gmail.com" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2 text-xs text-slate-900 dark:text-white focus:border-orange-600 focus:outline-none" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Payment Method *</label>
+              <select id="soundPaymentMethod" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2 text-xs font-semibold text-slate-900 dark:text-white focus:border-orange-600 focus:outline-none">
+                <option value="Pay on Store">Pay on Store (At Galle Store Pickup)</option>
+                <option value="Online Transfer">Online Bank Transfer</option>
+              </select>
             </div>
             <div>
               <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Event / Villa Location (Optional)</label>
               <input type="text" id="soundEventLocation" placeholder="e.g. Unawatuna Beach Villa" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2 text-xs text-slate-900 dark:text-white focus:border-orange-600 focus:outline-none" />
             </div>
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Residential Address *</label>
+            <input type="text" id="soundCustomerAddress" required placeholder="e.g. No. 45, Wakwella Road, Galle" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2 text-xs text-slate-900 dark:text-white focus:border-orange-600 focus:outline-none" />
           </div>
         </div>
 
@@ -1130,36 +1188,61 @@
        14. JAVASCRIPT LOGIC ENGINE
        ========================================================================= -->
   <script>
-    // Firebase Database Endpoint
+    // =========================================================================
+    // 14. SOUND LOGIC & CLOUD CALENDAR ENGINE
+    // =========================================================================
     const FIREBASE_BASE = 'https://droniex-rent-store-default-rtdb.asia-southeast1.firebasedatabase.app';
 
     // Pricing Matrix
     const SOUND_RATES = {
-      'jbl-partybox-320-solo': { name: 'JBL PartyBox Stage 320 Only', daily: 4000 },
-      'jbl-partybox-320-combo': { name: 'JBL PartyBox 320 + Dual Wireless Mics (Combo)', daily: 5000 },
-      'jbl-dual-mics-only': { name: 'JBL Dual Wireless Microphones Only', daily: 2000 }
+      'jbl-partybox-320-solo': { name: 'JBL PartyBox Stage 320 Only', daily: 4000, id: 'jbl-partybox-320' },
+      'jbl-partybox-320-combo': { name: 'JBL PartyBox 320 + Dual Wireless Mics (Combo)', daily: 5000, id: 'jbl-partybox-320-combo' },
+      'jbl-dual-mics-only': { name: 'JBL Dual Wireless Microphones Only', daily: 2000, id: 'jbl-wireless-mic' }
     };
 
     // State
     let _activePackageKey = 'jbl-partybox-320-combo';
     let _lastConfirmedBooking = null;
+    let _soundBookings = [];
+    let _soundInventory = [];
+
+    // Calendar Popup State
+    let activeCalendarInputId = '';
+    let calendarViewYear = 2026;
+    let calendarViewMonth = 10; // November (0-indexed)
+
+    // Toast Notification
+    function showToast(msg) {
+      const banner = document.getElementById('toastBanner');
+      const text = document.getElementById('toastMessage');
+      if (!banner || !text) return;
+      text.textContent = msg;
+      banner.classList.remove('hidden');
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => {
+        banner.classList.add('hidden');
+      }, 3500);
+    }
 
     // Theme Management
     function initSoundTheme() {
       const saved = localStorage.getItem('droniex_theme');
       if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
         document.documentElement.classList.add('dark');
-        document.getElementById('themeToggleText').innerText = '☀️ Light';
+        const el = document.getElementById('themeToggleText');
+        if (el) el.innerText = '☀️ Light';
       } else {
         document.documentElement.classList.remove('dark');
-        document.getElementById('themeToggleText').innerText = '🌙 Dark';
+        const el = document.getElementById('themeToggleText');
+        if (el) el.innerText = '🌙 Dark';
       }
     }
 
     function toggleSoundTheme() {
       const isDark = document.documentElement.classList.toggle('dark');
       localStorage.setItem('droniex_theme', isDark ? 'dark' : 'light');
-      document.getElementById('themeToggleText').innerText = isDark ? '☀️ Light' : '🌙 Dark';
+      const el = document.getElementById('themeToggleText');
+      if (el) el.innerText = isDark ? '☀️ Light' : '🌙 Dark';
     }
 
     // Default Dates Setup (Today + Tomorrow)
@@ -1168,55 +1251,236 @@
       const tomorrow = new Date(now);
       tomorrow.setDate(tomorrow.getDate() + 1);
 
-      const toYmd = d => d.toISOString().split('T')[0];
+      const toYmd = d => {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${y}-${m}-${day}`;
+      };
 
       const pInput = document.getElementById('soundPickupDate');
       const rInput = document.getElementById('soundReturnDate');
       const mpInput = document.getElementById('modalPickupDate');
       const mrInput = document.getElementById('modalReturnDate');
 
-      if (pInput) pInput.value = toYmd(now);
-      if (rInput) rInput.value = toYmd(tomorrow);
-      if (mpInput) mpInput.value = toYmd(now);
-      if (mrInput) mrInput.value = toYmd(tomorrow);
+      const ymdNow = toYmd(now);
+      const ymdTom = toYmd(tomorrow);
+
+      if (pInput && !pInput.value) pInput.value = ymdNow;
+      if (rInput && !rInput.value) rInput.value = ymdTom;
+      if (mpInput && !mpInput.value) mpInput.value = ymdNow;
+      if (mrInput && !mrInput.value) mrInput.value = ymdTom;
 
       calculateSoundDuration();
     }
 
+    // Quick Days Selector on Main Schedule Bar
     function setSoundDays(days) {
       const pInput = document.getElementById('soundPickupDate');
       const rInput = document.getElementById('soundReturnDate');
       if (!pInput || !rInput) return;
 
-      const pDate = pInput.value ? new Date(pInput.value) : new Date();
+      const pDate = pInput.value ? new Date(pInput.value + 'T00:00:00') : new Date();
       const rDate = new Date(pDate);
       rDate.setDate(pDate.getDate() + days);
 
-      rInput.value = rDate.toISOString().split('T')[0];
+      const y = rDate.getFullYear();
+      const m = String(rDate.getMonth() + 1).padStart(2, '0');
+      const d = String(rDate.getDate()).padStart(2, '0');
+
+      rInput.value = `${y}-${m}-${d}`;
       calculateSoundDuration();
+      showToast(`Rental duration set to ${days} Day${days > 1 ? 's' : ''}!`);
     }
 
+    // Quick Days Selector in Reservation Modal
+    function setQuickModalDays(days) {
+      const pInput = document.getElementById('modalPickupDate');
+      const rInput = document.getElementById('modalReturnDate');
+      if (!pInput || !rInput) return;
+
+      const pDate = pInput.value ? new Date(pInput.value + 'T00:00:00') : new Date();
+      const rDate = new Date(pDate);
+      rDate.setDate(pDate.getDate() + days);
+
+      const y = rDate.getFullYear();
+      const m = String(rDate.getMonth() + 1).padStart(2, '0');
+      const d = String(rDate.getDate()).padStart(2, '0');
+
+      rInput.value = `${y}-${m}-${d}`;
+      updateSoundModalPrice();
+      showToast(`Selected ${days} Day${days > 1 ? 's' : ''} rental period!`);
+    }
+
+    // Calculate duration and sync between main bar and modal
     function calculateSoundDuration() {
       const pInput = document.getElementById('soundPickupDate');
       const rInput = document.getElementById('soundReturnDate');
       const badge = document.getElementById('soundDurationBadge');
       if (!pInput || !rInput || !badge) return;
 
-      const d1 = new Date(pInput.value);
-      const d2 = new Date(rInput.value);
+      const d1 = new Date(pInput.value + 'T00:00:00');
+      const d2 = new Date(rInput.value + 'T00:00:00');
       let diffDays = Math.round((d2 - d1) / (1000 * 60 * 60 * 24));
-      if (diffDays < 1) diffDays = 1;
+      if (isNaN(diffDays) || diffDays < 1) diffDays = 1;
 
       badge.innerText = `${diffDays} Day${diffDays > 1 ? 's' : ''}`;
 
-      // Sync to modal if open
+      // Sync to modal inputs if available
       const mp = document.getElementById('modalPickupDate');
       const mr = document.getElementById('modalReturnDate');
       if (mp) mp.value = pInput.value;
       if (mr) mr.value = rInput.value;
     }
 
-    // Modal Price Sync
+    // =========================================================================
+    // REAL-TIME CLOUD AVAILABILITY & CONFLICT CHECKING
+    // =========================================================================
+    async function syncSoundBookingsFromCloud() {
+      try {
+        const [resRes, invRes] = await Promise.all([
+          fetch(FIREBASE_BASE + '/reservations.json'),
+          fetch(FIREBASE_BASE + '/inventory.json')
+        ]);
+        if (resRes.ok) {
+          const bData = await resRes.json();
+          if (bData && typeof bData === 'object') {
+            _soundBookings = Object.values(bData);
+          }
+        }
+        if (invRes.ok) {
+          const iData = await invRes.json();
+          if (Array.isArray(iData)) {
+            _soundInventory = iData;
+          }
+        }
+        updateSoundAvailabilityNotice();
+      } catch (err) {
+        console.warn('Firebase sound sync warning:', err);
+      }
+    }
+
+    function getActiveBookingsForSoundPackage(packageKey) {
+      if (!packageKey) packageKey = _activePackageKey;
+      return _soundBookings.filter(b => {
+        if (!b || !b.pickupDate || !b.returnDate) return false;
+        const st = (b.bookingState || b.status || '').toLowerCase();
+        if (st.includes('cancel') || st.includes('return') || st === 'completed') return false;
+
+        const gear = (b.itemsSummary || b.packageName || b.equipmentTitle || b.gear || '').toLowerCase();
+        const isSound = b.gearType === 'sound' || gear.includes('jbl') || gear.includes('partybox') || gear.includes('sound') || gear.includes('speaker') || gear.includes('mic');
+        if (!isSound) return false;
+
+        const isPartyBoxPkg = packageKey.includes('partybox') || packageKey.includes('combo') || packageKey.includes('solo');
+        const isMicOnlyPkg = packageKey.includes('mics-only') || packageKey.includes('dual-mics');
+
+        const bookingHasPartyBox = gear.includes('partybox') || gear.includes('320') || gear.includes('speaker') || gear.includes('combo');
+        const bookingHasMics = gear.includes('mic') || gear.includes('combo');
+
+        if (isPartyBoxPkg && bookingHasPartyBox) return true;
+        if (isMicOnlyPkg && bookingHasMics) return true;
+        return false;
+      }).sort((a, b) => (a.pickupDate || '').localeCompare(b.pickupDate || ''));
+    }
+
+    function checkSoundDateConflict(packageKey, pickDate, retDate) {
+      if (!pickDate || !retDate) return null;
+      const active = getActiveBookingsForSoundPackage(packageKey);
+      for (const b of active) {
+        // Full-day overlap: pickDate <= b.returnDate AND retDate >= b.pickupDate
+        if (pickDate <= b.returnDate && retDate >= b.pickupDate) {
+          return b;
+        }
+      }
+      return null;
+    }
+
+    function updateSoundAvailabilityNotice() {
+      const container = document.getElementById('soundItemBookedDatesNotice');
+      const alertContainer = document.getElementById('soundDateConflictAlert');
+      const submitBtn = document.getElementById('soundSubmitBtn');
+
+      const pkg = SOUND_RATES[_activePackageKey] || SOUND_RATES['jbl-partybox-320-combo'];
+      const activeBookings = getActiveBookingsForSoundPackage(_activePackageKey);
+
+      if (container) {
+        if (activeBookings.length === 0) {
+          container.innerHTML = `
+            <div class="rounded-2xl bg-emerald-50/90 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/80 p-3.5 flex flex-wrap items-center justify-between gap-2 text-xs">
+              <div class="flex items-center gap-2 text-emerald-800 dark:text-emerald-300 font-bold">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>Available for Booking: All upcoming dates are open for ${pkg.name}.</span>
+              </div>
+              <span class="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/60 px-2.5 py-0.5 rounded-full uppercase tracking-wider">Available</span>
+            </div>
+          `;
+        } else {
+          container.innerHTML = `
+            <div class="rounded-2xl bg-amber-50/90 dark:bg-amber-950/50 border border-amber-300 dark:border-amber-700 p-3.5 space-y-2 text-xs shadow-xs">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2 text-amber-900 dark:text-amber-200 font-extrabold text-xs uppercase tracking-wider">
+                  <span class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-ping"></span>
+                  <span>Reserved Dates Notice (වෙන්කර ඇති දින)</span>
+                </div>
+                <span class="text-[10px] font-bold text-amber-900 dark:text-amber-300 bg-amber-200/80 dark:bg-amber-900/80 px-2 py-0.5 rounded-full">
+                  ${activeBookings.length} Active Booking${activeBookings.length > 1 ? 's' : ''}
+                </span>
+              </div>
+              <p class="text-slate-600 dark:text-slate-300 text-xs">
+                Another customer has reserved <strong>${pkg.name}</strong> for the dates below. Please choose dates <strong>outside</strong> these booked dates:
+              </p>
+              <div class="flex flex-wrap gap-1.5 pt-0.5">
+                ${activeBookings.map(b => `
+                  <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-rose-300 dark:border-rose-800 text-rose-700 dark:text-rose-400 font-bold text-xs shadow-xs">
+                    <span>🔒 ${b.pickupDate} to ${b.returnDate}</span>
+                    <span class="text-[10px] text-slate-500 dark:text-slate-400 font-normal">(${b.rentalDays || '1'}d)</span>
+                  </span>
+                `).join('')}
+              </div>
+            </div>
+          `;
+        }
+      }
+
+      // Check conflict for currently selected modal pickup & return dates
+      const pInput = document.getElementById('modalPickupDate');
+      const rInput = document.getElementById('modalReturnDate');
+      const pDate = pInput ? pInput.value : '';
+      const rDate = rInput ? rInput.value : '';
+
+      const conflict = checkSoundDateConflict(_activePackageKey, pDate, rDate);
+
+      if (alertContainer) {
+        if (conflict) {
+          alertContainer.classList.remove('hidden');
+          alertContainer.innerHTML = `
+            <div class="rounded-2xl bg-rose-50 dark:bg-rose-950/70 border-2 border-rose-400 dark:border-rose-700 p-3.5 space-y-1.5 text-rose-900 dark:text-rose-200">
+              <div class="flex items-center gap-2 font-black text-xs sm:text-sm">
+                <span>⚠️</span>
+                <span>Date Conflict! Equipment Already Reserved (දින ගැටුමක් පවතී!)</span>
+              </div>
+              <p class="text-xs text-rose-800 dark:text-rose-300">
+                <strong>${pkg.name}</strong> is already booked by another customer from <span class="font-bold underline decoration-rose-500">${conflict.pickupDate} to ${conflict.returnDate}</span>.
+                Please select different dates before or after this reservation to proceed.
+              </p>
+            </div>
+          `;
+          if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+          }
+        } else {
+          alertContainer.classList.add('hidden');
+          alertContainer.innerHTML = '';
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+          }
+        }
+      }
+    }
+
+    // Modal Price Sync & Conflict Recheck
     function updateSoundModalPrice() {
       const radios = document.getElementsByName('soundPackage');
       for (const r of radios) {
@@ -1227,18 +1491,32 @@
       }
 
       const pkg = SOUND_RATES[_activePackageKey] || SOUND_RATES['jbl-partybox-320-combo'];
-      const pDate = new Date(document.getElementById('modalPickupDate').value);
-      const rDate = new Date(document.getElementById('modalReturnDate').value);
-      let days = Math.round((rDate - pDate) / (1000 * 60 * 60 * 24));
-      if (isNaN(days) || days < 1) days = 1;
+      const pInput = document.getElementById('modalPickupDate');
+      const rInput = document.getElementById('modalReturnDate');
+
+      let days = 1;
+      if (pInput && rInput && pInput.value && rInput.value) {
+        const pDate = new Date(pInput.value + 'T00:00:00');
+        const rDate = new Date(rInput.value + 'T00:00:00');
+        days = Math.round((rDate - pDate) / (1000 * 60 * 60 * 24));
+        if (isNaN(days) || days < 1) days = 1;
+      }
 
       const totalLkr = pkg.daily * days;
 
-      document.getElementById('modalDailyRateText').innerText = `Rs. ${pkg.daily.toLocaleString('en-LK')} / day`;
-      document.getElementById('modalDaysText').innerText = `${days} Day${days > 1 ? 's' : ''}`;
-      document.getElementById('modalTotalLkrText').innerText = `Rs. ${totalLkr.toLocaleString('en-LK')}`;
+      const rateEl = document.getElementById('modalDailyRateText');
+      const daysEl = document.getElementById('modalDaysText');
+      const totEl = document.getElementById('modalTotalLkrText');
+
+      if (rateEl) rateEl.innerText = `Rs. ${pkg.daily.toLocaleString('en-LK')} / day`;
+      if (daysEl) daysEl.innerText = `${days} Day${days > 1 ? 's' : ''}`;
+      if (totEl) totEl.innerText = `Rs. ${totalLkr.toLocaleString('en-LK')}`;
+
+      // Update availability and conflict notice for new package / dates
+      updateSoundAvailabilityNotice();
     }
 
+    // Open & Close Modal
     function openSoundReserveModal(packageKey) {
       if (packageKey && SOUND_RATES[packageKey]) {
         _activePackageKey = packageKey;
@@ -1251,55 +1529,243 @@
       // Sync dates from schedule bar
       const pInput = document.getElementById('soundPickupDate');
       const rInput = document.getElementById('soundReturnDate');
-      if (pInput && pInput.value) document.getElementById('modalPickupDate').value = pInput.value;
-      if (rInput && rInput.value) document.getElementById('modalReturnDate').value = rInput.value;
+      const mp = document.getElementById('modalPickupDate');
+      const mr = document.getElementById('modalReturnDate');
+
+      if (pInput && pInput.value && mp) mp.value = pInput.value;
+      if (rInput && rInput.value && mr) mr.value = rInput.value;
 
       updateSoundModalPrice();
 
       const modal = document.getElementById('soundReserveModal');
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
+
+      // Sync with cloud on opening modal to guarantee real-time accuracy
+      syncSoundBookingsFromCloud();
     }
 
     function closeSoundReserveModal() {
       const modal = document.getElementById('soundReserveModal');
-      modal.classList.add('hidden');
-      modal.classList.remove('flex');
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
     }
 
+    // Auto-Sync Calling Phone to WhatsApp Field
     function syncSoundPhoneToWa(val) {
       const same = document.getElementById('soundSameAsPhone');
-      if (same && same.checked) {
-        document.getElementById('soundCustomerWa').value = val;
+      const waInput = document.getElementById('soundCustomerWa');
+      if (same && same.checked && waInput) {
+        waInput.value = val;
       }
     }
 
     function toggleSoundSamePhone(isSame) {
       const waInput = document.getElementById('soundCustomerWa');
+      const phoneInput = document.getElementById('soundCustomerPhone');
+      if (!waInput) return;
       if (isSame) {
-        waInput.value = document.getElementById('soundCustomerPhone').value;
+        if (phoneInput) waInput.value = phoneInput.value;
+        waInput.setAttribute('readonly', 'true');
+        waInput.classList.add('cursor-not-allowed', 'opacity-90', 'bg-slate-100', 'dark:bg-slate-800/60');
+        waInput.classList.remove('bg-white', 'dark:bg-slate-900', 'cursor-text');
+      } else {
+        waInput.removeAttribute('readonly');
+        waInput.classList.remove('cursor-not-allowed', 'opacity-90', 'bg-slate-100', 'dark:bg-slate-800/60');
+        waInput.classList.add('bg-white', 'dark:bg-slate-900', 'cursor-text');
+        waInput.focus();
       }
     }
 
-    // Submit Reservation
-    async function submitSoundReservation() {
-      const name = document.getElementById('soundCustomerName').value.trim();
-      const phone = document.getElementById('soundCustomerPhone').value.trim();
-      const wa = document.getElementById('soundCustomerWa').value.trim();
-      const nic = document.getElementById('soundCustomerNic').value.trim();
-      const location = document.getElementById('soundEventLocation').value.trim();
-      const pDate = document.getElementById('modalPickupDate').value;
-      const rDate = document.getElementById('modalReturnDate').value;
+    // =========================================================================
+    // INTERACTIVE POP-UP CALENDAR PICKER
+    // =========================================================================
+    function openCalendarPopup(inputId, titleText) {
+      activeCalendarInputId = inputId;
+      const inputEl = document.getElementById(inputId);
+      const titleEl = document.getElementById('calendarPopupTitle');
+      if (titleEl && titleText) titleEl.textContent = titleText;
 
-      if (!name || !phone || !wa || !nic) {
-        alert('Please fill in all required fields.');
+      const curVal = inputEl && inputEl.value ? new Date(inputEl.value + 'T00:00:00') : new Date();
+      if (!isNaN(curVal.getTime())) {
+        calendarViewYear = curVal.getFullYear();
+        calendarViewMonth = curVal.getMonth();
+      }
+
+      renderCalendarGrid();
+      const modal = document.getElementById('calendarPopupModal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
+    }
+
+    function closeCalendarPopup() {
+      const modal = document.getElementById('calendarPopupModal');
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+    }
+
+    function changeCalendarMonth(delta) {
+      calendarViewMonth += delta;
+      if (calendarViewMonth > 11) {
+        calendarViewMonth = 0;
+        calendarViewYear += 1;
+      } else if (calendarViewMonth < 0) {
+        calendarViewMonth = 11;
+        calendarViewYear -= 1;
+      }
+      renderCalendarGrid();
+    }
+
+    function renderCalendarGrid() {
+      const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      const labelEl = document.getElementById('calendarMonthYearLabel');
+      const gridEl = document.getElementById('calendarDaysGrid');
+      if (labelEl) labelEl.textContent = `${monthNames[calendarViewMonth]} ${calendarViewYear}`;
+      if (!gridEl) return;
+
+      const inputEl = activeCalendarInputId ? document.getElementById(activeCalendarInputId) : null;
+      const selectedDateStr = inputEl ? inputEl.value : '';
+
+      const firstDay = new Date(calendarViewYear, calendarViewMonth, 1).getDay();
+      const daysInMonth = new Date(calendarViewYear, calendarViewMonth + 1, 0).getDate();
+
+      const activeBookings = getActiveBookingsForSoundPackage(_activePackageKey);
+
+      let html = '';
+      for (let i = 0; i < firstDay; i++) {
+        html += `<div></div>`;
+      }
+
+      const todayStr = new Date().toISOString().split('T')[0];
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const yyyy = calendarViewYear;
+        const mm = String(calendarViewMonth + 1).padStart(2, '0');
+        const dd = String(d).padStart(2, '0');
+        const dateStr = `${yyyy}-${mm}-${dd}`;
+        const isSelected = dateStr === selectedDateStr;
+        const isPast = dateStr < todayStr;
+        const isBooked = activeBookings.some(b => dateStr >= b.pickupDate && dateStr <= b.returnDate);
+
+        if (isBooked) {
+          html += `
+            <button type="button" onclick="handleBookedCalendarDateClick('${dateStr}')"
+              title="Reserved by another customer (${dateStr})"
+              class="py-1.5 px-0.5 rounded-xl font-bold transition bg-rose-50 dark:bg-rose-950/60 border border-rose-300 dark:border-rose-800 text-rose-700 dark:text-rose-400 cursor-not-allowed flex flex-col items-center justify-center">
+              <span class="line-through decoration-rose-500 text-xs">${d}</span>
+              <span class="text-[8px] font-black text-rose-600 dark:text-rose-400 uppercase tracking-tighter leading-none mt-0.5">Booked</span>
+            </button>
+          `;
+        } else if (isPast) {
+          html += `
+            <div class="py-2 text-slate-300 dark:text-slate-700 text-xs font-semibold cursor-not-allowed select-none">
+              ${d}
+            </div>
+          `;
+        } else {
+          html += `
+            <button type="button" onclick="selectCalendarDate('${dateStr}')"
+              class="py-2 rounded-xl font-bold transition cursor-pointer ${
+                isSelected
+                  ? 'bg-orange-600 text-white shadow-xs font-black'
+                  : 'bg-slate-50 dark:bg-slate-800/80 hover:bg-orange-50 dark:hover:bg-orange-950/40 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700'
+              }">
+              ${d}
+            </button>
+          `;
+        }
+      }
+      gridEl.innerHTML = html;
+    }
+
+    function handleBookedCalendarDateClick(dateStr) {
+      showToast(`⚠️ ${dateStr} is already reserved for this sound equipment! Please choose an open date.`);
+    }
+
+    function selectCalendarDate(dateStr) {
+      if (!activeCalendarInputId) return;
+      const inputEl = document.getElementById(activeCalendarInputId);
+      if (inputEl) inputEl.value = dateStr;
+
+      // Handle Pickup vs Return automatic progression
+      if (activeCalendarInputId === 'modalPickupDate' || activeCalendarInputId === 'soundPickupDate') {
+        const mp = document.getElementById('modalPickupDate');
+        const sp = document.getElementById('soundPickupDate');
+        if (mp) mp.value = dateStr;
+        if (sp) sp.value = dateStr;
+
+        // Auto advance return date if return date is <= pickup date
+        const mr = document.getElementById('modalReturnDate');
+        const sr = document.getElementById('soundReturnDate');
+        const curRet = (mr ? mr.value : '') || (sr ? sr.value : '');
+
+        if (!curRet || curRet <= dateStr) {
+          const dPick = new Date(dateStr + 'T00:00:00');
+          const nextD = new Date(dPick.getTime() + 24 * 60 * 60 * 1000);
+          const nextY = nextD.getFullYear();
+          const nextM = String(nextD.getMonth() + 1).padStart(2, '0');
+          const nextDay = String(nextD.getDate()).padStart(2, '0');
+          const nextStr = `${nextY}-${nextM}-${nextDay}`;
+          if (mr) mr.value = nextStr;
+          if (sr) sr.value = nextStr;
+        }
+      } else if (activeCalendarInputId === 'modalReturnDate' || activeCalendarInputId === 'soundReturnDate') {
+        const mr = document.getElementById('modalReturnDate');
+        const sr = document.getElementById('soundReturnDate');
+        if (mr) mr.value = dateStr;
+        if (sr) sr.value = dateStr;
+      }
+
+      calculateSoundDuration();
+      updateSoundModalPrice();
+      closeCalendarPopup();
+    }
+
+    // =========================================================================
+    // SUBMIT SOUND RESERVATION
+    // =========================================================================
+    async function submitSoundReservation() {
+      const name = (document.getElementById('soundCustomerName')?.value || '').trim();
+      const phone = (document.getElementById('soundCustomerPhone')?.value || '').trim();
+      const wa = (document.getElementById('soundCustomerWa')?.value || '').trim();
+      const nic = (document.getElementById('soundCustomerNic')?.value || '').trim();
+      const email = (document.getElementById('soundCustomerEmail')?.value || '').trim();
+      const address = (document.getElementById('soundCustomerAddress')?.value || '').trim();
+      const payMethod = document.getElementById('soundPaymentMethod')?.value || 'Pay on Store';
+      const location = (document.getElementById('soundEventLocation')?.value || '').trim();
+      const pDate = document.getElementById('modalPickupDate')?.value;
+      const rDate = document.getElementById('modalReturnDate')?.value;
+
+      if (!name || !phone || !wa || !nic || !email || !address) {
+        alert('Please fill in all required customer details (Name, Phone, WhatsApp, NIC, Email, and Address).');
         return;
       }
 
-      const pTime = new Date(pDate);
-      const rTime = new Date(rDate);
+      if (!pDate || !rDate) {
+        alert('Please select valid Pickup and Return dates.');
+        return;
+      }
+
+      const pTime = new Date(pDate + 'T00:00:00');
+      const rTime = new Date(rDate + 'T00:00:00');
       let days = Math.round((rTime - pTime) / (1000 * 60 * 60 * 24));
       if (isNaN(days) || days < 1) days = 1;
+
+      // Prevent booking if date conflict exists
+      const conflict = checkSoundDateConflict(_activePackageKey, pDate, rDate);
+      if (conflict) {
+        alert(`Cannot reserve: This sound equipment is already booked from ${conflict.pickupDate} to ${conflict.returnDate}! Please pick other dates.`);
+        updateSoundAvailabilityNotice();
+        return;
+      }
 
       const pkg = SOUND_RATES[_activePackageKey] || SOUND_RATES['jbl-partybox-320-combo'];
       const totalLkr = pkg.daily * days;
@@ -1309,13 +1775,16 @@
 
       const booking = {
         orderId: newOrderId,
+        itemId: pkg.id,
         gearType: 'sound',
         category: 'Music & Sound Equipment',
         customerName: name,
         phone: phone,
         whatsapp: wa,
         nic: nic,
-        address: location || 'Galle District',
+        email: email,
+        address: address,
+        eventLocation: location || 'Galle District',
         packageName: pkg.name,
         itemsSummary: `${pkg.name} (x1)`,
         pickupDate: pDate,
@@ -1323,7 +1792,7 @@
         rentalDays: days,
         schedule: `${pDate} to ${rDate} (${days} Day${days > 1 ? 's' : ''})`,
         totalLkr: totalLkr,
-        paymentMethod: 'Pay at Store Pickup',
+        paymentMethod: payMethod,
         bookingState: 'pending',
         status: 'Reserved Online · Pending Store Pickup',
         createdAt: new Date().toISOString()
@@ -1332,8 +1801,10 @@
       _lastConfirmedBooking = booking;
 
       const submitBtn = document.getElementById('soundSubmitBtn');
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = '<span>Logging Reservation...</span>';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span>Logging Reservation...</span>';
+      }
 
       try {
         // 1. Insert into Firebase Realtime Database
@@ -1343,7 +1814,7 @@
           body: JSON.stringify(booking)
         });
 
-        // 2. Trigger Silent Phone Notification via /api/send-whatsapp
+        // 2. Trigger Automated Notification via /api/send-whatsapp
         try {
           await fetch('/api/send-whatsapp', {
             method: 'POST',
@@ -1352,12 +1823,14 @@
               orderId: newOrderId,
               phone: phone,
               whatsapp: wa,
+              email: email,
               customerPhone: phone,
               customerName: name,
               schedule: booking.schedule,
               notifyAdmin: true,
               gear: booking.itemsSummary,
-              totalAmount: totalLkr
+              totalAmount: totalLkr,
+              paymentMethod: payMethod
             })
           });
         } catch (apiErr) {
@@ -1367,30 +1840,44 @@
       } catch (err) {
         console.error('Reservation error:', err);
       } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = '<span>Confirm Online Reservation →</span>';
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<span>Confirm Online Reservation →</span>';
+        }
         closeSoundReserveModal();
         openSoundSuccessModal(booking);
+        // Refresh local cache of bookings
+        syncSoundBookingsFromCloud();
       }
     }
 
     // Success Modal
     function openSoundSuccessModal(b) {
-      document.getElementById('successOrderId').innerText = b.orderId;
-      document.getElementById('successCustomer').innerText = b.customerName;
-      document.getElementById('successGear').innerText = b.itemsSummary;
-      document.getElementById('successDates').innerText = b.schedule;
-      document.getElementById('successAmount').innerText = `Rs. ${Number(b.totalLkr).toLocaleString('en-LK')}`;
+      const oid = document.getElementById('successOrderId');
+      const cname = document.getElementById('successCustomer');
+      const gear = document.getElementById('successGear');
+      const dts = document.getElementById('successDates');
+      const amt = document.getElementById('successAmount');
+
+      if (oid) oid.innerText = b.orderId;
+      if (cname) cname.innerText = b.customerName;
+      if (gear) gear.innerText = b.itemsSummary;
+      if (dts) dts.innerText = b.schedule;
+      if (amt) amt.innerText = `Rs. ${Number(b.totalLkr).toLocaleString('en-LK')}`;
 
       const modal = document.getElementById('soundSuccessModal');
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
     }
 
     function closeSoundSuccessModal() {
       const modal = document.getElementById('soundSuccessModal');
-      modal.classList.add('hidden');
-      modal.classList.remove('flex');
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
     }
 
     // Printable Handover Slip
@@ -1398,52 +1885,68 @@
       if (!_lastConfirmedBooking) return;
       const b = _lastConfirmedBooking;
 
-      document.getElementById('slipOrderRef').innerText = b.orderId;
-      document.getElementById('slipDateGenerated').innerText = new Date().toLocaleDateString('en-GB');
-      document.getElementById('slipCustomerName').innerText = b.customerName;
-      document.getElementById('slipCustomerNic').innerText = `NIC / Passport: ${b.nic || '—'}`;
-      document.getElementById('slipCustomerPhone').innerText = `Phone: ${b.phone}`;
-      document.getElementById('slipCustomerWa').innerText = `WhatsApp: ${b.whatsapp || b.phone}`;
-      document.getElementById('slipDatesSchedule').innerText = b.schedule;
-      document.getElementById('slipDuration').innerText = `Duration: ${b.rentalDays} Day${b.rentalDays > 1 ? 's' : ''}`;
-      document.getElementById('slipGearName').innerText = b.itemsSummary;
-      document.getElementById('slipTotalLkr').innerText = `Rs. ${Number(b.totalLkr).toLocaleString('en-LK')}`;
+      const ref = document.getElementById('slipOrderRef');
+      const name = document.getElementById('slipCustomerName');
+      const nic = document.getElementById('slipCustomerNic');
+      const phone = document.getElementById('slipCustomerPhone');
+      const wa = document.getElementById('slipCustomerWa');
+      const dates = document.getElementById('slipRentalDates');
+      const days = document.getElementById('slipTotalDays');
+      const tot = document.getElementById('slipTotalFee');
+      const pay = document.getElementById('slipPaymentMethod');
+      const gear = document.getElementById('slipGearName');
+
+      if (ref) ref.innerText = b.orderId;
+      if (name) name.innerText = b.customerName;
+      if (nic) nic.innerText = b.nic;
+      if (phone) phone.innerText = b.phone;
+      if (wa) wa.innerText = b.whatsapp;
+      if (dates) dates.innerText = `${b.pickupDate} to ${b.returnDate}`;
+      if (days) days.innerText = `${b.rentalDays} Day${b.rentalDays > 1 ? 's' : ''}`;
+      if (tot) tot.innerText = `Rs. ${Number(b.totalLkr).toLocaleString('en-LK')}`;
+      if (pay) pay.innerText = b.paymentMethod || 'Pay at Store Pickup';
+      if (gear) gear.innerText = b.itemsSummary;
 
       window.print();
     }
 
-    // Track Order Modal
-    function openSoundTrackModal() {
-      const modal = document.getElementById('soundTrackModal');
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
-    }
+    // Order Tracking Lookup
+    async function trackSoundOrder() {
+      const input = document.getElementById('trackOrderIdInput');
+      const resBox = document.getElementById('trackOrderResultBox');
+      if (!input || !resBox) return;
 
-    function closeSoundTrackModal() {
-      const modal = document.getElementById('soundTrackModal');
-      modal.classList.add('hidden');
-      modal.classList.remove('flex');
-    }
-
-    async function querySoundOrderTracking() {
-      const input = document.getElementById('soundTrackInput').value.trim();
-      const resBox = document.getElementById('soundTrackResult');
-      if (!input) return;
+      const orderId = input.value.trim();
+      if (!orderId) {
+        resBox.classList.remove('hidden');
+        resBox.innerHTML = '<span class="text-rose-400 font-semibold">Please enter your Order / Tracking ID (e.g. DX-SND-2026-XXXX).</span>';
+        return;
+      }
 
       resBox.classList.remove('hidden');
-      resBox.innerHTML = '<span class="text-slate-400">Searching cloud database...</span>';
+      resBox.innerHTML = '<span class="text-slate-400 animate-pulse">Searching store database...</span>';
 
       try {
-        const cleanId = encodeURIComponent(input.toUpperCase());
-        const res = await fetch(`${FIREBASE_BASE}/reservations/${cleanId}.json`);
+        const res = await fetch(`${FIREBASE_BASE}/reservations/${orderId}.json`);
         const data = await res.json();
 
         if (data && data.orderId) {
+          const isPickedUp = data.bookingState === 'picked_up' || (data.status || '').includes('Picked Up');
+          const isReturned = data.bookingState === 'returned' || (data.status || '').includes('Returned');
+
           resBox.innerHTML = `
-            <div class="space-y-1.5">
-              <div class="flex items-center justify-between font-bold">
-                <span class="font-mono text-orange-500">${data.orderId}</span>
-                <span class="px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 text-[10px] font-bold">${data.status || 'Active'}</span>
+            <div class="space-y-1.5 text-xs text-left">
+              <div class="flex items-center justify-between border-b border-slate-700 pb-1.5 mb-2">
+                <span class="font-mono font-bold text-orange-400 text-sm">#${data.orderId}</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold ${
+                  isPickedUp
+                    ? 'bg-amber-950 text-amber-300 border border-amber-800'
+                    : isReturned
+                    ? 'bg-slate-800 text-slate-300'
+                    : 'bg-emerald-950 text-emerald-300 border border-emerald-800'
+                }">
+                  ${data.status || 'Active Reservation'}
+                </span>
               </div>
               <div>👤 <strong>Customer:</strong> ${data.customerName}</div>
               <div>📦 <strong>Gear:</strong> ${data.itemsSummary}</div>
@@ -1464,7 +1967,71 @@
     document.addEventListener('DOMContentLoaded', () => {
       initSoundTheme();
       initDefaultDates();
+      syncSoundBookingsFromCloud();
     });
+
   </script>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toastBanner" class="fixed bottom-5 right-5 z-50 hidden bg-slate-900 border border-slate-700 text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-2.5 text-xs animate-fade-in no-print">
+    <span class="text-base">🔔</span>
+    <span id="toastMessage" class="font-medium">Notification</span>
+  </div>
+
+
+  <!-- MODAL: INTERACTIVE POP-UP CALENDAR PICKER -->
+  <div id="calendarPopupModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden items-center justify-center p-4 no-print">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-sm w-full p-5 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+        <div>
+          <span class="text-[10px] font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400">DronieX Sound Calendar</span>
+          <h3 id="calendarPopupTitle" class="text-base font-black text-slate-900 dark:text-white">Select Date</h3>
+        </div>
+        <button type="button" onclick="closeCalendarPopup()" class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center justify-center transition cursor-pointer">✕</button>
+      </div>
+
+      <!-- Month Navigation -->
+      <div class="flex items-center justify-between bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-3 py-2">
+        <button type="button" onclick="changeCalendarMonth(-1)" class="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-600 text-xs font-bold text-slate-800 dark:text-slate-100 shadow-xs cursor-pointer">◀ Prev</button>
+        <div id="calendarMonthYearLabel" class="text-sm font-black text-slate-900 dark:text-white">November 2026</div>
+        <button type="button" onclick="changeCalendarMonth(1)" class="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-600 text-xs font-bold text-slate-800 dark:text-slate-100 shadow-xs cursor-pointer">Next ▶</button>
+      </div>
+
+      <!-- Weekday Headers -->
+      <div class="grid grid-cols-7 gap-1 text-center text-[11px] font-bold text-slate-400">
+        <div>Su</div><div>Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div>
+      </div>
+
+      <!-- Days Grid -->
+      <div id="calendarDaysGrid" class="grid grid-cols-7 gap-1.5 text-center text-xs">
+        <!-- Populated dynamically by renderCalendarGrid() -->
+      </div>
+
+      <!-- Calendar Availability Legend -->
+      <div class="flex items-center justify-center gap-3.5 text-[10px] font-bold py-1.5 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700">
+        <span class="inline-flex items-center gap-1.5 text-slate-600 dark:text-slate-300">
+          <span class="w-2.5 h-2.5 rounded-sm bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600"></span> Available
+        </span>
+        <span class="inline-flex items-center gap-1.5 text-orange-600 dark:text-orange-400">
+          <span class="w-2.5 h-2.5 rounded-sm bg-orange-600"></span> Selected
+        </span>
+        <span class="inline-flex items-center gap-1.5 text-rose-600 dark:text-rose-400">
+          <span class="w-2.5 h-2.5 rounded-sm bg-rose-500"></span> Booked
+        </span>
+      </div>
+
+      <!-- Quick Duration Presets -->
+      <div class="pt-2 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 text-[11px]">
+        <span class="text-slate-500 dark:text-slate-400">Quick Duration:</span>
+        <div class="flex gap-1.5">
+          <button type="button" onclick="setQuickModalDays(1); closeCalendarPopup()" class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold cursor-pointer">01 Day</button>
+          <button type="button" onclick="setQuickModalDays(2); closeCalendarPopup()" class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold cursor-pointer">02 Days</button>
+          <button type="button" onclick="setQuickModalDays(3); closeCalendarPopup()" class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold cursor-pointer">03 Days</button>
+          <button type="button" onclick="setQuickModalDays(7); closeCalendarPopup()" class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold cursor-pointer">07 Days</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>
