@@ -1,6 +1,2 @@
 User-agent: *
-Allow: /
-Disallow: /admin.html
-Disallow: /api/
-
-Sitemap: https://droniex-rent-store.vercel.app/sitemap.xml
+Disallow: /
