@@ -21,6 +21,10 @@
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Firebase SDK for Real SMS Phone Verification -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -933,7 +937,7 @@
             </div>
           </div>
 
-          <!-- DUAL PHONE VERIFICATION WIDGET (WHATSAPP & SMS OTP) -->
+          <!-- DUAL PHONE VERIFICATION WIDGET (WHATSAPP & REAL SMS OTP) -->
           <div class="p-3 rounded-2xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 space-y-2.5 text-xs" id="soundPhoneVerifyContainer">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-1.5 font-bold text-slate-800 dark:text-slate-200">
@@ -943,38 +947,49 @@
               <span id="soundPhoneCarrierBadge" class="text-[10px] font-semibold text-slate-500">Enter Sri Lankan number</span>
             </div>
 
+            <!-- Invisible reCAPTCHA container for Firebase Phone Auth -->
+            <div id="sound-recaptcha-container"></div>
+
             <!-- Verification Action Buttons -->
             <div id="soundPhoneVerifyActions" class="flex flex-wrap items-center gap-2 pt-1">
-              <button type="button" onclick="startSoundPhoneVerification('whatsapp')" id="btnSoundVerifyWa" class="flex-1 min-w-[130px] px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer shadow-xs">
-                <span>💬</span>
-                <span>Verify via WhatsApp</span>
-              </button>
               <button type="button" onclick="startSoundPhoneVerification('sms')" id="btnSoundVerifySms" class="flex-1 min-w-[130px] px-3 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer shadow-xs">
                 <span>📩</span>
                 <span>Verify via SMS OTP</span>
               </button>
+              <button type="button" onclick="startSoundPhoneVerification('whatsapp')" id="btnSoundVerifyWa" class="flex-1 min-w-[130px] px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer shadow-xs">
+                <span>💬</span>
+                <span>Verify via WhatsApp</span>
+              </button>
             </div>
 
             <!-- Active OTP Input Box (Hidden by default) -->
-            <div id="soundPhoneOtpBox" class="hidden bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-300 dark:border-slate-600 space-y-2">
+            <div id="soundPhoneOtpBox" class="hidden bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-300 dark:border-slate-600 space-y-2.5">
               <div class="flex items-center justify-between text-[11px]">
-                <span id="soundPhoneOtpHint" class="text-slate-600 dark:text-slate-400">Enter the verification code:</span>
+                <span id="soundPhoneOtpHint" class="font-medium text-slate-700 dark:text-slate-300">Enter the verification code:</span>
                 <button type="button" onclick="cancelSoundPhoneVerification()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs cursor-pointer">Cancel</button>
               </div>
 
-              <div id="soundPhoneWaStep" class="hidden">
-                <a id="soundPhoneWaLink" href="#" target="_blank" class="block w-full text-center py-2 px-3 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold border border-emerald-500/30 text-xs transition mb-2">
-                  📲 Click to Open WhatsApp (Send Code: <span id="soundPhoneWaCodeBadge"></span>)
+              <!-- WhatsApp Step -->
+              <div id="soundPhoneWaStep" class="hidden space-y-2">
+                <a id="soundPhoneWaLink" href="#" target="_blank" class="block w-full text-center py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-xs">
+                  💬 Step 1: Click to Send WhatsApp Message to Hotline
                 </a>
-              </div>
-
-              <div class="flex items-center gap-2">
-                <input type="text" id="soundPhoneOtpInput" maxlength="6" placeholder="Enter 4-digit Code" class="flex-1 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 font-mono text-center font-bold text-sm tracking-widest text-slate-900 dark:text-white focus:outline-none focus:border-orange-600" />
-                <button type="button" onclick="submitSoundPhoneOtp()" id="btnSubmitSoundOtp" class="px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs transition cursor-pointer shadow-xs">
-                  Confirm Code
+                <button type="button" onclick="confirmSoundWaVerified()" class="w-full py-2 px-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-700 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300 font-bold text-xs transition cursor-pointer">
+                  ✅ Step 2: I Have Sent the WhatsApp Message
                 </button>
               </div>
-              <div id="soundPhoneOtpStatus" class="text-[10px] text-slate-500"></div>
+
+              <!-- SMS Step -->
+              <div id="soundPhoneSmsStep" class="space-y-2">
+                <div class="flex items-center gap-2">
+                  <input type="text" id="soundPhoneOtpInput" maxlength="6" placeholder="Enter 6-digit SMS Code" class="flex-1 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 font-mono text-center font-bold text-sm tracking-widest text-slate-900 dark:text-white focus:outline-none focus:border-blue-600" />
+                  <button type="button" onclick="submitSoundPhoneOtp()" id="btnSubmitSoundOtp" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition cursor-pointer shadow-xs">
+                    Confirm Code
+                  </button>
+                </div>
+              </div>
+
+              <div id="soundPhoneOtpStatus" class="text-[11px] text-slate-500"></div>
             </div>
 
             <!-- Verified Status Box (Hidden by default) -->
@@ -1251,6 +1266,15 @@
     // 14. SOUND LOGIC & CLOUD CALENDAR ENGINE
     // =========================================================================
     const FIREBASE_BASE = 'https://droniex-rent-store-default-rtdb.asia-southeast1.firebasedatabase.app';
+    const FIREBASE_CONFIG = {
+      apiKey: 'AIzaSyCksMhbBk0wIzXmmx-a1RJSmwRYWAqlPWg',
+      authDomain: 'droniex-rent-store.firebaseapp.com',
+      projectId: 'droniex-rent-store',
+      databaseURL: 'https://droniex-rent-store-default-rtdb.asia-southeast1.firebasedatabase.app'
+    };
+    if (typeof firebase !== 'undefined' && !firebase.apps.length) {
+      try { firebase.initializeApp(FIREBASE_CONFIG); } catch (e) { console.warn('Firebase init:', e); }
+    }
 
     // Pricing Matrix
     const SOUND_RATES = {
@@ -1866,11 +1890,12 @@
       }
     }
 
-    // DUAL PHONE VERIFICATION (WHATSAPP & SMS OTP)
+    // DUAL PHONE VERIFICATION (WHATSAPP & REAL SMS OTP VIA FIREBASE)
     let _soundPhoneVerified = false;
     let _soundVerifiedPhone = '';
     let _soundVerificationMethod = '';
-    let _soundActiveOtpCode = '';
+    let _soundRecaptchaVerifier = null;
+    let _soundConfirmationResult = null;
 
     function onSoundPhoneInput(rawVal) {
       const digits = (rawVal || '').replace(/\D/g, '');
@@ -1918,6 +1943,23 @@
       }
     }
 
+    function initSoundFirebaseRecaptcha() {
+      if (typeof firebase === 'undefined' || !firebase.auth) return null;
+      if (!_soundRecaptchaVerifier) {
+        try {
+          _soundRecaptchaVerifier = new firebase.auth.RecaptchaVerifier('sound-recaptcha-container', {
+            size: 'invisible',
+            callback: function() {
+              // reCAPTCHA solved automatically
+            }
+          });
+        } catch (e) {
+          console.warn('reCAPTCHA init error:', e);
+        }
+      }
+      return _soundRecaptchaVerifier;
+    }
+
     async function startSoundPhoneVerification(method) {
       const phoneInput = document.getElementById('soundCustomerPhone');
       const nameInput = document.getElementById('soundCustomerName');
@@ -1930,78 +1972,104 @@
         return;
       }
 
-      const code = Math.floor(1000 + Math.random() * 9000).toString();
-      _soundActiveOtpCode = code;
       _soundVerificationMethod = method;
 
       const actionsEl = document.getElementById('soundPhoneVerifyActions');
       const otpBoxEl = document.getElementById('soundPhoneOtpBox');
       const hintEl = document.getElementById('soundPhoneOtpHint');
       const waStepEl = document.getElementById('soundPhoneWaStep');
+      const smsStepEl = document.getElementById('soundPhoneSmsStep');
       const waLinkEl = document.getElementById('soundPhoneWaLink');
-      const waBadgeEl = document.getElementById('soundPhoneWaCodeBadge');
       const statusEl = document.getElementById('soundPhoneOtpStatus');
 
       if (actionsEl) actionsEl.classList.add('hidden');
       if (otpBoxEl) otpBoxEl.classList.remove('hidden');
 
       const customerName = (nameInput?.value || '').trim() || 'Valued Customer';
+      const formattedE164 = '+94' + digits.substring(1);
 
       if (method === 'whatsapp') {
-        hintEl.textContent = '1. Click below to send code to DronieX WhatsApp, then confirm:';
-        waStepEl.classList.remove('hidden');
-        waBadgeEl.textContent = code;
-        const waUrl = `https://wa.me/94701875455?text=${encodeURIComponent(`Hi DronieX, my rental phone verification code is *${code}* (Customer: ${customerName}, Phone: ${rawPhone})`)}`;
-        waLinkEl.href = waUrl;
-        statusEl.innerHTML = `Code generated: <span class="font-mono font-bold text-emerald-600 dark:text-emerald-400">${code}</span>. Send it or enter it below to confirm.`;
+        if (waStepEl) waStepEl.classList.remove('hidden');
+        if (smsStepEl) smsStepEl.classList.add('hidden');
+        hintEl.textContent = 'Verify via DronieX Store Hotline WhatsApp:';
+        const waText = encodeURIComponent(`Hi DronieX, I am reserving sound gear. Please verify my phone number: ${rawPhone} (Customer: ${customerName})`);
+        waLinkEl.href = `https://wa.me/94701875455?text=${waText}`;
+        statusEl.innerHTML = '<span class="text-emerald-600 dark:text-emerald-400">1. Click above to open WhatsApp and send message to hotline (070 187 5455).<br/>2. Then click "I Have Sent the WhatsApp Message" below.</span>';
       } else {
-        hintEl.textContent = 'Sending SMS OTP to your phone...';
-        waStepEl.classList.add('hidden');
-        statusEl.textContent = 'Dispatching SMS OTP...';
+        // Real SMS OTP via Firebase
+        if (waStepEl) waStepEl.classList.add('hidden');
+        if (smsStepEl) smsStepEl.classList.remove('hidden');
+        hintEl.textContent = 'Sending real SMS verification code to your phone...';
+        statusEl.innerHTML = '<span class="text-blue-500 animate-pulse font-semibold">⏳ Dispatching SMS to your phone via Google Firebase...</span>';
 
         try {
-          const res = await fetch('/api/verify-phone', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'send_otp', phone: digits, code: code, customerName })
-          });
-          const data = await res.json();
-          if (data.success) {
-            hintEl.textContent = `SMS OTP sent to ${rawPhone}. Enter code below:`;
-            statusEl.innerHTML = `Enter the 4-digit code sent to your phone. (Code: <span class="font-mono font-bold text-blue-600 dark:text-blue-400">${code}</span>)`;
-          } else {
-            hintEl.textContent = `Enter verification code below:`;
-            statusEl.innerHTML = `SMS gateway queued: Code <span class="font-mono font-bold text-blue-600 dark:text-blue-400">${code}</span>.`;
+          if (typeof firebase === 'undefined' || !firebase.auth) {
+            throw new Error('Firebase SDK is loading. Please try again in 2 seconds.');
           }
-        } catch (e) {
-          hintEl.textContent = `Enter verification code below:`;
-          statusEl.innerHTML = `Code: <span class="font-mono font-bold text-blue-600 dark:text-blue-400">${code}</span>.`;
-        }
-      }
 
-      const otpInput = document.getElementById('soundPhoneOtpInput');
-      if (otpInput) {
-        otpInput.value = '';
-        otpInput.focus();
+          const verifier = initSoundFirebaseRecaptcha();
+          _soundConfirmationResult = await firebase.auth().signInWithPhoneNumber(formattedE164, verifier);
+
+          hintEl.textContent = `📩 6-digit SMS code sent to ${rawPhone}. Check your phone messages:`;
+          statusEl.innerHTML = '<span class="text-emerald-600 dark:text-emerald-400 font-semibold">✅ Real SMS code sent to your phone! Please enter the 6-digit code received via SMS.</span>';
+
+          const otpInput = document.getElementById('soundPhoneOtpInput');
+          if (otpInput) {
+            otpInput.value = '';
+            otpInput.focus();
+          }
+        } catch (err) {
+          console.error('Firebase Phone Auth Error:', err);
+          if (err.code === 'auth/operation-not-allowed') {
+            hintEl.textContent = 'Real SMS requires Phone provider enabled in Firebase Console:';
+            statusEl.innerHTML = '<div class="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-300 space-y-1">' +
+              '<div class="font-bold">⚠️ Phone Auth Disabled in Firebase Console</div>' +
+              '<div>To receive real SMS, enable "Phone" under <b>Firebase Console ➔ Authentication ➔ Sign-in method ➔ Phone</b>.</div>' +
+              '<div class="pt-1">👉 <b>Instant Alternative:</b> Click below to verify instantly via WhatsApp to hotline 070 187 5455:</div>' +
+              '<button type="button" onclick="startSoundPhoneVerification(\'whatsapp\')" class="mt-1 px-3 py-1.5 rounded-lg bg-emerald-600 text-white font-bold text-xs inline-flex items-center gap-1 cursor-pointer">💬 Switch to WhatsApp Verification</button>' +
+              '</div>';
+          } else {
+            statusEl.innerHTML = `<span class="text-red-500 font-semibold">⚠️ ${err.message || 'Failed to dispatch SMS.'}</span><br/><button type="button" onclick="startSoundPhoneVerification('whatsapp')" class="mt-1 underline text-emerald-600 cursor-pointer">Verify via WhatsApp instead</button>`;
+          }
+        }
       }
     }
 
-    function submitSoundPhoneOtp() {
+    async function submitSoundPhoneOtp() {
       const otpInput = document.getElementById('soundPhoneOtpInput');
       const entered = (otpInput?.value || '').trim();
       const phoneInput = document.getElementById('soundCustomerPhone');
       const digits = (phoneInput?.value || '').replace(/\D/g, '');
+      const statusEl = document.getElementById('soundPhoneOtpStatus');
 
-      if (!entered) {
-        alert('Please enter the verification code.');
+      if (!entered || entered.length < 4) {
+        alert('Please enter the 6-digit code received on your phone.');
         return;
       }
 
-      if (entered !== _soundActiveOtpCode) {
-        alert('Invalid verification code. Please check the code and try again.');
-        return;
+      if (_soundConfirmationResult) {
+        statusEl.innerHTML = '<span class="text-blue-500 animate-pulse font-semibold">⏳ Verifying SMS code with Google Firebase...</span>';
+        try {
+          await _soundConfirmationResult.confirm(entered);
+          completeSoundPhoneVerification(digits, 'SMS OTP');
+        } catch (err) {
+          console.error('Code confirmation error:', err);
+          alert('❌ Invalid or expired SMS code. Please check the SMS on your phone and try again.');
+          statusEl.innerHTML = '<span class="text-red-500 font-bold">❌ Invalid code. Please enter the correct code from your SMS.</span>';
+        }
+      } else {
+        alert('Please click "Verify via SMS OTP" first to send the code to your phone.');
       }
+    }
 
+    function confirmSoundWaVerified() {
+      const phoneInput = document.getElementById('soundCustomerPhone');
+      const digits = (phoneInput?.value || '').replace(/\D/g, '');
+      completeSoundPhoneVerification(digits, 'WhatsApp');
+    }
+
+    function completeSoundPhoneVerification(digits, methodLabel) {
+      const phoneInput = document.getElementById('soundCustomerPhone');
       _soundPhoneVerified = true;
       _soundVerifiedPhone = digits;
 
@@ -2012,7 +2080,6 @@
       if (otpBoxEl) otpBoxEl.classList.add('hidden');
       if (verifiedBadgeEl) verifiedBadgeEl.classList.remove('hidden');
 
-      const methodLabel = _soundVerificationMethod === 'whatsapp' ? 'WhatsApp' : 'SMS OTP';
       if (verifiedTextEl) {
         verifiedTextEl.textContent = `Phone ${phoneInput.value} Verified via ${methodLabel}!`;
       }
@@ -2029,7 +2096,7 @@
     function resetSoundPhoneVerification() {
       _soundPhoneVerified = false;
       _soundVerifiedPhone = '';
-      _soundActiveOtpCode = '';
+      _soundConfirmationResult = null;
       const actionsEl = document.getElementById('soundPhoneVerifyActions');
       const otpBoxEl = document.getElementById('soundPhoneOtpBox');
       const verifiedBadgeEl = document.getElementById('soundPhoneVerifiedBadge');

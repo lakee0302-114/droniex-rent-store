@@ -82,7 +82,6 @@ module.exports = async (req, res) => {
       return res.status(200).json({
         success: true,
         phone: targetPhone,
-        code: generatedCode,
         smsSent,
         directWaUrl,
         expiresInSeconds: 600
