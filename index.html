@@ -853,7 +853,10 @@
             <input type="text" id="kycFullName" required placeholder="e.g. Kasun Perera" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:border-blue-600 focus:outline-none shadow-xs" />
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Phone Number *</label>
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">Phone Number *</label>
+              <span id="dronePhoneCarrierBadge" class="text-[10px] font-semibold text-slate-500"></span>
+            </div>
             <input type="tel" id="kycPhone1" required oninput="syncWhatsAppPhone(); onDronePhoneInput(this.value);" placeholder="e.g. 077 123 4567" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:border-blue-600 focus:outline-none shadow-xs" />
           </div>
           <div>
@@ -882,71 +885,6 @@
               <label for="kycSameAsPhone" class="text-xs text-slate-600 dark:text-slate-400 cursor-pointer select-none flex items-center gap-1 font-medium">
                 Same as phone number
               </label>
-            </div>
-          </div>
-
-          <!-- DUAL PHONE VERIFICATION WIDGET (WHATSAPP & REAL SMS OTP) -->
-          <div class="p-3.5 rounded-2xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 space-y-2.5 text-xs" id="dronePhoneVerifyContainer">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-1.5 font-bold text-slate-800 dark:text-slate-200">
-                <span>🛡️</span>
-                <span>Phone Verification (Required)</span>
-              </div>
-              <span id="dronePhoneCarrierBadge" class="text-[10px] font-semibold text-slate-500">Enter Sri Lankan number</span>
-            </div>
-
-            <!-- Invisible reCAPTCHA container for Firebase Phone Auth -->
-            <div id="drone-recaptcha-container"></div>
-
-            <!-- Verification Action Buttons -->
-            <div id="dronePhoneVerifyActions" class="flex flex-wrap items-center gap-2 pt-1">
-              <button type="button" onclick="startDronePhoneVerification('sms')" id="btnDroneVerifySms" class="flex-1 min-w-[130px] px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer shadow-xs">
-                <span>📩</span>
-                <span>Verify via SMS OTP</span>
-              </button>
-              <button type="button" onclick="startDronePhoneVerification('whatsapp')" id="btnDroneVerifyWa" class="flex-1 min-w-[130px] px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer shadow-xs">
-                <span>💬</span>
-                <span>Verify via WhatsApp</span>
-              </button>
-            </div>
-
-            <!-- Active OTP Input Box (Hidden by default) -->
-            <div id="dronePhoneOtpBox" class="hidden bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-300 dark:border-slate-600 space-y-2.5">
-              <div class="flex items-center justify-between text-[11px]">
-                <span id="dronePhoneOtpHint" class="font-medium text-slate-700 dark:text-slate-300">Enter the verification code:</span>
-                <button type="button" onclick="cancelDronePhoneVerification()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs cursor-pointer">Cancel</button>
-              </div>
-
-              <!-- WhatsApp Step -->
-              <div id="dronePhoneWaStep" class="hidden space-y-2">
-                <a id="dronePhoneWaLink" href="#" target="_blank" class="block w-full text-center py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-xs">
-                  💬 Step 1: Click to Send WhatsApp Message to Hotline
-                </a>
-                <button type="button" onclick="confirmDroneWaVerified()" class="w-full py-2 px-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-700 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300 font-bold text-xs transition cursor-pointer">
-                  ✅ Step 2: I Have Sent the WhatsApp Message
-                </button>
-              </div>
-
-              <!-- SMS Step -->
-              <div id="dronePhoneSmsStep" class="space-y-2">
-                <div class="flex items-center gap-2">
-                  <input type="text" id="dronePhoneOtpInput" maxlength="6" placeholder="Enter 6-digit SMS Code" class="flex-1 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 font-mono text-center font-bold text-sm tracking-widest text-slate-900 dark:text-white focus:outline-none focus:border-blue-600" />
-                  <button type="button" onclick="submitDronePhoneOtp()" id="btnSubmitDroneOtp" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition cursor-pointer shadow-xs">
-                    Confirm Code
-                  </button>
-                </div>
-              </div>
-
-              <div id="dronePhoneOtpStatus" class="text-[11px] text-slate-500"></div>
-            </div>
-
-            <!-- Verified Status Box (Hidden by default) -->
-            <div id="dronePhoneVerifiedBadge" class="hidden bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 p-2.5 rounded-xl flex items-center justify-between">
-              <div class="flex items-center gap-2 text-emerald-700 dark:text-emerald-400 font-bold text-xs">
-                <span>✅</span>
-                <span id="dronePhoneVerifiedText">Phone Number Verified!</span>
-              </div>
-              <button type="button" onclick="resetDronePhoneVerification()" class="text-[10px] text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 underline cursor-pointer">Change Number</button>
             </div>
           </div>
           <div>
@@ -3925,21 +3863,13 @@
       updateEquipmentAvailabilityNotice();
     }
 
-    // DUAL PHONE VERIFICATION (WHATSAPP & REAL SMS OTP VIA FIREBASE)
-    let _dronePhoneVerified = false;
-    let _droneVerifiedPhone = '';
-    let _droneVerificationMethod = '';
-    let _droneRecaptchaVerifier = null;
-    let _droneConfirmationResult = null;
-
     function onDronePhoneInput(rawVal) {
       const digits = (rawVal || '').replace(/\D/g, '');
       const badge = document.getElementById('dronePhoneCarrierBadge');
       if (!badge) return;
 
       if (digits.length === 0) {
-        badge.textContent = 'Enter Sri Lankan number';
-        badge.className = 'text-[10px] font-semibold text-slate-500';
+        badge.textContent = '';
         return;
       }
 
@@ -3960,189 +3890,15 @@
       }
 
       if (digits.length === 10 && digits.startsWith('07')) {
-        const dummies = ['0700000000', '0711111111', '0722222222', '0733333333', '0744444444', '0755555555', '0766666666', '0777777777', '0788888888', '0799999999', '0712345678'];
-        if (dummies.includes(digits)) {
-          badge.textContent = '⚠️ Invalid / Dummy Number';
-          badge.className = 'text-[10px] font-bold text-red-500';
-          return;
-        }
-        badge.textContent = `${carrier} · Ready to Verify`;
+        badge.textContent = carrier;
         badge.className = `text-[10px] ${color}`;
       } else {
         badge.textContent = `${carrier} (${digits.length}/10)`;
         badge.className = `text-[10px] ${color}`;
       }
-
-      if (_dronePhoneVerified && digits !== _droneVerifiedPhone) {
-        resetDronePhoneVerification();
-      }
     }
 
-    function initDroneFirebaseRecaptcha() {
-      if (typeof firebase === 'undefined' || !firebase.auth) return null;
-      if (!_droneRecaptchaVerifier) {
-        try {
-          _droneRecaptchaVerifier = new firebase.auth.RecaptchaVerifier('drone-recaptcha-container', {
-            size: 'invisible',
-            callback: function() {
-              // reCAPTCHA solved automatically
-            }
-          });
-        } catch (e) {
-          console.warn('reCAPTCHA init error:', e);
-        }
-      }
-      return _droneRecaptchaVerifier;
-    }
 
-    async function startDronePhoneVerification(method) {
-      const phoneInput = document.getElementById('kycPhone1');
-      const nameInput = document.getElementById('kycFullName');
-      const rawPhone = (phoneInput?.value || '').trim();
-      const digits = rawPhone.replace(/\D/g, '');
-
-      if (digits.length !== 10 || !digits.startsWith('07')) {
-        alert('Please enter a valid 10-digit Sri Lankan mobile number starting with 07 (e.g. 077 123 4567).');
-        phoneInput?.focus();
-        return;
-      }
-
-      _droneVerificationMethod = method;
-
-      const actionsEl = document.getElementById('dronePhoneVerifyActions');
-      const otpBoxEl = document.getElementById('dronePhoneOtpBox');
-      const hintEl = document.getElementById('dronePhoneOtpHint');
-      const waStepEl = document.getElementById('dronePhoneWaStep');
-      const smsStepEl = document.getElementById('dronePhoneSmsStep');
-      const waLinkEl = document.getElementById('dronePhoneWaLink');
-      const statusEl = document.getElementById('dronePhoneOtpStatus');
-
-      if (actionsEl) actionsEl.classList.add('hidden');
-      if (otpBoxEl) otpBoxEl.classList.remove('hidden');
-
-      const customerName = (nameInput?.value || '').trim() || 'Valued Customer';
-      const formattedE164 = '+94' + digits.substring(1);
-
-      if (method === 'whatsapp') {
-        if (waStepEl) waStepEl.classList.remove('hidden');
-        if (smsStepEl) smsStepEl.classList.add('hidden');
-        hintEl.textContent = 'Verify via DronieX Store Hotline WhatsApp:';
-        const waText = encodeURIComponent(`Hi DronieX, I am reserving drone gear. Please verify my phone number: ${rawPhone} (Customer: ${customerName})`);
-        waLinkEl.href = `https://wa.me/94701875455?text=${waText}`;
-        statusEl.innerHTML = '<span class="text-emerald-600 dark:text-emerald-400">1. Click above to open WhatsApp and send message to hotline (070 187 5455).<br/>2. Then click "I Have Sent the WhatsApp Message" below.</span>';
-      } else {
-        // Real SMS OTP via Firebase
-        if (waStepEl) waStepEl.classList.add('hidden');
-        if (smsStepEl) smsStepEl.classList.remove('hidden');
-        hintEl.textContent = 'Sending real SMS verification code to your phone...';
-        statusEl.innerHTML = '<span class="text-blue-500 animate-pulse font-semibold">⏳ Dispatching SMS to your phone via Google Firebase...</span>';
-
-        try {
-          if (typeof firebase === 'undefined' || !firebase.auth) {
-            throw new Error('Firebase SDK is loading. Please try again in 2 seconds.');
-          }
-
-          const verifier = initDroneFirebaseRecaptcha();
-          _droneConfirmationResult = await firebase.auth().signInWithPhoneNumber(formattedE164, verifier);
-
-          hintEl.textContent = `📩 6-digit SMS code sent to ${rawPhone}. Check your phone messages:`;
-          statusEl.innerHTML = '<span class="text-emerald-600 dark:text-emerald-400 font-semibold">✅ Real SMS code sent to your phone! Please enter the 6-digit code received via SMS.</span>';
-
-          const otpInput = document.getElementById('dronePhoneOtpInput');
-          if (otpInput) {
-            otpInput.value = '';
-            otpInput.focus();
-          }
-        } catch (err) {
-          console.error('Firebase Phone Auth Error:', err);
-          const isBillingErr = (err.message && err.message.includes('BILLING_NOT_ENABLED')) || err.code === 'auth/billing-not-enabled';
-          if (isBillingErr || err.code === 'auth/operation-not-allowed') {
-            hintEl.textContent = 'SMS Gateway Notice:';
-            statusEl.innerHTML = '<div class="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-300 space-y-1">' +
-              '<div class="font-bold">⚠️ ' + (isBillingErr ? 'Google Cloud Billing Required for SMS' : 'Phone Auth Notice') + '</div>' +
-              '<div>' + (isBillingErr ? 'Google requires Firebase Blaze plan to dispatch SMS to phones.' : 'Please enable Phone provider in Firebase Console.') + '</div>' +
-              '<div class="pt-1">👉 <b>100% Free Alternative:</b> Verify instantly via WhatsApp to store hotline (No card or billing needed):</div>' +
-              '<button type="button" onclick="startDronePhoneVerification(\'whatsapp\')" class="mt-1 px-3 py-1.5 rounded-lg bg-emerald-600 text-white font-bold text-xs inline-flex items-center gap-1 cursor-pointer">💬 Switch to WhatsApp Verification (070 187 5455)</button>' +
-              '</div>';
-          } else {
-            statusEl.innerHTML = `<span class="text-red-500 font-semibold">⚠️ ${err.message || 'Failed to dispatch SMS.'}</span><br/><button type="button" onclick="startDronePhoneVerification(\'whatsapp\')" class="mt-1 underline text-emerald-600 cursor-pointer">Verify via WhatsApp instead</button>`;
-          }
-        }
-      }
-    }
-
-    async function submitDronePhoneOtp() {
-      const otpInput = document.getElementById('dronePhoneOtpInput');
-      const entered = (otpInput?.value || '').trim();
-      const phoneInput = document.getElementById('kycPhone1');
-      const digits = (phoneInput?.value || '').replace(/\D/g, '');
-      const statusEl = document.getElementById('dronePhoneOtpStatus');
-
-      if (!entered || entered.length < 4) {
-        alert('Please enter the 6-digit code received on your phone.');
-        return;
-      }
-
-      if (_droneConfirmationResult) {
-        statusEl.innerHTML = '<span class="text-blue-500 animate-pulse font-semibold">⏳ Verifying SMS code with Google Firebase...</span>';
-        try {
-          await _droneConfirmationResult.confirm(entered);
-          completeDronePhoneVerification(digits, 'SMS OTP');
-        } catch (err) {
-          console.error('Code confirmation error:', err);
-          alert('❌ Invalid or expired SMS code. Please check the SMS on your phone and try again.');
-          statusEl.innerHTML = '<span class="text-red-500 font-bold">❌ Invalid code. Please enter the correct code from your SMS.</span>';
-        }
-      } else {
-        alert('Please click "Verify via SMS OTP" first to send the code to your phone.');
-      }
-    }
-
-    function confirmDroneWaVerified() {
-      const phoneInput = document.getElementById('kycPhone1');
-      const digits = (phoneInput?.value || '').replace(/\D/g, '');
-      completeDronePhoneVerification(digits, 'WhatsApp');
-    }
-
-    function completeDronePhoneVerification(digits, methodLabel) {
-      const phoneInput = document.getElementById('kycPhone1');
-      _dronePhoneVerified = true;
-      _droneVerifiedPhone = digits;
-
-      const otpBoxEl = document.getElementById('dronePhoneOtpBox');
-      const verifiedBadgeEl = document.getElementById('dronePhoneVerifiedBadge');
-      const verifiedTextEl = document.getElementById('dronePhoneVerifiedText');
-
-      if (otpBoxEl) otpBoxEl.classList.add('hidden');
-      if (verifiedBadgeEl) verifiedBadgeEl.classList.remove('hidden');
-
-      if (verifiedTextEl) {
-        verifiedTextEl.textContent = `Phone ${phoneInput.value} Verified via ${methodLabel}!`;
-      }
-      phoneInput.classList.add('border-emerald-500', 'bg-emerald-50/50', 'dark:bg-emerald-950/30');
-    }
-
-    function cancelDronePhoneVerification() {
-      const actionsEl = document.getElementById('dronePhoneVerifyActions');
-      const otpBoxEl = document.getElementById('dronePhoneOtpBox');
-      if (actionsEl) actionsEl.classList.remove('hidden');
-      if (otpBoxEl) otpBoxEl.classList.add('hidden');
-    }
-
-    function resetDronePhoneVerification() {
-      _dronePhoneVerified = false;
-      _droneVerifiedPhone = '';
-      _droneConfirmationResult = null;
-      const actionsEl = document.getElementById('dronePhoneVerifyActions');
-      const otpBoxEl = document.getElementById('dronePhoneOtpBox');
-      const verifiedBadgeEl = document.getElementById('dronePhoneVerifiedBadge');
-      const phoneInput = document.getElementById('kycPhone1');
-
-      if (actionsEl) actionsEl.classList.remove('hidden');
-      if (otpBoxEl) otpBoxEl.classList.add('hidden');
-      if (verifiedBadgeEl) verifiedBadgeEl.classList.add('hidden');
-      if (phoneInput) phoneInput.classList.remove('border-emerald-500', 'bg-emerald-50/50', 'dark:bg-emerald-950/30');
-    }
 
     function syncWhatsAppPhone() {
       const sameCheck = document.getElementById('kycSameAsPhone');
@@ -4194,13 +3950,6 @@
       let waVal = (document.getElementById('kycWhatsApp')?.value || '').trim();
       if (!waVal || (sameCheck && sameCheck.checked)) {
         waVal = phoneVal;
-      }
-
-      if (!_dronePhoneVerified) {
-        alert('⚠️ Please verify your phone number via WhatsApp or SMS OTP before confirming your reservation.');
-        const verifyBox = document.getElementById('dronePhoneVerifyContainer');
-        if (verifyBox) verifyBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        return;
       }
 
       appState.customer = {
@@ -4262,13 +4011,6 @@
     }
 
     function resetVerification() {
-      if (!_dronePhoneVerified) {
-        alert('⚠️ Please verify your phone number via WhatsApp or SMS OTP before confirming your reservation.');
-        const verifyBox = document.getElementById('dronePhoneVerifyContainer');
-        if (verifyBox) verifyBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        return;
-      }
-
       appState.customer = {
         verified: false,
         fullName: '',
