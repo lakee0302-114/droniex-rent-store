@@ -101,46 +101,55 @@
   <div id="adminAppDashboard" class="hidden flex-1 flex flex-col">
     <!-- Top Nav Header -->
     <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-40 no-print">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
-        <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-xl bg-blue-600 text-white font-black text-sm flex items-center justify-center shadow-xs">
+      <div class="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 sm:py-3 flex flex-wrap items-center justify-between gap-2.5 sm:gap-4">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-blue-600 text-white font-black text-sm flex items-center justify-center shadow-xs">
             DX
           </div>
           <div>
-            <div class="flex items-center gap-2">
-              <span class="font-black text-white text-base">DronieX</span>
-              <span class="px-2 py-0.5 rounded-md bg-blue-950 border border-blue-800 text-blue-400 text-[10px] font-bold uppercase tracking-wider">Staff Portal</span>
+            <div class="flex items-center gap-1.5">
+              <span class="font-black text-white text-sm sm:text-base">DronieX</span>
+              <span class="px-1.5 py-0.5 rounded-md bg-blue-950 border border-blue-800 text-blue-400 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider">Staff Portal</span>
             </div>
-            <div class="text-[11px] text-slate-400">Galwadugoda, Galle 80000 · 070 187 5455</div>
+            <div class="text-[10px] sm:text-[11px] text-slate-400 hidden xs:block">Galle 80000 · 070 187 5455</div>
           </div>
         </div>
 
-        <div class="flex items-center gap-2.5">
-          <div id="adminUserBadge" class="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 text-xs">
+        <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+          <div id="adminUserBadge" class="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 text-xs">
             <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-            <span id="adminUserEmailLabel">Staff Admin</span>
+            <span id="adminUserEmailLabel" class="truncate max-w-[120px]">Staff Admin</span>
           </div>
-          <button type="button" id="notifAlertToggleBtn" onclick="toggleOrderDesktopAlerts()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition cursor-pointer" title="Enable browser desktop alert notifications for new orders">
+          <button type="button" id="notifAlertToggleBtn" onclick="toggleOrderDesktopAlerts()" class="flex items-center gap-1 px-2 sm:px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition cursor-pointer" title="Enable browser alerts">
             <span id="notifAlertBellIcon">🔔</span>
-            <span id="notifAlertLabel" class="hidden sm:inline">Desktop Alerts</span>
+            <span id="notifAlertLabel" class="hidden md:inline">Alerts</span>
           </button>
-          <button type="button" onclick="testOrderSoundChime()" class="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition cursor-pointer" title="Play test order chime to confirm sound is active">
+          <button type="button" onclick="testOrderSoundChime()" class="hidden sm:flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition cursor-pointer" title="Play test chime">
             <span>🔊</span>
-            <span class="hidden md:inline">Test Sound</span>
+            <span class="hidden lg:inline">Chime</span>
           </button>
-          <button type="button" onclick="exportOrdersToCsv()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition shadow-xs cursor-pointer" title="Export all reservations to Excel (.csv)">
-            <span>📊 Excel Export</span>
+          <button type="button" onclick="exportOrdersToCsv()" class="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition shadow-xs cursor-pointer" title="Export Excel (.csv)">
+            <span>📊</span>
+            <span class="hidden sm:inline">Excel</span>
           </button>
-          <button type="button" onclick="syncFirebaseOrders(true)" id="cloudSyncBtn" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition cursor-pointer">
+          <button type="button" onclick="syncFirebaseOrders(true)" id="cloudSyncBtn" class="flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition cursor-pointer" title="Sync Cloud Data">
             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span id="cloudSyncStatus">Cloud Live</span>
+            <span id="cloudSyncStatus" class="hidden sm:inline">Cloud Live</span>
           </button>
-          <button type="button" onclick="lockAdminGate()" class="px-3 py-1.5 rounded-xl bg-rose-950/60 hover:bg-rose-900 border border-rose-800/80 text-rose-300 text-xs font-bold transition flex items-center gap-1 cursor-pointer">
-            <span>🔒 Log Out</span>
-          </button>
-          <a href="/" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition">
-            Storefront ↗
+          <a href="/" class="px-2 sm:px-2.5 py-1.5 rounded-xl bg-sky-950 hover:bg-sky-900 border border-sky-800 text-sky-300 text-xs font-semibold transition flex items-center gap-1" title="Open Drone Storefront">
+            <span>🚁</span>
+            <span class="hidden xs:inline">Drones</span>
+            <span class="text-[10px]">↗</span>
           </a>
+          <a href="/sound.html" class="px-2 sm:px-2.5 py-1.5 rounded-xl bg-indigo-950 hover:bg-indigo-900 border border-indigo-800 text-indigo-300 text-xs font-semibold transition flex items-center gap-1" title="Open Sound Gear Storefront">
+            <span>🔊</span>
+            <span class="hidden xs:inline">Sound</span>
+            <span class="text-[10px]">↗</span>
+          </a>
+          <button type="button" onclick="lockAdminGate()" class="px-2.5 py-1.5 rounded-xl bg-rose-950/60 hover:bg-rose-900 border border-rose-800/80 text-rose-300 text-xs font-bold transition flex items-center gap-1 cursor-pointer" title="Log Out">
+            <span>🔒</span>
+            <span class="hidden sm:inline">Exit</span>
+          </button>
         </div>
       </div>
     </header>
@@ -228,7 +237,7 @@
             <span>Make All Gear Available Now</span>
           </button>
         </div>
-        <div id="adminGearStatusGrid" class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+        <div id="adminGearStatusGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-2.5">
           <!-- Populated by renderGearStatusGrid() -->
         </div>
       </div>
@@ -240,16 +249,18 @@
           <div class="relative flex-1 max-w-md">
             <input type="text" id="orderSearchInput" oninput="filterOrdersTable()" placeholder="Search order ID, customer name, phone, NIC..." class="w-full pl-3 pr-8 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-blue-500" />
           </div>
-          <div class="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0" id="orderStatusFilters">
-            <button type="button" onclick="setFilter('all')" class="status-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-600 text-white" data-status="all">All</button>
-            <button type="button" onclick="setFilter('picked_up')" class="status-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700" data-status="picked_up">🔒 Active Out</button>
-            <button type="button" onclick="setFilter('pending')" class="status-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700" data-status="pending">⏳ Pending</button>
-            <button type="button" onclick="setFilter('returned')" class="status-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700" data-status="returned">✓ Returned</button>
+          <div class="flex items-center flex-wrap gap-1.5 overflow-x-auto pb-1 sm:pb-0" id="orderStatusFilters">
+            <button type="button" onclick="setFilter('all')" class="status-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-600 text-white whitespace-nowrap cursor-pointer" data-status="all">All</button>
+            <button type="button" onclick="setFilter('sound')" class="status-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 border border-slate-700 text-indigo-300 hover:bg-slate-700 whitespace-nowrap cursor-pointer" data-status="sound">🔊 Sound Gear</button>
+            <button type="button" onclick="setFilter('drone')" class="status-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 border border-slate-700 text-sky-300 hover:bg-slate-700 whitespace-nowrap cursor-pointer" data-status="drone">🚁 Drones</button>
+            <button type="button" onclick="setFilter('picked_up')" class="status-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 border border-slate-700 text-amber-300 hover:bg-slate-700 whitespace-nowrap cursor-pointer" data-status="picked_up">🔒 Active Out</button>
+            <button type="button" onclick="setFilter('pending')" class="status-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 whitespace-nowrap cursor-pointer" data-status="pending">⏳ Pending</button>
+            <button type="button" onclick="setFilter('returned')" class="status-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 border border-slate-700 text-emerald-300 hover:bg-slate-700 whitespace-nowrap cursor-pointer" data-status="returned">✓ Returned</button>
           </div>
         </div>
 
-        <!-- Table -->
-        <div class="border border-slate-800 rounded-2xl overflow-x-auto custom-scrollbar bg-slate-900">
+        <!-- Desktop Table View (md and above) -->
+        <div class="hidden md:block border border-slate-800 rounded-2xl overflow-x-auto custom-scrollbar bg-slate-900 shadow-md">
           <table class="w-full text-left text-xs border-collapse">
             <thead>
               <tr class="border-b border-slate-800 bg-slate-800/80 text-slate-400 uppercase text-[11px]">
@@ -267,6 +278,11 @@
               <!-- Rendered dynamically -->
             </tbody>
           </table>
+        </div>
+
+        <!-- Dedicated Mobile Card View (< md) -->
+        <div id="ordersMobileCardsList" class="md:hidden space-y-3">
+          <!-- Rendered dynamically by renderOrdersTable() -->
         </div>
       </div>
 
@@ -631,11 +647,14 @@
     const FIREBASE_BASE = 'https://droniex-rent-store-default-rtdb.asia-southeast1.firebasedatabase.app';
 
     let _adminBookings = [];
-    let _adminItems = [
-      { id: 'dji-mini-4-pro-combo', title: 'DJI Mini 4 Pro Drone — Fly More Combo', available: true },
-      { id: 'dji-osmo-mobile-se', title: 'DJI Osmo Mobile SE — Smartphone Gimbal', available: true },
-      { id: 'dji-osmo-mobile-7p', title: 'DJI Osmo Mobile 7P — Pro Smartphone Gimbal', available: false }
+    const DEFAULT_ADMIN_ITEMS = [
+      { id: 'dji-mini-4-pro-combo', title: 'DJI Mini 4 Pro Drone — Fly More Combo', category: 'drone', icon: '🚁', available: true },
+      { id: 'dji-osmo-mobile-se', title: 'DJI Osmo Mobile SE — Smartphone Gimbal', category: 'drone', icon: '📱', available: true },
+      { id: 'dji-osmo-mobile-7p', title: 'DJI Osmo Mobile 7P — Pro Smartphone Gimbal', category: 'drone', icon: '🎥', available: false },
+      { id: 'jbl-partybox-320', title: 'JBL PartyBox Stage 320 (240W Party Speaker)', category: 'sound', icon: '🔊', available: true },
+      { id: 'jbl-wireless-mic', title: 'JBL Wireless Dual Microphones (Pair)', category: 'sound', icon: '🎤', available: true }
     ];
+    let _adminItems = DEFAULT_ADMIN_ITEMS.map(it => ({ ...it }));
 
     let currentCalYear = 2026;
     let currentCalMonth = 10; // Nov
@@ -1054,7 +1073,13 @@
         const byId = _adminItems.find(it => it.id === b.itemId);
         if (byId) return byId;
       }
-      const summary = (b.itemsSummary || b.equipmentTitle || '').toLowerCase();
+      const summary = (b.itemsSummary || b.equipmentTitle || b.gear || '').toLowerCase();
+      if (summary.includes('partybox') || summary.includes('party box') || summary.includes('320')) {
+        return _adminItems.find(it => it.id === 'jbl-partybox-320');
+      }
+      if (summary.includes('wireless mic') || summary.includes('dual mic') || summary.includes('microphone')) {
+        return _adminItems.find(it => it.id === 'jbl-wireless-mic');
+      }
       if (summary.includes('mini 4 pro') || summary.includes('fly more combo')) {
         return _adminItems.find(it => it.id === 'dji-mini-4-pro-combo');
       }
@@ -1150,7 +1175,12 @@
         const invRes = await fetch(FIREBASE_BASE + '/inventory.json');
         if (invRes.ok) {
           const invData = await invRes.json();
-          if (Array.isArray(invData)) _adminItems = invData;
+          if (Array.isArray(invData) && invData.length > 0) {
+            _adminItems = DEFAULT_ADMIN_ITEMS.map(def => {
+              const cloud = invData.find(c => c && c.id === def.id);
+              return cloud ? { ...def, ...cloud } : { ...def };
+            });
+          }
         }
 
         await reconcileAdminInventory();
@@ -1630,11 +1660,11 @@
 
     function setFilter(status) {
       currentStatusFilter = status;
-      document.querySelectorAll('.status-btn').forEach(btn => {
+      document.querySelectorAll('#orderStatusFilters .status-btn, .status-btn').forEach(btn => {
         if (btn.getAttribute('data-status') === status) {
-          btn.className = 'status-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-600 text-white';
+          btn.className = 'status-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-600 text-white whitespace-nowrap cursor-pointer';
         } else {
-          btn.className = 'status-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700';
+          btn.className = 'status-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 whitespace-nowrap cursor-pointer';
         }
       });
       renderOrdersTable();
@@ -1646,76 +1676,173 @@
 
     function renderOrdersTable() {
       const tbody = document.getElementById('ordersTableBody');
+      const cardsContainer = document.getElementById('ordersMobileCardsList');
       const search = (document.getElementById('orderSearchInput')?.value || '').toLowerCase().trim();
-      if (!tbody) return;
 
       const filtered = _adminBookings.filter(b => {
+        const gearLower = (b.itemsSummary || b.equipmentTitle || b.gear || '').toLowerCase();
+        const isSound = gearLower.includes('partybox') || gearLower.includes('jbl') || gearLower.includes('mic') || gearLower.includes('speaker') || gearLower.includes('sound');
+        const isDrone = !isSound;
+
         if (currentStatusFilter !== 'all') {
           const isP = b.bookingState === 'picked_up' || (b.status || '').includes('Picked Up');
           const isR = b.bookingState === 'returned' || (b.status || '').includes('Returned');
           const isPend = b.bookingState === 'pending' || (b.status || '').includes('Pending');
+
           if (currentStatusFilter === 'picked_up' && !isP) return false;
           if (currentStatusFilter === 'returned' && !isR) return false;
           if (currentStatusFilter === 'pending' && !isPend) return false;
+          if (currentStatusFilter === 'sound' && !isSound) return false;
+          if (currentStatusFilter === 'drone' && !isDrone) return false;
         }
         if (search) {
-          const haystack = [b.orderId, b.customerName, b.phone, b.whatsapp, b.nic, b.itemsSummary].filter(Boolean).join(' ').toLowerCase();
+          const haystack = [b.orderId, b.customerName, b.phone, b.whatsapp, b.nic, b.itemsSummary, b.equipmentTitle].filter(Boolean).join(' ').toLowerCase();
           if (!haystack.includes(search)) return false;
         }
         return true;
       });
 
-      if (filtered.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" class="text-center py-8 text-slate-500">No reservations match the selected filter.</td></tr>';
-        return;
+      // 1. Render Desktop Table View
+      if (tbody) {
+        if (filtered.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="8" class="text-center py-8 text-slate-500">No reservations match the selected filter.</td></tr>';
+        } else {
+          tbody.innerHTML = filtered.map(b => {
+            const isP = b.bookingState === 'picked_up' || (b.status || '').includes('Picked Up');
+            const isR = b.bookingState === 'returned' || (b.status || '').includes('Returned');
+            const gearLower = (b.itemsSummary || b.equipmentTitle || b.gear || '').toLowerCase();
+            const isSound = gearLower.includes('partybox') || gearLower.includes('jbl') || gearLower.includes('mic') || gearLower.includes('speaker') || gearLower.includes('sound');
+
+            return `
+              <tr class="hover:bg-slate-800/50 transition">
+                <td class="py-3 px-3 font-mono font-bold text-blue-400">${b.orderId}</td>
+                <td class="py-3 px-3">
+                  <div class="font-bold text-white">${b.customerName || 'Customer'}</div>
+                  <div class="text-[10px] text-slate-400">NIC: ${b.nic || '—'}</div>
+                </td>
+                <td class="py-3 px-3">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-slate-400 text-xs">📞</span>
+                    <a href="tel:${b.phone || ''}" class="font-medium text-white hover:underline">${b.phone || '—'}</a>
+                  </div>
+                  <div class="flex items-center gap-1.5 text-emerald-400 font-bold mt-1 text-xs">
+                    <span>💬</span>
+                    <a href="https://wa.me/${(b.whatsapp || b.phone || '').replace(/[^0-9]/g, '')}" target="_blank" rel="noopener noreferrer" class="hover:underline flex items-center gap-1 font-mono" title="Open WhatsApp Chat">
+                      <span>WA:</span>
+                      <span>${b.whatsapp || b.phone || '—'}</span>
+                    </a>
+                  </div>
+                  <div class="text-[10px] text-slate-500 truncate max-w-[130px] mt-0.5">${b.email || '—'}</div>
+                </td>
+                <td class="py-3 px-3 font-semibold">
+                  <div class="flex items-center gap-1.5">
+                    <span class="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ${isSound ? 'bg-indigo-950 text-indigo-300 border border-indigo-800' : 'bg-sky-950 text-sky-300 border border-sky-800'}">
+                      ${isSound ? '🔊 Sound' : '🚁 Drone'}
+                    </span>
+                    <span class="truncate max-w-[200px]" title="${b.itemsSummary}">${b.itemsSummary}</span>
+                  </div>
+                </td>
+                <td class="py-3 px-3 whitespace-nowrap">${b.schedule || (b.pickupDate + ' to ' + b.returnDate)}</td>
+                <td class="py-3 px-3 font-bold text-emerald-400">Rs. ${Number(b.totalLkr).toLocaleString('en-LK')}</td>
+                <td class="py-3 px-3">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-bold ${isP ? 'bg-amber-950 text-amber-300 border border-amber-800' : isR ? 'bg-slate-800 text-slate-400 border border-slate-700' : 'bg-sky-950 text-sky-300 border border-sky-800'}">
+                    ${isP ? '🔒 Out' : isR ? '✓ Returned' : '⏳ Pending'}
+                  </span>
+                </td>
+                <td class="py-3 px-3 whitespace-nowrap">
+                  <div class="flex items-center gap-1.5">
+                    <button type="button" onclick="sendCustomerThankYouWhatsApp('${b.orderId}')" class="px-2 py-1 rounded bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-bold cursor-pointer" title="Send WhatsApp Reply">💬 WA</button>
+                    <button type="button" onclick="openSlipModal('${b.orderId}')" class="px-2 py-1 rounded bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-bold cursor-pointer" title="View Agreement Slip">📄</button>
+                    <button type="button" onclick="toggleOrderStatus('${b.orderId}')" class="px-2 py-1 rounded text-[10px] font-bold ${isP ? 'bg-slate-700 hover:bg-slate-600 text-white' : 'bg-amber-600 hover:bg-amber-500 text-white'} cursor-pointer">
+                      ${isP ? '✓ Return' : '🔒 Pickup'}
+                    </button>
+                    <button type="button" onclick="deleteAdminOrder('${b.orderId}')" class="px-2 py-1 rounded bg-rose-600/80 hover:bg-rose-600 text-white text-[10px] font-bold cursor-pointer transition" title="Permanently Delete Reservation">🗑️</button>
+                  </div>
+                </td>
+              </tr>
+            `;
+          }).join('');
+        }
       }
 
-      tbody.innerHTML = filtered.map(b => {
-        const isP = b.bookingState === 'picked_up' || (b.status || '').includes('Picked Up');
-        const isR = b.bookingState === 'returned' || (b.status || '').includes('Returned');
+      // 2. Render Dedicated Mobile Cards View (md:hidden)
+      if (cardsContainer) {
+        if (filtered.length === 0) {
+          cardsContainer.innerHTML = '<div class="text-center py-8 text-slate-500 text-xs bg-slate-900 border border-slate-800 rounded-2xl p-4">No reservations match the selected filter.</div>';
+        } else {
+          cardsContainer.innerHTML = filtered.map(b => {
+            const isP = b.bookingState === 'picked_up' || (b.status || '').includes('Picked Up');
+            const isR = b.bookingState === 'returned' || (b.status || '').includes('Returned');
+            const gearLower = (b.itemsSummary || b.equipmentTitle || b.gear || '').toLowerCase();
+            const isSound = gearLower.includes('partybox') || gearLower.includes('jbl') || gearLower.includes('mic') || gearLower.includes('speaker') || gearLower.includes('sound');
 
-        return `
-          <tr class="hover:bg-slate-800/50 transition">
-            <td class="py-3 px-3 font-mono font-bold text-blue-400">${b.orderId}</td>
-            <td class="py-3 px-3">
-              <div class="font-bold text-white">${b.customerName || 'Customer'}</div>
-              <div class="text-[10px] text-slate-400">NIC: ${b.nic || '—'}</div>
-            </td>
-            <td class="py-3 px-3">
-              <div class="flex items-center gap-1.5">
-                <span class="text-slate-400 text-xs">📞</span>
-                <span class="font-medium text-white">${b.phone || '—'}</span>
+            return `
+              <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 space-y-2.5 shadow-md">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="flex items-center gap-1.5">
+                    <span class="font-mono font-bold text-xs text-blue-400">#${b.orderId}</span>
+                    <span class="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase ${isSound ? 'bg-indigo-950 text-indigo-300 border border-indigo-800' : 'bg-sky-950 text-sky-300 border border-sky-800'}">
+                      ${isSound ? '🔊 Sound Gear' : '🚁 Drone / Gimbal'}
+                    </span>
+                  </div>
+                  <span class="px-2 py-0.5 rounded-lg text-[10px] font-bold ${isP ? 'bg-amber-950 text-amber-300 border border-amber-800' : isR ? 'bg-slate-800 text-slate-400 border border-slate-700' : 'bg-sky-950 text-sky-300 border border-sky-800'}">
+                    ${isP ? '🔒 Out on Rental' : isR ? '✓ Returned' : '⏳ Pending Pickup'}
+                  </span>
+                </div>
+
+                <div class="flex items-start justify-between gap-2">
+                  <div>
+                    <div class="font-bold text-white text-sm">${b.customerName || 'Customer'}</div>
+                    <div class="text-[11px] text-slate-400 flex items-center gap-2 mt-0.5">
+                      <span>NIC: <strong class="text-slate-300 font-mono">${b.nic || '—'}</strong></span>
+                      ${b.email ? `<span class="truncate max-w-[120px] text-slate-500">• ${b.email}</span>` : ''}
+                    </div>
+                  </div>
+                  <div class="text-right">
+                    <div class="text-[10px] uppercase font-bold text-slate-400">Total</div>
+                    <div class="text-sm font-black text-emerald-400">Rs. ${Number(b.totalLkr).toLocaleString('en-LK')}</div>
+                  </div>
+                </div>
+
+                <div class="bg-slate-950/70 rounded-xl p-2.5 border border-slate-800/80 space-y-1 text-xs">
+                  <div class="flex items-baseline justify-between gap-2">
+                    <span class="text-slate-400 text-[11px]">Gear:</span>
+                    <span class="font-semibold text-slate-200 text-right truncate">${b.itemsSummary}</span>
+                  </div>
+                  <div class="flex items-baseline justify-between gap-2">
+                    <span class="text-slate-400 text-[11px]">Dates:</span>
+                    <span class="font-mono text-slate-300 text-[11px]">${b.schedule || (b.pickupDate + ' to ' + b.returnDate)}</span>
+                  </div>
+                </div>
+
+                <!-- Touch Friendly Call & WhatsApp Row -->
+                <div class="grid grid-cols-2 gap-2 pt-0.5">
+                  <a href="tel:${b.phone || ''}" class="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-bold transition">
+                    <span>📞 Call</span>
+                    <span class="text-[10px] text-slate-400 font-mono font-normal truncate">(${b.phone || '—'})</span>
+                  </a>
+                  <a href="https://wa.me/${(b.whatsapp || b.phone || '').replace(/[^0-9]/g, '')}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition shadow-xs">
+                    <span>💬 WhatsApp</span>
+                  </a>
+                </div>
+
+                <!-- Quick Action Buttons -->
+                <div class="grid grid-cols-3 gap-1.5 pt-0.5">
+                  <button type="button" onclick="openSlipModal('${b.orderId}')" class="py-1.5 px-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold flex items-center justify-center gap-1 cursor-pointer transition">
+                    <span>📄 Slip</span>
+                  </button>
+                  <button type="button" onclick="toggleOrderStatus('${b.orderId}')" class="py-1.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1 cursor-pointer transition ${isP ? 'bg-slate-700 hover:bg-slate-600 text-white' : 'bg-amber-600 hover:bg-amber-500 text-white'}">
+                    <span>${isP ? '✓ Return' : '🔒 Pickup'}</span>
+                  </button>
+                  <button type="button" onclick="deleteAdminOrder('${b.orderId}')" class="py-1.5 px-2 rounded-xl bg-rose-600/80 hover:bg-rose-600 text-white text-xs font-bold flex items-center justify-center gap-1 cursor-pointer transition">
+                    <span>🗑️ Delete</span>
+                  </button>
+                </div>
               </div>
-              <div class="flex items-center gap-1.5 text-emerald-400 font-bold mt-1 text-xs">
-                <span>💬</span>
-                <a href="https://wa.me/${(b.whatsapp || b.phone || '').replace(/[^0-9]/g, '')}" target="_blank" rel="noopener noreferrer" class="hover:underline flex items-center gap-1 font-mono" title="Open WhatsApp Chat">
-                  <span>WA:</span>
-                  <span>${b.whatsapp || b.phone || '—'}</span>
-                </a>
-              </div>
-              <div class="text-[10px] text-slate-500 truncate max-w-[130px] mt-0.5">${b.email || '—'}</div>
-            </td>
-            <td class="py-3 px-3 font-semibold">${b.itemsSummary}</td>
-            <td class="py-3 px-3 whitespace-nowrap">${b.schedule || (b.pickupDate + ' to ' + b.returnDate)}</td>
-            <td class="py-3 px-3 font-bold text-emerald-400">Rs. ${Number(b.totalLkr).toLocaleString('en-LK')}</td>
-            <td class="py-3 px-3">
-              <span class="px-2 py-0.5 rounded text-[10px] font-bold ${isP ? 'bg-amber-950 text-amber-300 border border-amber-800' : isR ? 'bg-slate-800 text-slate-400' : 'bg-sky-950 text-sky-300 border border-sky-800'}">
-                ${isP ? '🔒 Out' : isR ? '✓ Returned' : '⏳ Pending'}
-              </span>
-            </td>
-            <td class="py-3 px-3 whitespace-nowrap">
-              <div class="flex items-center gap-1.5">
-                <button type="button" onclick="sendCustomerThankYouWhatsApp('${b.orderId}')" class="px-2 py-1 rounded bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-bold cursor-pointer" title="Send WhatsApp Reply">💬 WA</button>
-                <button type="button" onclick="openSlipModal('${b.orderId}')" class="px-2 py-1 rounded bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-bold cursor-pointer" title="View Agreement Slip">📄</button>
-                <button type="button" onclick="toggleOrderStatus('${b.orderId}')" class="px-2 py-1 rounded text-[10px] font-bold ${isP ? 'bg-slate-700 hover:bg-slate-600 text-white' : 'bg-amber-600 hover:bg-amber-500 text-white'} cursor-pointer">
-                  ${isP ? '✓ Return' : '🔒 Pickup'}
-                </button>
-                <button type="button" onclick="deleteAdminOrder('${b.orderId}')" class="px-2 py-1 rounded bg-rose-600/80 hover:bg-rose-600 text-white text-[10px] font-bold cursor-pointer transition" title="Permanently Delete Reservation">🗑️</button>
-              </div>
-            </td>
-          </tr>
-        `;
-      }).join('');
+            `;
+          }).join('');
+        }
+      }
     }
 
     // WhatsApp Thank You Sender
@@ -2055,7 +2182,7 @@
           <div>
             <div class="text-xl font-black text-slate-900">DronieX Rent Store — Galle</div>
             <div class="text-xs text-slate-500">No. 131, D.J. Wimalasurendra Mawatha, Galwadugoda, Galle 80000</div>
-            <div class="text-xs text-slate-500">Hotlines: 070 187 5455 / 071 351 0551</div>
+            <div class="text-xs text-slate-500">Hotlines: 070 187 5455 / 0740309322</div>
           </div>
           <div class="text-right">
             <div class="text-xs font-bold uppercase text-blue-600">Rental Agreement</div>
@@ -2063,7 +2190,7 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-4 text-xs">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-xs">
           <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-1">
             <div class="font-bold text-blue-600 uppercase text-[10px]">Hirer Information</div>
             <div class="font-bold text-slate-900 text-sm">${b.customerName}</div>
