@@ -220,7 +220,7 @@
             <span>Explore Sound Gear</span>
             <span>↓</span>
           </a>
-          <button type="button" onclick="openSoundReserveModal('jbl-partybox-320-combo')" class="px-6 py-3 rounded-xl bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-100 text-white dark:text-slate-900 font-bold text-xs shadow-sm transition">
+          <button type="button" id="soundHeroComboBtn" onclick="openSoundReserveModal('jbl-partybox-320-combo')" class="px-6 py-3 rounded-xl bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-100 text-white dark:text-slate-900 font-bold text-xs shadow-sm transition">
             Book Combo (Rs. 5,000/day) →
           </button>
           <a href="https://wa.me/94701875455?text=Hello%20DronieX%20Galle%2C%20I%20would%20like%20to%20rent%20JBL%20PartyBox%20%26%20Sound%20Equipment." target="_blank" rel="noopener noreferrer" class="px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold text-xs border border-slate-200 dark:border-slate-700 transition">
@@ -319,9 +319,9 @@
               </span>
             </div>
 
-            <div class="absolute top-3 left-3">
-              <span class="px-2 py-0.5 rounded-md bg-emerald-500/90 text-white text-[10px] font-black uppercase">
-                Available Now
+            <div class="absolute top-3 left-3" id="soundCardPartyboxBadge">
+              <span class="px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 text-[10px] font-black uppercase shadow-xs flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Available Now
               </span>
             </div>
             <div class="absolute top-3 right-3 text-right">
@@ -340,6 +340,9 @@
               <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
                 Massive JBL Pro Sound with dual 6.5" high-sensitivity woofers, dual 1" tweeters, synchronized lightshow, telescopic handle, and rugged wide wheels.
               </p>
+
+              <!-- Dynamic Reserved Banner for PartyBox -->
+              <div id="soundCardPartyboxReservedBanner"></div>
 
               <!-- Feature Highlights -->
               <ul class="mt-3 space-y-1.5 text-xs text-slate-700 dark:text-slate-300 font-medium">
@@ -376,10 +379,10 @@
               </div>
 
               <div class="grid grid-cols-2 gap-2 pt-1">
-                <button type="button" onclick="openSoundReserveModal('jbl-partybox-320-solo')" class="py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs transition cursor-pointer text-center">
+                <button type="button" id="soundBtnPartyboxSolo" onclick="openSoundReserveModal('jbl-partybox-320-solo')" class="py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs transition cursor-pointer text-center">
                   Speaker Only (4K)
                 </button>
-                <button type="button" onclick="openSoundReserveModal('jbl-partybox-320-combo')" class="py-2.5 px-3 rounded-xl bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white font-black text-xs shadow-sm transition cursor-pointer text-center">
+                <button type="button" id="soundBtnPartyboxCombo" onclick="openSoundReserveModal('jbl-partybox-320-combo')" class="py-2.5 px-3 rounded-xl bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white font-black text-xs shadow-sm transition cursor-pointer text-center">
                   With Mics (5K) →
                 </button>
               </div>
@@ -403,9 +406,9 @@
               </span>
             </div>
 
-            <div class="absolute top-3 left-3">
-              <span class="px-2 py-0.5 rounded-md bg-emerald-500/90 text-white text-[10px] font-black uppercase">
-                Available Now
+            <div class="absolute top-3 left-3" id="soundCardMicBadge">
+              <span class="px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 text-[10px] font-black uppercase shadow-xs flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Available Now
               </span>
             </div>
             <div class="absolute top-3 right-3 text-right">
@@ -424,6 +427,9 @@
               <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
                 Pair of genuine JBL Wireless handheld microphones with rechargeable 6.35mm UHF receiver dongle. Cardioid vocal pattern with anti-feedback tech.
               </p>
+
+              <!-- Dynamic Reserved Banner for Mics -->
+              <div id="soundCardMicReservedBanner"></div>
 
               <!-- Feature Highlights -->
               <ul class="mt-3 space-y-1.5 text-xs text-slate-700 dark:text-slate-300 font-medium">
@@ -459,7 +465,7 @@
                 </div>
               </div>
 
-              <button type="button" onclick="openSoundReserveModal('jbl-dual-mics-only')" class="w-full py-2.5 px-3 rounded-xl bg-slate-900 dark:bg-amber-600 hover:bg-slate-800 dark:hover:bg-amber-500 text-white font-black text-xs shadow-sm transition cursor-pointer text-center">
+              <button type="button" id="soundBtnMicOnly" onclick="openSoundReserveModal('jbl-dual-mics-only')" class="w-full py-2.5 px-3 rounded-xl bg-slate-900 dark:bg-amber-600 hover:bg-slate-800 dark:hover:bg-amber-500 text-white font-black text-xs shadow-sm transition cursor-pointer text-center">
                 Reserve Dual Mics (Rs. 2,000/day) →
               </button>
             </div>
@@ -574,7 +580,7 @@
             <p class="text-[11px] text-slate-300 mt-0.5">Pay on store pickup in Galle. Valid NIC/Passport required.</p>
           </div>
 
-          <button type="button" onclick="openSoundReserveModal('jbl-partybox-320-combo')" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-slate-950 font-black text-xs shadow-lg transition cursor-pointer text-center whitespace-nowrap">
+          <button type="button" id="soundBtnComboSection" onclick="openSoundReserveModal('jbl-partybox-320-combo')" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-slate-950 font-black text-xs shadow-lg transition cursor-pointer text-center whitespace-nowrap">
             Book Party Combo (Rs. 5,000) →
           </button>
         </div>
@@ -1335,6 +1341,228 @@
     // =========================================================================
     // REAL-TIME CLOUD AVAILABILITY & CONFLICT CHECKING
     // =========================================================================
+    function formatShortDate(dStr) {
+      if (!dStr) return '';
+      const parts = dStr.split('-');
+      if (parts.length === 3) {
+        const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        const mIdx = parseInt(parts[1], 10) - 1;
+        return (months[mIdx] || parts[1]) + ' ' + parseInt(parts[2], 10);
+      }
+      return dStr;
+    }
+
+    function getSoundGearAvailability() {
+      let partyboxAvail = true;
+      let partyboxUntil = '';
+      let micAvail = true;
+      let micUntil = '';
+
+      // 1. Check inventory from Firebase (/inventory.json)
+      if (Array.isArray(_soundInventory)) {
+        const pb = _soundInventory.find(i => i && i.id === 'jbl-partybox-320');
+        if (pb && pb.available === false) {
+          partyboxAvail = false;
+          partyboxUntil = pb.reservedUntilDate || '';
+        }
+        const mc = _soundInventory.find(i => i && i.id === 'jbl-wireless-mic');
+        if (mc && mc.available === false) {
+          micAvail = false;
+          micUntil = mc.reservedUntilDate || '';
+        }
+      }
+
+      // 2. Cross-check active reservations (_soundBookings) that are out on rental / picked up
+      const activeOutBookings = _soundBookings.filter(b => {
+        if (!b) return false;
+        const st = (b.bookingState || b.status || '').toLowerCase();
+        return st.includes('picked_up') || st.includes('picked up') || st.includes('out on rental');
+      });
+
+      activeOutBookings.forEach(b => {
+        const summary = (b.itemsSummary || b.equipmentTitle || b.packageName || b.gear || '').toLowerCase();
+        const pkgName = (b.packageName || '').toLowerCase();
+        const isCombo = summary.includes('combo') || pkgName.includes('combo') || 
+                        ((summary.includes('partybox') || summary.includes('320')) && (summary.includes('mic') || summary.includes('microphone')));
+        
+        const hasPartyBox = isCombo || summary.includes('partybox') || summary.includes('party box') || summary.includes('320') || summary.includes('speaker');
+        const hasMics = isCombo || summary.includes('wireless mic') || summary.includes('dual mic') || summary.includes('microphone') || summary.includes('mics');
+
+        if (hasPartyBox) {
+          partyboxAvail = false;
+          if (b.returnDate && (!partyboxUntil || b.returnDate > partyboxUntil)) {
+            partyboxUntil = b.returnDate;
+          }
+        }
+        if (hasMics) {
+          micAvail = false;
+          if (b.returnDate && (!micUntil || b.returnDate > micUntil)) {
+            micUntil = b.returnDate;
+          }
+        }
+      });
+
+      return {
+        partybox: { available: partyboxAvail, reservedUntilDate: partyboxUntil },
+        mic: { available: micAvail, reservedUntilDate: micUntil },
+        combo: { available: partyboxAvail && micAvail, reservedUntilDate: partyboxUntil || micUntil }
+      };
+    }
+
+    function renderSoundCatalogAvailability() {
+      const gearAvail = getSoundGearAvailability();
+      const isPbAvail = gearAvail.partybox.available;
+      const isMcAvail = gearAvail.mic.available;
+      const isComboAvail = gearAvail.combo.available;
+
+      // 1. PartyBox 320 Card
+      const pbBadge = document.getElementById('soundCardPartyboxBadge');
+      if (pbBadge) {
+        if (isPbAvail) {
+          pbBadge.innerHTML = `
+            <span class="px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 text-[10px] font-black uppercase shadow-xs flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Available Now
+            </span>
+          `;
+        } else {
+          pbBadge.innerHTML = `
+            <span class="px-2.5 py-1 rounded-full bg-amber-50 dark:bg-amber-950/90 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700 text-[10px] font-black uppercase shadow-xs flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping"></span> Reserved ${gearAvail.partybox.reservedUntilDate ? 'Until ' + formatShortDate(gearAvail.partybox.reservedUntilDate) : '· Out on Rental'}
+            </span>
+          `;
+        }
+      }
+
+      const pbBanner = document.getElementById('soundCardPartyboxReservedBanner');
+      if (pbBanner) {
+        if (!isPbAvail) {
+          pbBanner.innerHTML = `
+            <div class="rounded-2xl bg-amber-50 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-700 p-3.5 space-y-1.5 mt-3 shadow-xs">
+              <div class="flex items-center justify-between">
+                <span class="inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-amber-800 dark:text-amber-300">
+                  <span class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span>
+                  Reserved · Out on Rental (වෙන් කර ඇත)
+                </span>
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-200 dark:bg-amber-900/80 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-700">Unavailable</span>
+              </div>
+              <div class="text-xs text-amber-900 dark:text-amber-200 font-medium">
+                This party speaker is currently out on rental. ${gearAvail.partybox.reservedUntilDate ? '<strong>Next Available Pickup: ' + formatShortDate(gearAvail.partybox.reservedUntilDate) + ' (' + gearAvail.partybox.reservedUntilDate + ')</strong>' : 'Currently reserved at DronieX Store.'}
+              </div>
+            </div>
+          `;
+        } else {
+          pbBanner.innerHTML = '';
+        }
+      }
+
+      const btnSolo = document.getElementById('soundBtnPartyboxSolo');
+      if (btnSolo) {
+        if (isPbAvail) {
+          btnSolo.disabled = false;
+          btnSolo.className = 'py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs transition cursor-pointer text-center';
+          btnSolo.textContent = 'Speaker Only (4K)';
+        } else {
+          btnSolo.disabled = true;
+          btnSolo.className = 'py-2.5 px-3 rounded-xl bg-amber-50 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700 font-bold text-xs cursor-not-allowed opacity-90 text-center';
+          btnSolo.textContent = '🔒 Reserved' + (gearAvail.partybox.reservedUntilDate ? ' (' + formatShortDate(gearAvail.partybox.reservedUntilDate) + ')' : '');
+        }
+      }
+
+      const btnCombo = document.getElementById('soundBtnPartyboxCombo');
+      if (btnCombo) {
+        if (isComboAvail) {
+          btnCombo.disabled = false;
+          btnCombo.className = 'py-2.5 px-3 rounded-xl bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white font-black text-xs shadow-sm transition cursor-pointer text-center';
+          btnCombo.textContent = 'With Mics (5K) →';
+        } else {
+          btnCombo.disabled = true;
+          btnCombo.className = 'py-2.5 px-3 rounded-xl bg-amber-50 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700 font-bold text-xs cursor-not-allowed opacity-90 text-center';
+          btnCombo.textContent = !isPbAvail ? ('🔒 Speaker Reserved' + (gearAvail.partybox.reservedUntilDate ? ' (' + formatShortDate(gearAvail.partybox.reservedUntilDate) + ')' : '')) : '🔒 Mics Reserved';
+        }
+      }
+
+      // 2. Dual Wireless Mics Card
+      const mcBadge = document.getElementById('soundCardMicBadge');
+      if (mcBadge) {
+        if (isMcAvail) {
+          mcBadge.innerHTML = `
+            <span class="px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 text-[10px] font-black uppercase shadow-xs flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Available Now
+            </span>
+          `;
+        } else {
+          mcBadge.innerHTML = `
+            <span class="px-2.5 py-1 rounded-full bg-amber-50 dark:bg-amber-950/90 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700 text-[10px] font-black uppercase shadow-xs flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping"></span> Reserved ${gearAvail.mic.reservedUntilDate ? 'Until ' + formatShortDate(gearAvail.mic.reservedUntilDate) : '· Out on Rental'}
+            </span>
+          `;
+        }
+      }
+
+      const mcBanner = document.getElementById('soundCardMicReservedBanner');
+      if (mcBanner) {
+        if (!isMcAvail) {
+          mcBanner.innerHTML = `
+            <div class="rounded-2xl bg-amber-50 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-700 p-3.5 space-y-1.5 mt-3 shadow-xs">
+              <div class="flex items-center justify-between">
+                <span class="inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-amber-800 dark:text-amber-300">
+                  <span class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span>
+                  Reserved · Out on Rental (වෙන් කර ඇත)
+                </span>
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-200 dark:bg-amber-900/80 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-700">Unavailable</span>
+              </div>
+              <div class="text-xs text-amber-900 dark:text-amber-200 font-medium">
+                These wireless mics are currently out on rental. ${gearAvail.mic.reservedUntilDate ? '<strong>Next Available Pickup: ' + formatShortDate(gearAvail.mic.reservedUntilDate) + ' (' + gearAvail.mic.reservedUntilDate + ')</strong>' : 'Currently reserved at DronieX Store.'}
+              </div>
+            </div>
+          `;
+        } else {
+          mcBanner.innerHTML = '';
+        }
+      }
+
+      const btnMic = document.getElementById('soundBtnMicOnly');
+      if (btnMic) {
+        if (isMcAvail) {
+          btnMic.disabled = false;
+          btnMic.className = 'w-full py-2.5 px-3 rounded-xl bg-slate-900 dark:bg-amber-600 hover:bg-slate-800 dark:hover:bg-amber-500 text-white font-black text-xs shadow-sm transition cursor-pointer text-center';
+          btnMic.textContent = 'Reserve Dual Mics (Rs. 2,000/day) →';
+        } else {
+          btnMic.disabled = true;
+          btnMic.className = 'w-full py-2.5 px-3 rounded-xl bg-amber-50 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700 font-bold text-xs cursor-not-allowed opacity-90 text-center';
+          btnMic.textContent = '🔒 Mics Reserved' + (gearAvail.mic.reservedUntilDate ? ' Until ' + formatShortDate(gearAvail.mic.reservedUntilDate) : ' · Out on Rental');
+        }
+      }
+
+      // 3. Party Combo Banner Section
+      const btnComboSec = document.getElementById('soundBtnComboSection');
+      if (btnComboSec) {
+        if (isComboAvail) {
+          btnComboSec.disabled = false;
+          btnComboSec.className = 'w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-slate-950 font-black text-xs shadow-lg transition cursor-pointer text-center whitespace-nowrap';
+          btnComboSec.textContent = 'Book Party Combo (Rs. 5,000) →';
+        } else {
+          btnComboSec.disabled = true;
+          btnComboSec.className = 'w-full sm:w-auto px-6 py-3 rounded-xl bg-amber-950/80 text-amber-300 border border-amber-600 font-black text-xs cursor-not-allowed opacity-90 text-center whitespace-nowrap';
+          btnComboSec.textContent = '🔒 Combo Unavailable · ' + (!isPbAvail ? 'Speaker Reserved' : 'Mics Reserved');
+        }
+      }
+
+      // 4. Hero Combo Button
+      const heroBtn = document.getElementById('soundHeroComboBtn');
+      if (heroBtn) {
+        if (isComboAvail) {
+          heroBtn.disabled = false;
+          heroBtn.className = 'px-6 py-3 rounded-xl bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-100 text-white dark:text-slate-900 font-bold text-xs shadow-sm transition cursor-pointer';
+          heroBtn.textContent = 'Book Combo (Rs. 5,000/day) →';
+        } else {
+          heroBtn.disabled = true;
+          heroBtn.className = 'px-6 py-3 rounded-xl bg-amber-950/80 text-amber-300 border border-amber-700 font-bold text-xs cursor-not-allowed opacity-90 transition';
+          heroBtn.textContent = '🔒 Combo Reserved · Out on Rental';
+        }
+      }
+    }
+
     async function syncSoundBookingsFromCloud() {
       try {
         const [resRes, invRes] = await Promise.all([
@@ -1353,6 +1581,7 @@
             _soundInventory = iData;
           }
         }
+        renderSoundCatalogAvailability();
         updateSoundAvailabilityNotice();
       } catch (err) {
         console.warn('Firebase sound sync warning:', err);
@@ -1384,6 +1613,8 @@
 
     function checkSoundDateConflict(packageKey, pickDate, retDate) {
       if (!pickDate || !retDate) return null;
+
+      // 1. Check existing active booking dates
       const active = getActiveBookingsForSoundPackage(packageKey);
       for (const b of active) {
         // Full-day overlap: pickDate <= b.returnDate AND retDate >= b.pickupDate
@@ -1391,6 +1622,33 @@
           return b;
         }
       }
+
+      // 2. Also check if equipment is currently marked unavailable / locked in store
+      const gearAvail = getSoundGearAvailability();
+      const isPartyBoxPkg = packageKey.includes('partybox') || packageKey.includes('combo') || packageKey.includes('solo');
+      const isMicOnlyPkg = packageKey.includes('mics-only') || packageKey.includes('dual-mics');
+
+      if (isPartyBoxPkg && !gearAvail.partybox.available) {
+        const until = gearAvail.partybox.reservedUntilDate || new Date().toISOString().slice(0, 10);
+        if (pickDate <= until) {
+          return {
+            pickupDate: 'Current Active Rental',
+            returnDate: until,
+            customerName: 'Reserved / Out on Rental'
+          };
+        }
+      }
+      if (isMicOnlyPkg && !gearAvail.mic.available) {
+        const until = gearAvail.mic.reservedUntilDate || new Date().toISOString().slice(0, 10);
+        if (pickDate <= until) {
+          return {
+            pickupDate: 'Current Active Rental',
+            returnDate: until,
+            customerName: 'Reserved / Out on Rental'
+          };
+        }
+      }
+
       return null;
     }
 
@@ -1978,6 +2236,7 @@
       initSoundTheme();
       initDefaultDates();
       syncSoundBookingsFromCloud();
+      setInterval(syncSoundBookingsFromCloud, 8000);
     });
 
   </script>
