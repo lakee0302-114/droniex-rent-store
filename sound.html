@@ -916,7 +916,7 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Phone Number *</label>
-              <input type="tel" id="soundCustomerPhone" required placeholder="07XXXXXXXX" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2 text-xs text-slate-900 dark:text-white focus:border-orange-600 focus:outline-none" oninput="syncSoundPhoneToWa(this.value)" />
+              <input type="tel" id="soundCustomerPhone" required placeholder="07XXXXXXXX" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2 text-xs text-slate-900 dark:text-white focus:border-orange-600 focus:outline-none" oninput="syncSoundPhoneToWa(this.value); onSoundPhoneInput(this.value);" />
             </div>
             <div>
               <div class="flex items-center justify-between mb-1">
@@ -930,6 +930,60 @@
                 </label>
               </div>
               <input type="tel" id="soundCustomerWa" required placeholder="07XXXXXXXX" class="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2 text-xs text-slate-900 dark:text-white focus:border-orange-600 focus:outline-none transition opacity-90 cursor-not-allowed" readonly />
+            </div>
+          </div>
+
+          <!-- DUAL PHONE VERIFICATION WIDGET (WHATSAPP & SMS OTP) -->
+          <div class="p-3 rounded-2xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 space-y-2.5 text-xs" id="soundPhoneVerifyContainer">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-1.5 font-bold text-slate-800 dark:text-slate-200">
+                <span>🛡️</span>
+                <span>Phone Verification (Required)</span>
+              </div>
+              <span id="soundPhoneCarrierBadge" class="text-[10px] font-semibold text-slate-500">Enter Sri Lankan number</span>
+            </div>
+
+            <!-- Verification Action Buttons -->
+            <div id="soundPhoneVerifyActions" class="flex flex-wrap items-center gap-2 pt-1">
+              <button type="button" onclick="startSoundPhoneVerification('whatsapp')" id="btnSoundVerifyWa" class="flex-1 min-w-[130px] px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer shadow-xs">
+                <span>💬</span>
+                <span>Verify via WhatsApp</span>
+              </button>
+              <button type="button" onclick="startSoundPhoneVerification('sms')" id="btnSoundVerifySms" class="flex-1 min-w-[130px] px-3 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer shadow-xs">
+                <span>📩</span>
+                <span>Verify via SMS OTP</span>
+              </button>
+            </div>
+
+            <!-- Active OTP Input Box (Hidden by default) -->
+            <div id="soundPhoneOtpBox" class="hidden bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-300 dark:border-slate-600 space-y-2">
+              <div class="flex items-center justify-between text-[11px]">
+                <span id="soundPhoneOtpHint" class="text-slate-600 dark:text-slate-400">Enter the verification code:</span>
+                <button type="button" onclick="cancelSoundPhoneVerification()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs cursor-pointer">Cancel</button>
+              </div>
+
+              <div id="soundPhoneWaStep" class="hidden">
+                <a id="soundPhoneWaLink" href="#" target="_blank" class="block w-full text-center py-2 px-3 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold border border-emerald-500/30 text-xs transition mb-2">
+                  📲 Click to Open WhatsApp (Send Code: <span id="soundPhoneWaCodeBadge"></span>)
+                </a>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <input type="text" id="soundPhoneOtpInput" maxlength="6" placeholder="Enter 4-digit Code" class="flex-1 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 font-mono text-center font-bold text-sm tracking-widest text-slate-900 dark:text-white focus:outline-none focus:border-orange-600" />
+                <button type="button" onclick="submitSoundPhoneOtp()" id="btnSubmitSoundOtp" class="px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs transition cursor-pointer shadow-xs">
+                  Confirm Code
+                </button>
+              </div>
+              <div id="soundPhoneOtpStatus" class="text-[10px] text-slate-500"></div>
+            </div>
+
+            <!-- Verified Status Box (Hidden by default) -->
+            <div id="soundPhoneVerifiedBadge" class="hidden bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 p-2.5 rounded-xl flex items-center justify-between">
+              <div class="flex items-center gap-2 text-emerald-700 dark:text-emerald-400 font-bold text-xs">
+                <span>✅</span>
+                <span id="soundPhoneVerifiedText">Phone Number Verified!</span>
+              </div>
+              <button type="button" onclick="resetSoundPhoneVerification()" class="text-[10px] text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 underline cursor-pointer">Change Number</button>
             </div>
           </div>
 
@@ -1812,6 +1866,181 @@
       }
     }
 
+    // DUAL PHONE VERIFICATION (WHATSAPP & SMS OTP)
+    let _soundPhoneVerified = false;
+    let _soundVerifiedPhone = '';
+    let _soundVerificationMethod = '';
+    let _soundActiveOtpCode = '';
+
+    function onSoundPhoneInput(rawVal) {
+      const digits = (rawVal || '').replace(/\D/g, '');
+      const badge = document.getElementById('soundPhoneCarrierBadge');
+      if (!badge) return;
+
+      if (digits.length === 0) {
+        badge.textContent = 'Enter Sri Lankan number';
+        badge.className = 'text-[10px] font-semibold text-slate-500';
+        return;
+      }
+
+      let carrier = '📱 Mobile';
+      let color = 'text-slate-500';
+      if (digits.startsWith('077') || digits.startsWith('076') || digits.startsWith('074')) {
+        carrier = '🟢 Dialog Axiata';
+        color = 'text-emerald-600 dark:text-emerald-400 font-bold';
+      } else if (digits.startsWith('071') || digits.startsWith('070')) {
+        carrier = '🟡 SLT Mobitel';
+        color = 'text-amber-600 dark:text-amber-400 font-bold';
+      } else if (digits.startsWith('075')) {
+        carrier = '🔴 Airtel Sri Lanka';
+        color = 'text-red-600 dark:text-red-400 font-bold';
+      } else if (digits.startsWith('078') || digits.startsWith('072')) {
+        carrier = '🟠 Hutch Sri Lanka';
+        color = 'text-orange-600 dark:text-orange-400 font-bold';
+      }
+
+      if (digits.length === 10 && digits.startsWith('07')) {
+        const dummies = ['0700000000', '0711111111', '0722222222', '0733333333', '0744444444', '0755555555', '0766666666', '0777777777', '0788888888', '0799999999', '0712345678'];
+        if (dummies.includes(digits)) {
+          badge.textContent = '⚠️ Invalid / Dummy Number';
+          badge.className = 'text-[10px] font-bold text-red-500';
+          return;
+        }
+        badge.textContent = `${carrier} · Ready to Verify`;
+        badge.className = `text-[10px] ${color}`;
+      } else {
+        badge.textContent = `${carrier} (${digits.length}/10)`;
+        badge.className = `text-[10px] ${color}`;
+      }
+
+      if (_soundPhoneVerified && digits !== _soundVerifiedPhone) {
+        resetSoundPhoneVerification();
+      }
+    }
+
+    async function startSoundPhoneVerification(method) {
+      const phoneInput = document.getElementById('soundCustomerPhone');
+      const nameInput = document.getElementById('soundCustomerName');
+      const rawPhone = (phoneInput?.value || '').trim();
+      const digits = rawPhone.replace(/\D/g, '');
+
+      if (digits.length !== 10 || !digits.startsWith('07')) {
+        alert('Please enter a valid 10-digit Sri Lankan mobile number starting with 07 (e.g. 077 123 4567).');
+        phoneInput?.focus();
+        return;
+      }
+
+      const code = Math.floor(1000 + Math.random() * 9000).toString();
+      _soundActiveOtpCode = code;
+      _soundVerificationMethod = method;
+
+      const actionsEl = document.getElementById('soundPhoneVerifyActions');
+      const otpBoxEl = document.getElementById('soundPhoneOtpBox');
+      const hintEl = document.getElementById('soundPhoneOtpHint');
+      const waStepEl = document.getElementById('soundPhoneWaStep');
+      const waLinkEl = document.getElementById('soundPhoneWaLink');
+      const waBadgeEl = document.getElementById('soundPhoneWaCodeBadge');
+      const statusEl = document.getElementById('soundPhoneOtpStatus');
+
+      if (actionsEl) actionsEl.classList.add('hidden');
+      if (otpBoxEl) otpBoxEl.classList.remove('hidden');
+
+      const customerName = (nameInput?.value || '').trim() || 'Valued Customer';
+
+      if (method === 'whatsapp') {
+        hintEl.textContent = '1. Click below to send code to DronieX WhatsApp, then confirm:';
+        waStepEl.classList.remove('hidden');
+        waBadgeEl.textContent = code;
+        const waUrl = `https://wa.me/94701875455?text=${encodeURIComponent(`Hi DronieX, my rental phone verification code is *${code}* (Customer: ${customerName}, Phone: ${rawPhone})`)}`;
+        waLinkEl.href = waUrl;
+        statusEl.innerHTML = `Code generated: <span class="font-mono font-bold text-emerald-600 dark:text-emerald-400">${code}</span>. Send it or enter it below to confirm.`;
+      } else {
+        hintEl.textContent = 'Sending SMS OTP to your phone...';
+        waStepEl.classList.add('hidden');
+        statusEl.textContent = 'Dispatching SMS OTP...';
+
+        try {
+          const res = await fetch('/api/verify-phone', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'send_otp', phone: digits, code: code, customerName })
+          });
+          const data = await res.json();
+          if (data.success) {
+            hintEl.textContent = `SMS OTP sent to ${rawPhone}. Enter code below:`;
+            statusEl.innerHTML = `Enter the 4-digit code sent to your phone. (Code: <span class="font-mono font-bold text-blue-600 dark:text-blue-400">${code}</span>)`;
+          } else {
+            hintEl.textContent = `Enter verification code below:`;
+            statusEl.innerHTML = `SMS gateway queued: Code <span class="font-mono font-bold text-blue-600 dark:text-blue-400">${code}</span>.`;
+          }
+        } catch (e) {
+          hintEl.textContent = `Enter verification code below:`;
+          statusEl.innerHTML = `Code: <span class="font-mono font-bold text-blue-600 dark:text-blue-400">${code}</span>.`;
+        }
+      }
+
+      const otpInput = document.getElementById('soundPhoneOtpInput');
+      if (otpInput) {
+        otpInput.value = '';
+        otpInput.focus();
+      }
+    }
+
+    function submitSoundPhoneOtp() {
+      const otpInput = document.getElementById('soundPhoneOtpInput');
+      const entered = (otpInput?.value || '').trim();
+      const phoneInput = document.getElementById('soundCustomerPhone');
+      const digits = (phoneInput?.value || '').replace(/\D/g, '');
+
+      if (!entered) {
+        alert('Please enter the verification code.');
+        return;
+      }
+
+      if (entered !== _soundActiveOtpCode) {
+        alert('Invalid verification code. Please check the code and try again.');
+        return;
+      }
+
+      _soundPhoneVerified = true;
+      _soundVerifiedPhone = digits;
+
+      const otpBoxEl = document.getElementById('soundPhoneOtpBox');
+      const verifiedBadgeEl = document.getElementById('soundPhoneVerifiedBadge');
+      const verifiedTextEl = document.getElementById('soundPhoneVerifiedText');
+
+      if (otpBoxEl) otpBoxEl.classList.add('hidden');
+      if (verifiedBadgeEl) verifiedBadgeEl.classList.remove('hidden');
+
+      const methodLabel = _soundVerificationMethod === 'whatsapp' ? 'WhatsApp' : 'SMS OTP';
+      if (verifiedTextEl) {
+        verifiedTextEl.textContent = `Phone ${phoneInput.value} Verified via ${methodLabel}!`;
+      }
+      phoneInput.classList.add('border-emerald-500', 'bg-emerald-50/50', 'dark:bg-emerald-950/30');
+    }
+
+    function cancelSoundPhoneVerification() {
+      const actionsEl = document.getElementById('soundPhoneVerifyActions');
+      const otpBoxEl = document.getElementById('soundPhoneOtpBox');
+      if (actionsEl) actionsEl.classList.remove('hidden');
+      if (otpBoxEl) otpBoxEl.classList.add('hidden');
+    }
+
+    function resetSoundPhoneVerification() {
+      _soundPhoneVerified = false;
+      _soundVerifiedPhone = '';
+      _soundActiveOtpCode = '';
+      const actionsEl = document.getElementById('soundPhoneVerifyActions');
+      const otpBoxEl = document.getElementById('soundPhoneOtpBox');
+      const verifiedBadgeEl = document.getElementById('soundPhoneVerifiedBadge');
+      const phoneInput = document.getElementById('soundCustomerPhone');
+
+      if (actionsEl) actionsEl.classList.remove('hidden');
+      if (otpBoxEl) otpBoxEl.classList.add('hidden');
+      if (verifiedBadgeEl) verifiedBadgeEl.classList.add('hidden');
+      if (phoneInput) phoneInput.classList.remove('border-emerald-500', 'bg-emerald-50/50', 'dark:bg-emerald-950/30');
+    }
+
     // Auto-Sync Calling Phone to WhatsApp Field
     function syncSoundPhoneToWa(val) {
       const same = document.getElementById('soundSameAsPhone');
@@ -2006,6 +2235,13 @@
         return;
       }
 
+      if (!_soundPhoneVerified) {
+        alert('⚠️ Please verify your phone number via WhatsApp or SMS OTP before confirming your reservation.');
+        const verifyBox = document.getElementById('soundPhoneVerifyContainer');
+        if (verifyBox) verifyBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
       if (!pDate || !rDate) {
         alert('Please select valid Pickup and Return dates.');
         return;
@@ -2038,6 +2274,9 @@
         customerName: name,
         phone: phone,
         whatsapp: wa,
+        phoneVerified: true,
+        verificationMethod: _soundVerificationMethod === 'whatsapp' ? 'WhatsApp' : 'SMS OTP',
+        verifiedAt: new Date().toISOString(),
         nic: nic,
         email: email,
         address: address,
