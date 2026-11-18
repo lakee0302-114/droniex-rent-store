@@ -2139,9 +2139,9 @@
       const content = document.getElementById('slipContent');
       if (!modal || !content) return;
 
-      // Extract invoice number from orderId
-      const digits = (b.orderId || '').replace(/\D/g, '');
-      const invNumber = 'INV-' + (digits ? digits.slice(-5).padStart(5, '0') : '00024');
+      // Use the exact Order ID for the invoice identifier
+      const orderIdClean = (b.orderId || '').replace(/^#\s*/, '') || 'DRX-0001';
+      const invNumber = orderIdClean;
 
       // Dates parsing
       let pDate = b.pickupDate;
