@@ -223,7 +223,7 @@ module.exports = async (req, res) => {
     let emailSent = false;
     let emailError = null;
     const emailApiKey = (emailConfig.apiKey || process.env.EMAIL_API_KEY || process.env.BREVO_API_KEY || '').trim();
-    const storeEmail = (emailConfig.storeEmail || 'lakditha2008@gmail.com').trim();
+    const storeEmail = (emailConfig.storeEmail || 'droniex03@gmail.com').trim();
     const emailEnabled = emailConfig.enabled !== false;
     const targetEmail = (email || '').trim();
 
@@ -273,7 +273,7 @@ module.exports = async (req, res) => {
               'Accept': 'application/json'
             },
             body: JSON.stringify({
-              sender: { name: 'DronieX Rent Store', email: storeEmail || 'lakditha2008@gmail.com' },
+              sender: { name: 'DronieX Rent Store', email: storeEmail || 'droniex03@gmail.com' },
               to: recipients,
               subject: testEmail ? '✈️ DronieX Email Service Test' : `DronieX Equipment Rental Confirmation [${orderId || 'Booking'}]`,
               htmlContent: emailHtml
