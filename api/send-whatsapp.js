@@ -37,7 +37,7 @@ module.exports = async (req, res) => {
     const FIREBASE_BASE = 'https://droniex-rent-store-default-rtdb.asia-southeast1.firebasedatabase.app';
     let instanceId = process.env.ULTRAMSG_INSTANCE_ID || '';
     let token = process.env.ULTRAMSG_TOKEN || '';
-    let adminAlertPhone = '0740309322';
+    let adminAlertPhone = '0701875455';
     let waEnabled = true;
     let emailConfig = {};
     let ntfyConfig = {};
@@ -78,7 +78,7 @@ module.exports = async (req, res) => {
       else callingPhoneFormatted = cDigits;
     }
 
-    let storeAdminPhone = (adminAlertPhone || '0740309322').toString().replace(/[^0-9]/g, '');
+    let storeAdminPhone = (adminAlertPhone || '0701875455').toString().replace(/[^0-9]/g, '');
     if (storeAdminPhone.startsWith('0')) storeAdminPhone = '94' + storeAdminPhone.substring(1);
     else if (!storeAdminPhone.startsWith('94') && storeAdminPhone.length === 9) storeAdminPhone = '94' + storeAdminPhone;
 
@@ -115,7 +115,7 @@ module.exports = async (req, res) => {
     // =========================================================================
     let ntfySent = false;
     let ntfyError = null;
-    const ntfyTopic = (ntfyConfig.topic || 'droniex_orders_0740309322').trim();
+    const ntfyTopic = (ntfyConfig.topic || 'droniex_orders_0701875455').trim();
     const ntfyEnabled = ntfyConfig.enabled !== false;
     const ntfyPriority = (ntfyConfig.silent !== false) ? 'low' : 'default'; // low = silent (no sound, notifications only)
 
