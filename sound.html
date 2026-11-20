@@ -802,8 +802,8 @@
   <!-- =========================================================================
        10. SOUND RESERVATION MODAL (INTERACTIVE BOOKING ENGINE)
        ========================================================================= -->
-  <div id="soundReserveModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs hidden items-center justify-center p-3 sm:p-4 overflow-y-auto no-print">
-    <div class="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-xl w-full p-5 sm:p-7 space-y-5 shadow-2xl my-8">
+  <div id="soundReserveModal" onclick="if (event.target === this) closeSoundReserveModal();" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs hidden items-start justify-center p-3 sm:p-6 overflow-y-auto no-print">
+    <div class="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-xl w-full p-5 sm:p-7 space-y-5 shadow-2xl my-4 sm:my-8">
       
       <!-- Modal Header -->
       <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
@@ -813,7 +813,7 @@
           </span>
           <h3 class="text-lg font-black text-slate-900 dark:text-white mt-1">Reserve Sound &amp; Music Equipment</h3>
         </div>
-        <button type="button" onclick="closeSoundReserveModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center justify-center cursor-pointer transition">
+        <button type="button" onclick="closeSoundReserveModal()" class="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-rose-100 dark:hover:bg-rose-950 text-slate-600 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 border border-slate-200 dark:border-slate-700 flex items-center justify-center cursor-pointer transition font-black text-lg shadow-xs" title="Close (වසන්න)">
           ✕
         </button>
       </div>
@@ -821,46 +821,21 @@
       <!-- Reservation Form -->
       <form id="soundBookingForm" onsubmit="event.preventDefault(); submitSoundReservation();" class="space-y-4">
         
-        <!-- Package Selector -->
-        <div>
-          <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
-            Select Equipment / Package
-          </label>
-          <div class="space-y-2 text-xs">
-            
-            <label class="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-orange-500 cursor-pointer transition">
-              <div class="flex items-center gap-2.5">
-                <input type="radio" name="soundPackage" value="jbl-partybox-320-combo" checked onchange="updateSoundModalPrice()" class="text-orange-600 focus:ring-orange-500 cursor-pointer" />
-                <div>
-                  <div class="font-bold text-slate-900 dark:text-white">JBL PartyBox 320 + Dual Wireless Mics (Combo)</div>
-                  <div class="text-[10px] text-slate-500">JBL Party Speaker + Pair of JBL Mics + Receiver</div>
-                </div>
-              </div>
-              <span class="font-black text-orange-600 dark:text-orange-400 font-mono">Rs. 5,000/day</span>
-            </label>
-
-            <label class="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-orange-500 cursor-pointer transition">
-              <div class="flex items-center gap-2.5">
-                <input type="radio" name="soundPackage" value="jbl-partybox-320-solo" onchange="updateSoundModalPrice()" class="text-orange-600 focus:ring-orange-500 cursor-pointer" />
-                <div>
-                  <div class="font-bold text-slate-900 dark:text-white">JBL PartyBox Stage 320 Only (Speaker Only)</div>
-                  <div class="text-[10px] text-slate-500">JBL Party Speaker with power cord &amp; accessories</div>
-                </div>
-              </div>
-              <span class="font-black text-slate-800 dark:text-slate-200 font-mono">Rs. 4,000/day</span>
-            </label>
-
-            <label class="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-orange-500 cursor-pointer transition">
-              <div class="flex items-center gap-2.5">
-                <input type="radio" name="soundPackage" value="jbl-dual-mics-only" onchange="updateSoundModalPrice()" class="text-orange-600 focus:ring-orange-500 cursor-pointer" />
-                <div>
-                  <div class="font-bold text-slate-900 dark:text-white">JBL Dual Wireless Microphones (Mics Only)</div>
-                  <div class="text-[10px] text-slate-500">Pair of wireless mics with UHF receiver dongle</div>
-                </div>
-              </div>
-              <span class="font-black text-slate-800 dark:text-slate-200 font-mono">Rs. 2,000/day</span>
-            </label>
-
+        <!-- Selected Equipment Banner (Replaces redundant radio buttons) -->
+        <input type="hidden" id="soundPackageInput" name="soundPackage" value="jbl-partybox-320-combo" />
+        <div class="p-3.5 rounded-2xl bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/40 dark:to-amber-950/40 border border-orange-200 dark:border-orange-800/80 flex items-center justify-between gap-3 shadow-xs">
+          <div class="flex items-center gap-3 min-w-0">
+            <div class="w-10 h-10 rounded-xl bg-orange-100 dark:bg-orange-900/60 border border-orange-300 dark:border-orange-700/80 flex items-center justify-center shrink-0">
+              <span id="soundModalSelectedIcon" class="text-xl">🎤🔊</span>
+            </div>
+            <div class="min-w-0">
+              <div class="text-[10px] font-black uppercase tracking-wider text-orange-600 dark:text-orange-400">Selected Equipment</div>
+              <div id="soundModalSelectedTitle" class="text-sm font-black text-slate-900 dark:text-white truncate">JBL PartyBox 320 + Dual Wireless Mics (Combo)</div>
+              <div id="soundModalSelectedDesc" class="text-[11px] text-slate-500 dark:text-slate-400 truncate">JBL Party Speaker + Pair of JBL Mics + Receiver</div>
+            </div>
+          </div>
+          <div class="text-right shrink-0">
+            <span id="soundModalSelectedRate" class="text-xs font-black text-orange-600 dark:text-orange-400 font-mono">Rs. 5,000/day</span>
           </div>
         </div>
 
@@ -1007,10 +982,15 @@
           </label>
         </div>
 
-        <!-- Submit Button -->
-        <button type="submit" id="soundSubmitBtn" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white font-black text-xs shadow-lg shadow-orange-600/20 flex items-center justify-center gap-2 cursor-pointer transition">
-          <span>Confirm Online Reservation →</span>
-        </button>
+        <!-- Action Buttons (Submit & Cancel) -->
+        <div class="flex items-center gap-2.5 pt-1">
+          <button type="button" onclick="closeSoundReserveModal()" class="py-3 px-4 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-slate-700 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 font-bold text-xs border border-slate-200 dark:border-slate-700 transition cursor-pointer text-center">
+            ✕ Cancel (වසන්න)
+          </button>
+          <button type="submit" id="soundSubmitBtn" class="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white font-black text-xs shadow-lg shadow-orange-600/20 flex items-center justify-center gap-2 cursor-pointer transition">
+            <span>Confirm Online Reservation →</span>
+          </button>
+        </div>
 
       </form>
 
@@ -1216,9 +1196,27 @@
 
     // Pricing Matrix
     const SOUND_RATES = {
-      'jbl-partybox-320-solo': { name: 'JBL PartyBox Stage 320 Only', daily: 4000, id: 'jbl-partybox-320' },
-      'jbl-partybox-320-combo': { name: 'JBL PartyBox 320 + Dual Wireless Mics (Combo)', daily: 5000, id: 'jbl-partybox-320-combo' },
-      'jbl-dual-mics-only': { name: 'JBL Dual Wireless Microphones Only', daily: 2000, id: 'jbl-wireless-mic' }
+      'jbl-partybox-320-solo': { 
+        name: 'JBL PartyBox Stage 320 (Speaker Only)', 
+        desc: 'JBL Party Speaker with power cord & accessories',
+        icon: '🔊',
+        daily: 4000, 
+        id: 'jbl-partybox-320' 
+      },
+      'jbl-partybox-320-combo': { 
+        name: 'JBL PartyBox 320 + Dual Wireless Mics (Combo)', 
+        desc: 'JBL Party Speaker + Pair of JBL Mics + Receiver',
+        icon: '🎤🔊',
+        daily: 5000, 
+        id: 'jbl-partybox-320-combo' 
+      },
+      'jbl-dual-mics-only': { 
+        name: 'JBL Dual Wireless Microphones (Mics Only)', 
+        desc: 'Pair of wireless mics with UHF receiver dongle',
+        icon: '🎤',
+        daily: 2000, 
+        id: 'jbl-wireless-mic' 
+      }
     };
 
     // State
@@ -1755,12 +1753,9 @@
 
     // Modal Price Sync & Conflict Recheck
     function updateSoundModalPrice() {
-      const radios = document.getElementsByName('soundPackage');
-      for (const r of radios) {
-        if (r.checked) {
-          _activePackageKey = r.value;
-          break;
-        }
+      const pkgInput = document.getElementById('soundPackageInput');
+      if (pkgInput && pkgInput.value && SOUND_RATES[pkgInput.value]) {
+        _activePackageKey = pkgInput.value;
       }
 
       const pkg = SOUND_RATES[_activePackageKey] || SOUND_RATES['jbl-partybox-320-combo'];
@@ -1793,11 +1788,23 @@
     function openSoundReserveModal(packageKey) {
       if (packageKey && SOUND_RATES[packageKey]) {
         _activePackageKey = packageKey;
-        const radios = document.getElementsByName('soundPackage');
-        for (const r of radios) {
-          r.checked = (r.value === packageKey);
-        }
       }
+
+      const pkgInput = document.getElementById('soundPackageInput');
+      if (pkgInput) {
+        pkgInput.value = _activePackageKey;
+      }
+
+      const pkg = SOUND_RATES[_activePackageKey] || SOUND_RATES['jbl-partybox-320-combo'];
+      
+      const titleEl = document.getElementById('soundModalSelectedTitle');
+      const descEl = document.getElementById('soundModalSelectedDesc');
+      const rateEl = document.getElementById('soundModalSelectedRate');
+      const iconEl = document.getElementById('soundModalSelectedIcon');
+      if (titleEl) titleEl.textContent = pkg.name;
+      if (descEl) descEl.textContent = pkg.desc || '';
+      if (rateEl) rateEl.textContent = `Rs. ${pkg.daily.toLocaleString('en-LK')}/day`;
+      if (iconEl) iconEl.textContent = pkg.icon || '🔊';
 
       // Sync dates from schedule bar
       const pInput = document.getElementById('soundPickupDate');
@@ -1814,6 +1821,7 @@
       if (modal) {
         modal.classList.remove('hidden');
         modal.classList.add('flex');
+        modal.scrollTop = 0;
       }
 
       // Sync with cloud on opening modal to guarantee real-time accuracy
@@ -1827,6 +1835,13 @@
         modal.classList.remove('flex');
       }
     }
+
+    // Close on Escape key
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeSoundReserveModal();
+      }
+    });
 
     function onSoundPhoneInput(rawVal) {
       const digits = (rawVal || '').replace(/\D/g, '');
