@@ -224,9 +224,9 @@
             <span>Explore Sound Gear</span>
             <span>↓</span>
           </a>
-          <a href="https://wa.me/94701875455?text=Hello%20DronieX%2C%20I%20am%20interested%20in%20the%20JBL%20PartyBox%20Stage%20320%20when%20it%20arrives." target="_blank" id="soundHeroComboBtn" class="px-6 py-3 rounded-xl bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-100 text-white dark:text-slate-900 font-bold text-xs shadow-sm transition flex items-center justify-center">
-            PartyBox Coming Soon · Inquire WhatsApp →
-          </a>
+          <button type="button" id="soundHeroComboBtn" disabled class="px-6 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-bold text-xs cursor-not-allowed transition flex items-center justify-center">
+            ⏳ Coming Soon
+          </button>
           <a href="https://wa.me/94701875455?text=Hello%20DronieX%20Galle%2C%20I%20would%20like%20to%20rent%20JBL%20PartyBox%20%26%20Sound%20Equipment." target="_blank" rel="noopener noreferrer" class="px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold text-xs border border-slate-200 dark:border-slate-700 transition">
             WhatsApp Hotline: 070 187 5455
           </a>
@@ -346,12 +346,7 @@
               </p>
 
               <!-- Dynamic Reserved Banner for PartyBox -->
-              <div id="soundCardPartyboxReservedBanner">
-                <div class="rounded-2xl bg-amber-500/10 dark:bg-amber-950/40 border border-amber-500/30 p-2.5 flex items-center gap-2 text-xs text-amber-700 dark:text-amber-300 mt-2">
-                  <span class="text-sm">⏳</span>
-                  <span class="font-bold">Coming Soon to Galle Store · Pre-orders &amp; inquiries open</span>
-                </div>
-              </div>
+              <div id="soundCardPartyboxReservedBanner"></div>
 
               <!-- Feature Highlights -->
               <ul class="mt-3 space-y-1.5 text-xs text-slate-700 dark:text-slate-300 font-medium">
@@ -387,13 +382,12 @@
                 </div>
               </div>
 
-              <div class="grid grid-cols-2 gap-2 pt-1">
-                <button type="button" id="soundBtnPartyboxSolo" disabled class="py-2.5 px-3 rounded-xl bg-amber-50 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700 font-bold text-xs cursor-not-allowed opacity-90 text-center">
-                  ⏳ Coming Soon
+              <div id="soundPartyboxBtnsWrap" class="pt-1 flex gap-2">
+                <button type="button" id="soundBtnPartyboxSolo" class="hidden">Speaker Only</button>
+                <button type="button" id="soundBtnPartyboxCombo" disabled class="w-full py-2.5 px-3 rounded-xl bg-amber-500/10 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-500/30 font-bold text-xs cursor-not-allowed opacity-90 text-center flex items-center justify-center gap-1.5">
+                  <span>⏳</span>
+                  <span>Coming Soon</span>
                 </button>
-                <a href="https://wa.me/94701875455?text=Hello%20DronieX%2C%20I%20am%20interested%20in%20the%20JBL%20PartyBox%20Stage%20320%20when%20it%20arrives." target="_blank" id="soundBtnPartyboxCombo" class="py-2.5 px-3 rounded-xl bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white font-black text-xs shadow-sm transition text-center flex items-center justify-center cursor-pointer">
-                  Inquire WhatsApp →
-                </a>
               </div>
             </div>
           </div>
@@ -589,9 +583,9 @@
             <p class="text-[11px] text-slate-300 mt-0.5">Pay on store pickup in Galle. Valid NIC/Passport required.</p>
           </div>
 
-          <a href="https://wa.me/94701875455?text=Hello%20DronieX%2C%20I%20am%20interested%20in%20the%20JBL%20PartyBox%20Stage%20320%20Combo%20when%20it%20arrives." target="_blank" id="soundBtnComboSection" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-slate-950 font-black text-xs shadow-lg transition cursor-pointer text-center whitespace-nowrap flex items-center justify-center">
-            ⏳ Coming Soon · Inquire WhatsApp →
-          </a>
+          <button type="button" id="soundBtnComboSection" disabled class="w-full sm:w-auto px-6 py-3 rounded-xl bg-amber-950/80 text-amber-300 border border-amber-700 font-bold text-xs cursor-not-allowed opacity-90 text-center whitespace-nowrap flex items-center justify-center">
+            ⏳ Coming Soon
+          </button>
         </div>
 
       </div>
@@ -1467,12 +1461,7 @@
       const pbBanner = document.getElementById('soundCardPartyboxReservedBanner');
       if (pbBanner) {
         if (PARTYBOX_COMING_SOON) {
-          pbBanner.innerHTML = `
-            <div class="rounded-2xl bg-amber-500/10 dark:bg-amber-950/40 border border-amber-500/30 p-2.5 flex items-center gap-2 text-xs text-amber-700 dark:text-amber-300 mt-2">
-              <span class="text-sm">⏳</span>
-              <span class="font-bold">Coming Soon to Galle Store · Pre-orders &amp; inquiries open</span>
-            </div>
-          `;
+          pbBanner.innerHTML = '';
         } else if (!isPbAvail) {
           pbBanner.innerHTML = `
             <div class="rounded-2xl bg-amber-50 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-700 p-3.5 space-y-1.5 mt-3 shadow-xs">
@@ -1494,40 +1483,40 @@
       }
 
       const btnSolo = document.getElementById('soundBtnPartyboxSolo');
-      if (btnSolo) {
-        if (PARTYBOX_COMING_SOON) {
-          btnSolo.disabled = true;
-          btnSolo.className = 'py-2.5 px-3 rounded-xl bg-amber-50 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700 font-bold text-xs cursor-not-allowed opacity-90 text-center';
-          btnSolo.textContent = '⏳ Coming Soon';
-        } else if (isPbAvail) {
-          btnSolo.disabled = false;
-          btnSolo.className = 'py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs transition cursor-pointer text-center';
-          btnSolo.textContent = 'Speaker Only';
-        } else {
-          btnSolo.disabled = true;
-          btnSolo.className = 'py-2.5 px-3 rounded-xl bg-amber-50 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700 font-bold text-xs cursor-not-allowed opacity-90 text-center';
-          btnSolo.textContent = '🔒 Reserved' + (gearAvail.partybox.reservedUntilDate ? ' (' + formatShortDate(gearAvail.partybox.reservedUntilDate) + ')' : '');
-        }
-      }
-
       const btnCombo = document.getElementById('soundBtnPartyboxCombo');
-      if (btnCombo) {
-        if (PARTYBOX_COMING_SOON) {
-          btnCombo.disabled = false;
-          btnCombo.className = 'py-2.5 px-3 rounded-xl bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white font-black text-xs shadow-sm transition text-center flex items-center justify-center cursor-pointer';
-          btnCombo.textContent = 'Inquire WhatsApp →';
-          btnCombo.onclick = (e) => {
-            e.preventDefault();
-            window.open('https://wa.me/94701875455?text=Hello%20DronieX%2C%20I%20am%20interested%20in%20the%20JBL%20PartyBox%20Stage%20320%20when%20it%20arrives.', '_blank');
-          };
-        } else if (isComboAvail) {
-          btnCombo.disabled = false;
-          btnCombo.className = 'py-2.5 px-3 rounded-xl bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white font-black text-xs shadow-sm transition cursor-pointer text-center';
-          btnCombo.textContent = 'With Mics →';
-        } else {
+      if (PARTYBOX_COMING_SOON) {
+        if (btnSolo) btnSolo.style.display = 'none';
+        if (btnCombo) {
+          btnCombo.style.display = 'flex';
           btnCombo.disabled = true;
-          btnCombo.className = 'py-2.5 px-3 rounded-xl bg-amber-50 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700 font-bold text-xs cursor-not-allowed opacity-90 text-center';
-          btnCombo.textContent = !isPbAvail ? ('🔒 Speaker Reserved' + (gearAvail.partybox.reservedUntilDate ? ' (' + formatShortDate(gearAvail.partybox.reservedUntilDate) + ')' : '')) : '🔒 Mics Reserved';
+          btnCombo.className = 'w-full py-2.5 px-3 rounded-xl bg-amber-500/10 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-500/30 font-bold text-xs cursor-not-allowed opacity-90 text-center flex items-center justify-center gap-1.5';
+          btnCombo.textContent = '⏳ Coming Soon';
+          btnCombo.onclick = null;
+        }
+      } else {
+        if (btnSolo) {
+          btnSolo.style.display = 'block';
+          if (isPbAvail) {
+            btnSolo.disabled = false;
+            btnSolo.className = 'py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs transition cursor-pointer text-center';
+            btnSolo.textContent = 'Speaker Only';
+          } else {
+            btnSolo.disabled = true;
+            btnSolo.className = 'py-2.5 px-3 rounded-xl bg-amber-50 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700 font-bold text-xs cursor-not-allowed opacity-90 text-center';
+            btnSolo.textContent = '🔒 Reserved' + (gearAvail.partybox.reservedUntilDate ? ' (' + formatShortDate(gearAvail.partybox.reservedUntilDate) + ')' : '');
+          }
+        }
+        if (btnCombo) {
+          btnCombo.style.display = 'block';
+          if (isComboAvail) {
+            btnCombo.disabled = false;
+            btnCombo.className = 'py-2.5 px-3 rounded-xl bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white font-black text-xs shadow-sm transition cursor-pointer text-center';
+            btnCombo.textContent = 'With Mics →';
+          } else {
+            btnCombo.disabled = true;
+            btnCombo.className = 'py-2.5 px-3 rounded-xl bg-amber-50 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700 font-bold text-xs cursor-not-allowed opacity-90 text-center';
+            btnCombo.textContent = !isPbAvail ? ('🔒 Speaker Reserved' + (gearAvail.partybox.reservedUntilDate ? ' (' + formatShortDate(gearAvail.partybox.reservedUntilDate) + ')' : '')) : '🔒 Mics Reserved';
+          }
         }
       }
 
@@ -1588,13 +1577,10 @@
       const btnComboSec = document.getElementById('soundBtnComboSection');
       if (btnComboSec) {
         if (PARTYBOX_COMING_SOON) {
-          btnComboSec.disabled = false;
-          btnComboSec.className = 'w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-slate-950 font-black text-xs shadow-lg transition cursor-pointer text-center whitespace-nowrap flex items-center justify-center';
-          btnComboSec.textContent = '⏳ Coming Soon · Inquire WhatsApp →';
-          btnComboSec.onclick = (e) => {
-            e.preventDefault();
-            window.open('https://wa.me/94701875455?text=Hello%20DronieX%2C%20I%20am%20interested%20in%20the%20JBL%20PartyBox%20Stage%20320%20Combo%20when%20it%20arrives.', '_blank');
-          };
+          btnComboSec.disabled = true;
+          btnComboSec.className = 'w-full sm:w-auto px-6 py-3 rounded-xl bg-amber-950/80 text-amber-300 border border-amber-700 font-bold text-xs cursor-not-allowed opacity-90 text-center whitespace-nowrap flex items-center justify-center';
+          btnComboSec.textContent = '⏳ Coming Soon';
+          btnComboSec.onclick = null;
         } else if (isComboAvail) {
           btnComboSec.disabled = false;
           btnComboSec.className = 'w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-slate-950 font-black text-xs shadow-lg transition cursor-pointer text-center whitespace-nowrap';
@@ -1610,13 +1596,10 @@
       const heroBtn = document.getElementById('soundHeroComboBtn');
       if (heroBtn) {
         if (PARTYBOX_COMING_SOON) {
-          heroBtn.disabled = false;
-          heroBtn.className = 'px-6 py-3 rounded-xl bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-100 text-white dark:text-slate-900 font-bold text-xs shadow-sm transition flex items-center justify-center';
-          heroBtn.textContent = 'PartyBox Coming Soon · Inquire WhatsApp →';
-          heroBtn.onclick = (e) => {
-            e.preventDefault();
-            window.open('https://wa.me/94701875455?text=Hello%20DronieX%2C%20I%20am%20interested%20in%20the%20JBL%20PartyBox%20Stage%20320%20when%20it%20arrives.', '_blank');
-          };
+          heroBtn.disabled = true;
+          heroBtn.className = 'px-6 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-bold text-xs cursor-not-allowed transition flex items-center justify-center';
+          heroBtn.textContent = '⏳ Coming Soon';
+          heroBtn.onclick = null;
         } else if (isComboAvail) {
           heroBtn.disabled = false;
           heroBtn.className = 'px-6 py-3 rounded-xl bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-100 text-white dark:text-slate-900 font-bold text-xs shadow-sm transition cursor-pointer';
@@ -1839,7 +1822,7 @@
     // Open & Close Modal
     function openSoundReserveModal(packageKey) {
       if (PARTYBOX_COMING_SOON && (packageKey === 'jbl-partybox-320-solo' || packageKey === 'jbl-partybox-320-combo')) {
-        window.open('https://wa.me/94701875455?text=' + encodeURIComponent('Hello DronieX, I am interested in pre-ordering/inquiring about the JBL PartyBox Stage 320 coming soon to the Galle store.'), '_blank');
+        showToast('JBL PartyBox Stage 320 is Coming Soon!');
         return;
       }
       if (packageKey && SOUND_RATES[packageKey]) {
