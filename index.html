@@ -3419,7 +3419,10 @@
         return;
       }
       appState.selectedContractItemId = appState.cart[0].itemId;
-      toggleCartDrawer();
+      const drawer = document.getElementById('cartDrawer');
+      const backdrop = document.getElementById('cartDrawerBackdrop');
+      if (drawer) drawer.classList.add('translate-x-full');
+      if (backdrop) backdrop.classList.add('hidden');
       switchView('verify');
     }
 
@@ -3972,7 +3975,7 @@
         phone: phoneVal,
         whatsapp: waVal,
         phoneVerified: true,
-        verificationMethod: _droneVerificationMethod === 'whatsapp' ? 'WhatsApp' : 'SMS OTP',
+        verificationMethod: 'Direct Booking',
         verifiedAt: new Date().toISOString(),
         nic: appState.customer.nic,
         email: appState.customer.email,
