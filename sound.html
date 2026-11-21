@@ -1000,8 +1000,11 @@
   <!-- =========================================================================
        11. ORDER SUCCESS MODAL
        ========================================================================= -->
-  <div id="soundSuccessModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs hidden items-center justify-center p-3 sm:p-4 overflow-y-auto no-print">
+  <div id="soundSuccessModal" onclick="if (event.target === this) closeSoundSuccessModal();" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs hidden items-center justify-center p-3 sm:p-4 overflow-y-auto no-print">
     <div class="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-6 text-center space-y-5 shadow-2xl">
+      <button type="button" onclick="closeSoundSuccessModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center justify-center cursor-pointer transition font-black text-sm" title="Close">
+        ✕
+      </button>
       
       <!-- Success Icon -->
       <div class="w-14 h-14 rounded-2xl bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400 mx-auto flex items-center justify-center text-3xl shadow-inner">
@@ -1063,8 +1066,8 @@
         <button type="button" onclick="printSoundSlip()" class="w-full py-3 px-4 rounded-xl bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-100 text-white dark:text-slate-900 font-bold text-xs shadow transition flex items-center justify-center gap-2 cursor-pointer">
           <span>📄 Download / Print Handover Agreement Slip</span>
         </button>
-        <button type="button" onclick="closeSoundSuccessModal()" class="w-full py-2.5 px-4 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-xs transition cursor-pointer">
-          Done
+        <button type="button" onclick="closeSoundSuccessModal()" class="w-full py-2.5 px-4 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs transition cursor-pointer">
+          Close
         </button>
       </div>
 
@@ -2213,6 +2216,17 @@
         modal.classList.add('hidden');
         modal.classList.remove('flex');
       }
+      closeSoundReserveModal();
+      const form = document.getElementById('soundBookingForm');
+      if (form) form.reset();
+      const same = document.getElementById('soundSameAsPhone');
+      if (same) {
+        same.checked = true;
+        toggleSoundSamePhone(true);
+      }
+      const badge = document.getElementById('soundPhoneCarrierBadge');
+      if (badge) badge.textContent = '';
+      _lastConfirmedBooking = null;
     }
 
     // Printable Handover Slip

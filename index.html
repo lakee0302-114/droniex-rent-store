@@ -4541,6 +4541,12 @@
         modal.classList.add('hidden');
         modal.classList.remove('flex');
       }
+      // Auto-close reservation form, clear cart and return smoothly to catalog
+      appState.cart = [];
+      renderCart();
+      resetVerification();
+      switchView('catalog');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function printOrderSlipFromSuccess() {
@@ -5400,8 +5406,11 @@
   <!-- =========================================================================
        ONLINE RESERVATION DIRECT SUCCESS MODAL (NO WHATSAPP REQUIRED)
        ========================================================================= -->
-  <div id="orderSuccessModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden items-center justify-center p-4 no-print">
+  <div id="orderSuccessModal" onclick="if (event.target === this) closeOrderSuccessModal();" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden items-center justify-center p-4 no-print">
     <div class="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-lg w-full p-6 sm:p-7 space-y-5 shadow-2xl">
+      <button type="button" onclick="closeOrderSuccessModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center justify-center cursor-pointer transition font-black text-sm" title="Close">
+        ✕
+      </button>
       <div class="text-center space-y-2">
         <div class="w-14 h-14 rounded-2xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 mx-auto flex items-center justify-center text-2xl shadow-inner">
           ✓
