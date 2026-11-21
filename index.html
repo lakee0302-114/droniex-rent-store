@@ -3257,32 +3257,40 @@
     // =========================================================================
     function addToCart(itemId) {
       const existing = appState.cart.find(c => c.itemId === itemId);
-      if (existing) {
-        existing.qty += 1;
-      } else {
-        appState.cart.push({ itemId, qty: 1 });
-      }
-      renderCart();
       const item = appState.items.find(i => i.id === itemId);
+      if (existing) {
+        showToast(`"${item ? item.title : 'Item'}" is already in your reservation!`);
+        toggleCartDrawer(true);
+        return;
+      }
+      appState.cart.push({ itemId, qty: 1 });
+      renderCart();
       showToast(`Added "${item ? item.title : 'Item'}" to your rental booking!`);
     }
 
-    function updateCartQty(itemId, delta) {
+    function removeFromCart(itemId) {
       const idx = appState.cart.findIndex(c => c.itemId === itemId);
-      if (idx === -1) return;
-      appState.cart[idx].qty += delta;
-      if (appState.cart[idx].qty <= 0) {
+      if (idx !== -1) {
+        const item = appState.items.find(i => i.id === itemId);
         appState.cart.splice(idx, 1);
+        renderCart();
+        showToast(`Removed "${item ? item.title : 'Item'}" from booking`);
       }
-      renderCart();
     }
 
-    function toggleCartDrawer() {
+    function updateCartQty(itemId, delta) {
+      if (delta < 0) {
+        removeFromCart(itemId);
+      }
+    }
+
+    function toggleCartDrawer(forceOpen) {
       const drawer = document.getElementById('cartDrawer');
       const backdrop = document.getElementById('cartDrawerBackdrop');
       if (!drawer || !backdrop) return;
       const isOpen = !drawer.classList.contains('translate-x-full');
-      if (isOpen) {
+      const shouldOpen = forceOpen !== undefined ? forceOpen : !isOpen;
+      if (!shouldOpen) {
         drawer.classList.add('translate-x-full');
         backdrop.classList.add('hidden');
       } else {
@@ -3300,9 +3308,10 @@
       appState.cart.forEach(entry => {
         const item = appState.items.find(i => i.id === entry.itemId);
         if (!item) return;
-        totalCount += entry.qty;
-        subtotalLkr += getUnitRentalCostLkr(item) * entry.qty;
-        depositLkr += getEffectiveDepositLkr(item) * entry.qty;
+        totalCount += 1;
+        const itemDays = item.selectedDays || appState.rentalDays || 1;
+        subtotalLkr += getUnitRentalCostLkr(item, itemDays);
+        depositLkr += getEffectiveDepositLkr(item);
       });
 
       const discountLkr = 0;
@@ -3340,8 +3349,7 @@
         const item = appState.items.find(i => i.id === entry.itemId);
         if (!item) return '';
         const itemDays = item.selectedDays || appState.rentalDays || 1;
-        const itemRental = getUnitRentalCostLkr(item, itemDays) * entry.qty;
-        const itemDep = getEffectiveDepositLkr(item) * entry.qty;
+        const itemRental = getUnitRentalCostLkr(item, itemDays);
         return `
           <div class="bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl p-3 flex gap-3 items-center">
             <img src="${item.image}" alt="${item.title}" class="w-14 h-14 rounded-xl object-cover flex-shrink-0 border border-slate-200 dark:border-slate-700" />
@@ -3349,11 +3357,9 @@
               <div class="text-xs font-bold text-slate-900 dark:text-white truncate">${item.title}</div>
               <div class="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold">${formatMoney(itemRental)} (${itemDays} Day${itemDays > 1 ? 's' : ''})</div>
             </div>
-            <div class="flex items-center gap-1.5 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-2 py-1 shadow-xs">
-              <button type="button" onclick="updateCartQty('${item.id}', -1)" class="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-bold px-1">−</button>
-              <span class="text-xs font-bold text-slate-900 dark:text-white">${entry.qty}</span>
-              <button type="button" onclick="updateCartQty('${item.id}', 1)" class="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-bold px-1">+</button>
-            </div>
+            <button type="button" onclick="removeFromCart('${item.id}')" class="w-8 h-8 rounded-xl bg-white dark:bg-slate-900 hover:bg-rose-50 dark:hover:bg-rose-950/60 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 border border-slate-200 dark:border-slate-700 flex items-center justify-center transition shadow-xs flex-shrink-0 cursor-pointer" title="Remove item">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+            </button>
           </div>
         `;
       }).join('');
@@ -3720,7 +3726,7 @@
         ? booking.itemsSummary
         : appState.cart.map(c => {
             const it = appState.items.find(i => i.id === c.itemId);
-            return it ? `${it.title} (x${c.qty})` : '';
+            return it ? it.title : '';
           }).filter(Boolean).join(', ');
 
       const itemObj = appState.items.find(i => i.id === appState.selectedContractItemId) || appState.items[0];
