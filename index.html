@@ -120,6 +120,7 @@
     html.dark tbody tr:hover {
       background-color: rgba(30, 41, 59, 0.5);
     }
+    html.dark .bg-slate-50\/60 {
       background-color: rgba(30, 41, 59, 0.4) !important;
     }
   </style>
@@ -271,13 +272,13 @@
   </div>
 
   <!-- STICKY MASTER NAVIGATION HEADER -->
-  <header class="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-xs no-print">
+  <header class="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 shadow-xs no-print">
     <div class="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between gap-3">
       
       <!-- Brand Logo & Hidden Nav Bindings -->
       <div class="flex items-center gap-3">
         <button type="button" onclick="handleLogoClick(event)" class="flex items-center gap-2.5 text-left group flex-shrink-0 cursor-pointer" title="DronieX Store Galle">
-          <div class="w-10 h-10 rounded-xl overflow-hidden p-0.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-xs group-hover:border-blue-400 transition-all duration-200">
+          <div class="w-10 h-10 rounded-xl overflow-hidden p-0.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-xs group-hover:border-blue-500 transition-all duration-200">
             <img src="droniex-logo.jpg" alt="DronieX Rent Store Galle Logo" class="w-full h-full object-cover rounded-[10px]" onerror="this.onerror=null;this.src='droniex-logo.jpg'" />
           </div>
           <div>
@@ -301,15 +302,17 @@
       </div>
 
       <!-- DESKTOP NAV LINKS -->
-      <nav class="hidden lg:flex items-center gap-5 text-xs font-semibold text-slate-600 dark:text-slate-300">
+      <nav class="hidden lg:flex items-center gap-6 text-xs font-semibold text-slate-600 dark:text-slate-300">
         <a href="#catalogSection" class="hover:text-blue-600 dark:hover:text-blue-400 transition">Equipment</a>
         <a href="#gimbalValuePacksSection" class="hover:text-blue-600 dark:hover:text-blue-400 transition">Packages</a>
+        <a href="#howItWorksSection" class="hover:text-blue-600 dark:hover:text-blue-400 transition">How It Works</a>
         <a href="#storeHubSection" class="hover:text-blue-600 dark:hover:text-blue-400 transition">Store &amp; Location</a>
+        <a href="#reviewsSection" class="hover:text-blue-600 dark:hover:text-blue-400 transition">Reviews</a>
         <a href="#faqSection" class="hover:text-blue-600 dark:hover:text-blue-400 transition">FAQ</a>
-        <a href="sound.html" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-orange-500/10 hover:bg-orange-500/20 text-orange-600 dark:text-orange-400 border border-orange-500/30 font-bold transition">
+        <a href="sound.html" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-orange-500/10 hover:bg-orange-500/20 text-orange-600 dark:text-orange-400 border border-orange-500/20 font-bold transition">
           <span>🔊</span>
-          <span>JBL &amp; Sound Gear</span>
-          <span class="text-[9px] bg-orange-600 text-white font-black px-1.5 py-0.2 rounded uppercase">NEW</span>
+          <span>Sound Gear</span>
+          <span class="text-[9px] bg-orange-600 text-white font-black px-1.5 py-0.2 rounded uppercase">JBL</span>
         </a>
       </nav>
 
@@ -380,97 +383,96 @@
     <!-- VIEW 1: CATALOG, PACKAGES & HOME SHOWCASE -->
     <div id="view-catalog" class="space-y-8">
 
-      <!-- PROMINENT JBL & SOUND EQUIPMENT BANNER BUTTON -->
-      <div class="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-r from-orange-600 via-amber-500 to-rose-600 p-0.5 sm:p-1 shadow-lg shadow-orange-500/20">
-        <a href="sound.html" class="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 sm:p-5 bg-white/95 dark:bg-slate-900/95 hover:bg-white dark:hover:bg-slate-900 rounded-[20px] transition duration-300 group">
+      <!-- RESTRAINED PREMIUM JBL & SOUND EQUIPMENT BANNER -->
+      <div class="relative overflow-hidden rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 sm:p-5 shadow-xs transition hover:border-orange-400 dark:hover:border-orange-500/50">
+        <a href="sound.html" class="flex flex-col sm:flex-row items-center justify-between gap-4 group">
           <div class="flex items-center gap-3.5 sm:gap-4 text-left">
-            <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-orange-500/20 via-amber-500/20 to-rose-500/20 border border-orange-500/30 flex items-center justify-center p-1 shadow-md group-hover:scale-105 transition flex-shrink-0">
-              <img src="jbl-partybox-320.png" alt="JBL PartyBox 320" class="max-h-full max-w-full object-contain filter drop-shadow" onerror="this.src='https://kh.jbl.com/dw/image/v2/AAUJ_PRD/on/demandware.static/-/Sites-masterCatalog_Harman/default/dwb1e08d62/JBL_PARTYBOX_STAGE_320_HERO_2_47988_x3.png?sw=600&sfrm=png';" />
+            <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center p-1.5 group-hover:scale-105 transition flex-shrink-0">
+              <img src="jbl-partybox-320.png" alt="JBL PartyBox 320" class="max-h-full max-w-full object-contain" onerror="this.src='https://kh.jbl.com/dw/image/v2/AAUJ_PRD/on/demandware.static/-/Sites-masterCatalog_Harman/default/dwb1e08d62/JBL_PARTYBOX_STAGE_320_HERO_2_47988_x3.png?sw=600&sfrm=png';" />
             </div>
             <div>
               <div class="flex flex-wrap items-center gap-2">
-                <span class="px-2.5 py-0.5 rounded-full bg-orange-600 text-white font-black text-[10px] uppercase tracking-wider">
-                  NEW SERVICE · GALLE
+                <span class="px-2 py-0.5 rounded-md bg-orange-50 dark:bg-orange-950 text-orange-700 dark:text-orange-300 font-bold text-[10px] uppercase tracking-wider border border-orange-200 dark:border-orange-800">
+                  Galle Sound Rentals
                 </span>
-                <span class="text-xs font-bold text-orange-600 dark:text-orange-400">
-                  🎵 Sound &amp; Party Gear Rentals
+                <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                  PartyBox 320 &amp; Dual Wireless Mics
                 </span>
               </div>
-              <h2 class="text-base sm:text-xl font-black text-slate-900 dark:text-white tracking-tight mt-0.5 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition">
-                JBL Products &amp; Music Equipment Rental
+              <h2 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white mt-0.5 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition">
+                JBL Audio &amp; Event Equipment Rentals
               </h2>
-              <p class="text-xs text-slate-600 dark:text-slate-400 font-normal mt-0.5 line-clamp-1 sm:line-clamp-none">
-                Rent genuine JBL PartyBox 320 &amp; JBL Wireless Dual Microphones for Beach Parties, Weddings &amp; Events in Galle!
+              <p class="text-xs text-slate-500 dark:text-slate-400 font-normal">
+                High-power portable audio for beach gatherings, private villas &amp; celebrations in Galle.
               </p>
             </div>
           </div>
-          <div class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white font-black text-xs shadow-md shadow-orange-500/25 whitespace-nowrap transform group-hover:scale-105 transition flex-shrink-0">
-            <span>Explore JBL Products →</span>
+          <div class="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 dark:bg-orange-600 hover:bg-slate-800 dark:hover:bg-orange-700 text-white font-bold text-xs shadow-xs whitespace-nowrap transition flex-shrink-0">
+            <span>Explore Sound Gear →</span>
           </div>
         </a>
       </div>
 
-      <!-- HERO SECTION: REFINED APPLE / LINEAR COMMERCIAL PRESENTATION -->
-      <section class="relative rounded-3xl overflow-hidden border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm p-8 sm:p-12 lg:p-16 text-center">
+      <!-- HERO SECTION: MODERN MINIMALIST COMMERCIAL PRESENTATION -->
+      <section class="relative rounded-3xl overflow-hidden border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs p-8 sm:p-12 lg:p-16 text-center">
         <div class="max-w-3xl mx-auto space-y-6">
           
           <div class="flex flex-wrap items-center justify-center gap-2">
             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-xs font-semibold">
               <span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
-              <span id="heroBadgeText">Galle Fort Pickup · Express Handover</span>
+              <span id="heroBadgeText">Galle Store · 5 Min to Galle Fort</span>
             </span>
             <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800/60 text-amber-800 dark:text-amber-300 text-xs font-bold">
               ★ 5.0 Google Rating (Galle)
             </span>
           </div>
 
-          <h1 id="heroHeadline" class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 dark:text-white leading-[1.08]">
-            Capture More.<br /><span class="text-blue-600">Explore Further.</span>
+          <h1 id="heroHeadline" class="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 dark:text-white leading-[1.1]">
+            Professional DJI Drone &amp; Gimbal Rentals in Galle
           </h1>
 
           <p id="heroSubtext" class="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-2xl mx-auto font-normal leading-relaxed">
-            Premium DJI drone and handheld gimbal rentals in Galle. Complete Fly More kits with 3 flight batteries, 128GB high-speed MicroSD card, and in-store pilot briefing.
+            Official 4K camera drones and handheld gimbals with 3 flight batteries, 128GB high-speed 4K MicroSD card, and express in-store pilot briefing in Galle.
           </p>
 
-          <!-- 3 Clean Minimalist Trust Indicators -->
-          <div class="flex flex-wrap items-center justify-center gap-3 pt-1 text-xs text-slate-700 dark:text-slate-300 font-medium">
-            <div class="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700">
-              <svg class="w-4 h-4 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-              <span>3 Batteries (100+ Mins)</span>
+          <!-- 5 Clean Minimalist Trust Indicators -->
+          <div class="flex flex-wrap items-center justify-center gap-2.5 pt-1 text-xs text-slate-700 dark:text-slate-300 font-medium">
+            <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700">
+              <span class="text-blue-600 font-bold">✓</span> 3 Batteries (100+ Mins)
             </div>
-            <div class="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700">
-              <svg class="w-4 h-4 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
-              <span>Galle Store Pickup</span>
+            <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700">
+              <span class="text-blue-600 font-bold">✓</span> 128GB 4K SD Card Included
             </div>
-            <div class="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700">
-              <svg class="w-4 h-4 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-              <span>In-Store Flight Briefing</span>
+            <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700">
+              <span class="text-blue-600 font-bold">✓</span> Free Pilot Briefing
+            </div>
+            <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700">
+              <span class="text-blue-600 font-bold">✓</span> CAASL &amp; MOD Compliant
+            </div>
+            <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700">
+              <span class="text-blue-600 font-bold">✓</span> Zero Upfront Payment
             </div>
           </div>
 
-          <!-- Two Clear Primary Actions -->
+          <!-- CTAs -->
           <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
-            <a href="#catalogSection" class="sheen-btn px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm shadow-blue-500/20 transition flex items-center gap-2">
-              <span>Explore Drones</span>
-              <span class="text-xs">↓</span>
+            <a href="#catalogSection" class="sheen-btn px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition">
+              Explore Equipment ↓
             </a>
-            <a href="sound.html" class="px-5 py-3 rounded-xl bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white font-black text-xs shadow-md shadow-orange-500/20 transition flex items-center gap-1.5">
-              <span>🔊 JBL Products</span>
-              <span>→</span>
-            </a>
-            <button type="button" onclick="switchView('verify')" class="px-6 py-3 rounded-xl bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-100 text-white dark:text-slate-900 font-bold text-xs shadow-sm transition">
-              Reserve Gear →
+            <button type="button" onclick="switchView('verify')" class="sheen-btn px-6 py-3 rounded-xl bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white font-bold text-xs shadow-xs transition cursor-pointer">
+              Reserve Online →
             </button>
-            <a href="https://wa.me/94701875455?text=Hello%20DronieX%20Galle%2C%20I%20would%20like%20to%20reserve%20gear." target="_blank" rel="noopener noreferrer" class="px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold text-xs border border-slate-200 dark:border-slate-700 transition">
-              WhatsApp: 070 187 5455
+            <a href="https://wa.me/94701875455?text=Hello%20DronieX%20Galle%2C%20I%20would%20like%20to%20inquire%20about%20gear%20rental." target="_blank" rel="noopener noreferrer" class="px-5 py-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 text-xs font-bold transition flex items-center gap-1.5">
+              <span>WhatsApp Us</span>
             </a>
           </div>
+
         </div>
       </section>
 
-      <!-- STREAMLINED RENTAL DATES & SCHEDULE BAR -->
-      <section id="rentalDatesBar" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-4 sm:p-5 shadow-xs space-y-3">
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <!-- RENTAL DATES & SCHEDULE BAR -->
+      <section id="rentalDatesBar" class="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xs">
+        <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
           
           <!-- Date Pickers Grid -->
           <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -478,7 +480,7 @@
             <div>
               <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1">Pickup Date</label>
               <div class="relative cursor-pointer" onclick="openCalendarPopup('pickupDateInput', 'Select Pickup Date')">
-                <input type="date" id="pickupDateInput" value="2026-11-12" readonly onchange="updateRentalSchedule()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-blue-500 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white font-bold cursor-pointer focus:border-blue-600 focus:outline-none transition" />
+                <input type="date" id="pickupDateInput" value="2026-11-24" readonly onchange="updateRentalSchedule()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-blue-500 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white font-bold cursor-pointer focus:border-blue-600 focus:outline-none transition" />
                 <span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs">
                   <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 </span>
@@ -489,7 +491,7 @@
             <div id="returnDateWrapper">
               <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1">Return Date</label>
               <div class="relative cursor-pointer" onclick="openCalendarPopup('returnDateInput', 'Select Return Date')">
-                <input type="date" id="returnDateInput" value="2026-11-13" readonly onchange="updateRentalSchedule()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-blue-500 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white font-bold cursor-pointer focus:border-blue-600 focus:outline-none transition" />
+                <input type="date" id="returnDateInput" value="2026-11-25" readonly onchange="updateRentalSchedule()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-blue-500 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white font-bold cursor-pointer focus:border-blue-600 focus:outline-none transition" />
                 <span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs">
                   <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 </span>
@@ -529,65 +531,63 @@
             <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Genuine 4K camera gear (<span id="statTotalItems" class="font-bold text-blue-600">3</span> units) with 3 batteries &amp; fast Galle handover.</p>
           </div>
 
+          <!-- Filter & Sort Bar -->
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div id="categoryFilterBar" class="flex flex-wrap items-center gap-1.5">
+              <!-- Populated by JS -->
+            </div>
 
-        </div>
+            <div class="flex items-center gap-2">
+              <label class="flex items-center gap-1.5 text-xs text-slate-700 dark:text-slate-300 cursor-pointer bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 px-3 py-1.5 rounded-xl shadow-xs">
+                <input type="checkbox" id="availableOnlyToggle" onchange="renderCatalog()" class="rounded border-slate-300 text-blue-600 focus:ring-0" />
+                <span>Available Only</span>
+              </label>
 
-        <!-- Filter & Sort Bar -->
-        <div class="flex flex-wrap items-center justify-between gap-3">
-          <div id="categoryFilterBar" class="flex flex-wrap items-center gap-1.5">
-            <!-- Populated by JS -->
-          </div>
-
-          <div class="flex items-center gap-2">
-            <label class="flex items-center gap-1.5 text-xs text-slate-700 dark:text-slate-300 cursor-pointer bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 px-3 py-1.5 rounded-xl shadow-xs">
-              <input type="checkbox" id="availableOnlyToggle" onchange="renderCatalog()" class="rounded border-slate-300 text-blue-600 focus:ring-0" />
-              <span>Available Only</span>
-            </label>
-
-            <select id="sortSelect" onchange="renderCatalog()" class="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-blue-600 shadow-xs">
-              <option value="popular">Sort: Most Popular</option>
-              <option value="price-asc">Price: Low to High</option>
-              <option value="price-desc">Price: High to Low</option>
-            </select>
+              <select id="sortSelect" onchange="renderCatalog()" class="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-blue-600 shadow-xs">
+                <option value="popular">Sort: Most Popular</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+              </select>
+            </div>
           </div>
         </div>
 
-        <!-- Product Grid (Rendered by JS) -->
+        <!-- Product Grid (Rendered dynamically by renderCatalog()) -->
         <div id="catalogGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <!-- Rendered dynamically by renderCatalog() -->
         </div>
       </section>
 
-      <!-- STREAMLINED GIMBAL VALUE PACKAGES -->
+      <!-- STREAMLINED VALUE PACKAGES SECTION -->
       <section id="gimbalValuePacksSection" class="space-y-4 pt-4">
         <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
           <div>
             <span class="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">Value Packages</span>
-            <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white mt-0.5">Multi-Day Packages (1, 2 &amp; 7 Days)</h2>
-            <p class="text-xs text-slate-500 dark:text-slate-400">Save up to Rs. 3,100 with all-inclusive packages for coastal travel in Galle.</p>
+            <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white mt-0.5">Rental Packages &amp; Multi-Day Savings</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Compare 1-day, 2-day weekend, and 7-day weekly rates. Save up to Rs. 5,000.</p>
           </div>
           <span class="text-[11px] text-slate-500 font-semibold">*Daily rentals only • No hourly billing</span>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
           
           <!-- Card 1: DJI OSMO MOBILE SE -->
-          <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 p-5 space-y-3.5 shadow-sm card-clean">
+          <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 p-5 space-y-3.5 shadow-xs card-clean">
             <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2.5">
               <div>
-                <span class="text-[10px] font-bold uppercase tracking-wider text-blue-600">Foldable 3-Axis Gimbal</span>
-                <h3 class="text-lg font-black text-slate-900 dark:text-white">DJI Osmo Mobile SE</h3>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-blue-600">Smartphone Gimbal</span>
+                <h3 class="text-base font-black text-slate-900 dark:text-white">DJI Osmo Mobile SE</h3>
               </div>
-              <span class="px-2.5 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 text-xs font-semibold border border-blue-200 dark:border-blue-800">Galle Pack</span>
+              <span class="px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 text-[11px] font-semibold border border-blue-200 dark:border-blue-800">Essential</span>
             </div>
 
             <!-- Tier 1: 01 Day -->
             <div class="bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 hover:border-blue-400 rounded-xl p-3 flex items-center justify-between gap-3 transition">
               <div>
                 <div class="text-xs font-black text-slate-900 dark:text-white">01 Day Pass — Rs. 1,200</div>
-                <div class="text-[11px] text-slate-500 dark:text-slate-400">Galle Fort sunset, day trips &amp; reels.</div>
+                <div class="text-[11px] text-slate-500 dark:text-slate-400">Day trip &amp; Galle Fort sunset reels.</div>
               </div>
-              <button type="button" onclick="bookGimbalPackage('dji-osmo-mobile-se', 1)" class="sheen-btn px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition cursor-pointer">
+              <button type="button" onclick="bookGimbalPackage('dji-osmo-mobile-se', 1)" class="sheen-btn px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition cursor-pointer">
                 Select →
               </button>
             </div>
@@ -596,9 +596,9 @@
             <div class="bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 hover:border-emerald-400 rounded-xl p-3 flex items-center justify-between gap-3 transition">
               <div>
                 <div class="text-xs font-black text-slate-900 dark:text-white">02 Days Weekend — Rs. 2,200 <span class="text-[10px] text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 px-1.5 py-0.5 rounded font-bold">Save Rs. 200</span></div>
-                <div class="text-[11px] text-slate-500 dark:text-slate-400">Friday to Sunday coastal trips.</div>
+                <div class="text-[11px] text-slate-500 dark:text-slate-400">Weekend beach &amp; resort stays.</div>
               </div>
-              <button type="button" onclick="bookGimbalPackage('dji-osmo-mobile-se', 2)" class="sheen-btn px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition cursor-pointer">
+              <button type="button" onclick="bookGimbalPackage('dji-osmo-mobile-se', 2)" class="sheen-btn px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition cursor-pointer">
                 Select →
               </button>
             </div>
@@ -607,31 +607,31 @@
             <div class="bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 hover:border-blue-400 rounded-xl p-3 flex items-center justify-between gap-3 transition">
               <div>
                 <div class="text-xs font-black text-slate-900 dark:text-white">07 Days Weekly — Rs. 6,500 <span class="text-[10px] text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 px-1.5 py-0.5 rounded font-bold">Save Rs. 1,900</span></div>
-                <div class="text-[11px] text-slate-500 dark:text-slate-400">Full southern tour &amp; vacation pack.</div>
+                <div class="text-[11px] text-slate-500 dark:text-slate-400">Full southern tour vacation pass.</div>
               </div>
-              <button type="button" onclick="bookGimbalPackage('dji-osmo-mobile-se', 7)" class="sheen-btn px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition cursor-pointer">
+              <button type="button" onclick="bookGimbalPackage('dji-osmo-mobile-se', 7)" class="sheen-btn px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition cursor-pointer">
                 Select →
               </button>
             </div>
           </div>
 
           <!-- Card 2: DJI OSMO MOBILE 7P -->
-          <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 p-5 space-y-3.5 shadow-sm card-clean">
+          <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 p-5 space-y-3.5 shadow-xs card-clean">
             <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2.5">
               <div>
-                <span class="text-[10px] font-bold uppercase tracking-wider text-blue-600">ActiveTrack 7.0 Pro Gimbal</span>
-                <h3 class="text-lg font-black text-slate-900 dark:text-white">DJI Osmo Mobile 7P</h3>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-blue-600">ActiveTrack 7.0 Pro</span>
+                <h3 class="text-base font-black text-slate-900 dark:text-white">DJI Osmo Mobile 7P</h3>
               </div>
-              <span class="px-2.5 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 text-xs font-semibold border border-blue-200 dark:border-blue-800">Pro Pack</span>
+              <span class="px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 text-[11px] font-semibold border border-blue-200 dark:border-blue-800">Pro Kit</span>
             </div>
 
             <!-- Tier 1: 01 Day -->
             <div class="bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 hover:border-blue-400 rounded-xl p-3 flex items-center justify-between gap-3 transition">
               <div>
                 <div class="text-xs font-black text-slate-900 dark:text-white">01 Day Pass — Rs. 1,800</div>
-                <div class="text-[11px] text-slate-500 dark:text-slate-400">ActiveTrack 7.0 with built-in rod.</div>
+                <div class="text-[11px] text-slate-500 dark:text-slate-400">AI tracking with built-in rod.</div>
               </div>
-              <button type="button" onclick="bookGimbalPackage('dji-osmo-mobile-7p', 1)" class="sheen-btn px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition cursor-pointer">
+              <button type="button" onclick="bookGimbalPackage('dji-osmo-mobile-7p', 1)" class="sheen-btn px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition cursor-pointer">
                 Select →
               </button>
             </div>
@@ -640,9 +640,9 @@
             <div class="bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 hover:border-emerald-400 rounded-xl p-3 flex items-center justify-between gap-3 transition">
               <div>
                 <div class="text-xs font-black text-slate-900 dark:text-white">02 Days Weekend — Rs. 3,300 <span class="text-[10px] text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 px-1.5 py-0.5 rounded font-bold">Save Rs. 300</span></div>
-                <div class="text-[11px] text-slate-500 dark:text-slate-400">Unawatuna &amp; Mirissa weekend vlogs.</div>
+                <div class="text-[11px] text-slate-500 dark:text-slate-400">Unawatuna &amp; Mirissa vlog shoot.</div>
               </div>
-              <button type="button" onclick="bookGimbalPackage('dji-osmo-mobile-7p', 2)" class="sheen-btn px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition cursor-pointer">
+              <button type="button" onclick="bookGimbalPackage('dji-osmo-mobile-7p', 2)" class="sheen-btn px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition cursor-pointer">
                 Select →
               </button>
             </div>
@@ -653,7 +653,51 @@
                 <div class="text-xs font-black text-slate-900 dark:text-white">07 Days Weekly — Rs. 9,500 <span class="text-[10px] text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 px-1.5 py-0.5 rounded font-bold">Save Rs. 3,100</span></div>
                 <div class="text-[11px] text-slate-500 dark:text-slate-400">Complete multi-location production.</div>
               </div>
-              <button type="button" onclick="bookGimbalPackage('dji-osmo-mobile-7p', 7)" class="sheen-btn px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition cursor-pointer">
+              <button type="button" onclick="bookGimbalPackage('dji-osmo-mobile-7p', 7)" class="sheen-btn px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition cursor-pointer">
+                Select →
+              </button>
+            </div>
+          </div>
+
+          <!-- Card 3: DJI MINI 4 PRO COMBO -->
+          <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 p-5 space-y-3.5 shadow-xs card-clean">
+            <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2.5">
+              <div>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-blue-600">4K Drone Kit</span>
+                <h3 class="text-base font-black text-slate-900 dark:text-white">DJI Mini 4 Pro Combo</h3>
+              </div>
+              <span class="px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 text-[11px] font-semibold border border-emerald-200 dark:border-emerald-800">Flagship</span>
+            </div>
+
+            <!-- Tier 1: 01 Day -->
+            <div class="bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 hover:border-blue-400 rounded-xl p-3 flex items-center justify-between gap-3 transition">
+              <div>
+                <div class="text-xs font-black text-slate-900 dark:text-white">01 Day Pass — Rs. 10,000</div>
+                <div class="text-[11px] text-slate-500 dark:text-slate-400">3 batteries, 128GB SD &amp; brief.</div>
+              </div>
+              <button type="button" onclick="bookGimbalPackage('dji-mini-4-pro-combo', 1)" class="sheen-btn px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition cursor-pointer">
+                Select →
+              </button>
+            </div>
+
+            <!-- Tier 2: 02 Days Weekend -->
+            <div class="bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 hover:border-emerald-400 rounded-xl p-3 flex items-center justify-between gap-3 transition">
+              <div>
+                <div class="text-xs font-black text-slate-900 dark:text-white">02 Days Weekend — Rs. 20,000</div>
+                <div class="text-[11px] text-slate-500 dark:text-slate-400">48-hour full aerial coverage.</div>
+              </div>
+              <button type="button" onclick="bookGimbalPackage('dji-mini-4-pro-combo', 2)" class="sheen-btn px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition cursor-pointer">
+                Select →
+              </button>
+            </div>
+
+            <!-- Tier 3: 07 Days Weekly -->
+            <div class="bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 hover:border-blue-400 rounded-xl p-3 flex items-center justify-between gap-3 transition">
+              <div>
+                <div class="text-xs font-black text-slate-900 dark:text-white">07 Days Weekly — Rs. 65,000 <span class="text-[10px] text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 px-1.5 py-0.5 rounded font-bold">Save Rs. 5,000</span></div>
+                <div class="text-[11px] text-slate-500 dark:text-slate-400">Full island trip &amp; documentary kit.</div>
+              </div>
+              <button type="button" onclick="bookGimbalPackage('dji-mini-4-pro-combo', 7)" class="sheen-btn px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition cursor-pointer">
                 Select →
               </button>
             </div>
@@ -662,7 +706,65 @@
         </div>
       </section>
 
-      <!-- STORE LOCATION & TRUST BENTO GRID -->
+      <!-- HOW IT WORKS SECTION -->
+      <section id="howItWorksSection" class="space-y-4 pt-4">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">Simple Workflow</span>
+            <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white mt-0.5">How It Works</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Rent premium gear in 4 simple steps with zero advance deposit required online.</p>
+          </div>
+          <span class="text-xs text-slate-500 font-semibold">Fast 2-minute handover in Galle</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Step 1 -->
+          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-3 card-clean shadow-xs">
+            <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 flex items-center justify-center text-blue-600 dark:text-blue-400 font-black text-sm">
+              01
+            </div>
+            <h3 class="text-base font-bold text-slate-900 dark:text-white">Choose Gear &amp; Dates</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+              Select your equipment (DJI Mini 4 Pro, Osmo Mobile, or JBL Sound) and pick your exact rental dates.
+            </p>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-3 card-clean shadow-xs">
+            <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 flex items-center justify-center text-blue-600 dark:text-blue-400 font-black text-sm">
+              02
+            </div>
+            <h3 class="text-base font-bold text-slate-900 dark:text-white">Reserve Online in 2 Mins</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+              Fill in your contact details with zero advance fee. We confirm your hold instantly via WhatsApp.
+            </p>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-3 card-clean shadow-xs">
+            <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 flex items-center justify-center text-blue-600 dark:text-blue-400 font-black text-sm">
+              03
+            </div>
+            <h3 class="text-base font-bold text-slate-900 dark:text-white">Galle Handover &amp; Briefing</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+              Pickup at Galwadugoda (5 mins to Galle Fort). Complete quick ID verification and test the gear with our pilot.
+            </p>
+          </div>
+
+          <!-- Step 4 -->
+          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-3 card-clean shadow-xs">
+            <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 flex items-center justify-center text-blue-600 dark:text-blue-400 font-black text-sm">
+              04
+            </div>
+            <h3 class="text-base font-bold text-slate-900 dark:text-white">Shoot in 4K &amp; Easy Return</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+              Capture stunning aerials along the southern coast. Return hardware on time for an instant deposit refund.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- STORE LOCATION & HANDOVER HUB -->
       <section id="storeHubSection" class="space-y-4 pt-4">
         <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2.5">
           <div>
@@ -675,7 +777,7 @@
         <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
           
           <!-- Tile 1: Store & Map (7 Col) -->
-          <div class="md:col-span-7 bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-sm flex flex-col justify-between space-y-3">
+          <div class="md:col-span-7 bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between space-y-3">
             <div class="space-y-1">
               <div class="flex items-center justify-between">
                 <span class="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800">OPEN 8:00 AM – 8:00 PM</span>
@@ -710,9 +812,9 @@
           <!-- Tile 2: Inclusions & Quick Verification (5 Col) -->
           <div class="md:col-span-5 space-y-3.5 flex flex-col justify-between">
             <!-- Inclusions -->
-            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-sm space-y-2">
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-2">
               <div class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wide">
-                Included in Every Kit
+                Included in Every Drone Kit
               </div>
               <div class="grid grid-cols-2 gap-1.5 text-xs text-slate-700 dark:text-slate-300">
                 <div class="flex items-center gap-1.5"><span class="text-emerald-600 font-bold">✓</span> 3 Batteries (100m)</div>
@@ -723,19 +825,19 @@
             </div>
 
             <!-- Fast KYC Verification -->
-            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-sm space-y-1.5">
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-1.5">
               <div class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wide">
-                Fast 2-Minute Handover
+                Fast 2-Minute Handover Requirements
               </div>
-              <p class="text-xs text-slate-600 dark:text-slate-400">Sri Lankan NIC or Foreign Passport. Quick digital signature upon equipment handover.</p>
+              <p class="text-xs text-slate-600 dark:text-slate-400">
+                Bring Original National Identity Card (NIC), Driving License, or Passport for physical verification during equipment handover.
+              </p>
             </div>
 
-            <!-- Top Galle Flight Hotspots -->
-            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-sm space-y-1.5">
-              <div class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wide">
-                Top Coastal Locations
-              </div>
-              <div class="flex flex-wrap gap-1 text-[11px] font-semibold text-slate-800 dark:text-slate-200">
+            <!-- Southern Province Spots -->
+            <div class="bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-1">
+              <div class="text-[10px] uppercase font-bold text-slate-400">Popular Southern Filming Spots</div>
+              <div class="flex flex-wrap gap-1 text-[11px] text-slate-600 dark:text-slate-300">
                 <span class="px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800">Galle Fort Lighthouse</span>
                 <span class="px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800">Unawatuna Beach</span>
                 <span class="px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800">Coconut Tree Hill Mirissa</span>
@@ -743,6 +845,83 @@
             </div>
           </div>
 
+        </div>
+      </section>
+
+      <!-- CUSTOMER REVIEWS & TRUST SECTION -->
+      <section id="reviewsSection" class="space-y-4 pt-4">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">Verified Ratings</span>
+              <span class="px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 text-[10px] font-bold border border-amber-200 dark:border-amber-800">100% 5-Star Reviews</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white mt-0.5">What Our Customers Say</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Real feedback from travelers, content creators, and wedding filmmakers in Galle.</p>
+          </div>
+          <a href="https://maps.app.goo.gl/uDF84DTuVNTLxa6w9" target="_blank" rel="noopener noreferrer" class="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1">
+            <span>Read on Google Maps</span>
+            <span>↗</span>
+          </a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <!-- Review 1 -->
+          <div class="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl p-5 space-y-3 shadow-xs card-clean">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs flex items-center justify-center">
+                  SN
+                </div>
+                <div>
+                  <h3 class="font-bold text-slate-900 dark:text-white text-xs">Sineth Nimhan</h3>
+                  <div class="text-[10px] text-slate-400">Verified Google Review · July 2026</div>
+                </div>
+              </div>
+              <span class="text-amber-500 text-xs font-bold">★★★★★</span>
+            </div>
+            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed italic">
+              "Excellent service, quality drones, and a smooth rental process. Friendly and fair prices. Highly recommended!"
+            </p>
+          </div>
+
+          <!-- Review 2 -->
+          <div class="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl p-5 space-y-3 shadow-xs card-clean">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs flex items-center justify-center">
+                  SB
+                </div>
+                <div>
+                  <h3 class="font-bold text-slate-900 dark:text-white text-xs">Seniru Thulnith Bandara</h3>
+                  <div class="text-[10px] text-slate-400">Verified Google Review · July 2026</div>
+                </div>
+              </div>
+              <span class="text-amber-500 text-xs font-bold">★★★★★</span>
+            </div>
+            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed italic">
+              "Great service and recommended for professional aerial videography."
+            </p>
+          </div>
+
+          <!-- Review 3 -->
+          <div class="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl p-5 space-y-3 shadow-xs card-clean">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs flex items-center justify-center">
+                  VD
+                </div>
+                <div>
+                  <h3 class="font-bold text-slate-900 dark:text-white text-xs">Vishka Dulaj</h3>
+                  <div class="text-[10px] text-slate-400">Verified Google Review · Oct 2026</div>
+                </div>
+              </div>
+              <span class="text-amber-500 text-xs font-bold">★★★★★</span>
+            </div>
+            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed italic">
+              "Super equipment and prompt customer assistance."
+            </p>
+          </div>
         </div>
       </section>
 
@@ -1404,11 +1583,11 @@
       <div class="space-y-3">
         <div class="flex items-center gap-2.5">
           <img src="droniex-logo.jpg" onerror="this.onerror=null;this.src='droniex-logo.jpg';" alt="DronieX Rent Store Logo" class="w-9 h-9 rounded-lg object-cover border border-slate-700" />
-          <span class="text-lg font-black text-white">DronieX Rent Store</span>
-          <span class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 text-[10px] font-bold">GALLE</span>
+          <span class="text-lg font-black text-white">DronieX</span>
+          <span class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 text-[10px] font-bold">GALLE STORE</span>
         </div>
         <p class="leading-relaxed">
-          Galle's dedicated DJI Camera Drone and DJI Osmo Mobile Gimbal rental store at Galwadugoda, Galle. Daily &amp; Multi-Day Value Packages available.
+          Galle's dedicated DJI Camera Drone and DJI Osmo Mobile Gimbal rental store. Tested 4K kits with 3 batteries, 128GB MicroSD, and free pilot walkthrough.
         </p>
         <div class="space-y-1 text-slate-300">
           <div><a href="https://maps.app.goo.gl/uDF84DTuVNTLxa6w9" target="_blank" rel="noopener noreferrer" class="hover:text-blue-400">No. 131, D.J. Wimalasurendra Mawatha, Galwadugoda, Galle 80000</a></div>
@@ -1417,21 +1596,23 @@
       </div>
 
       <div class="space-y-2">
-        <div class="font-bold text-white uppercase tracking-wider text-[11px]">Our Rental Lineup</div>
+        <div class="font-bold text-white uppercase tracking-wider text-[11px]">Rental Lineup</div>
         <ul class="space-y-1.5">
           <li><button type="button" onclick="switchView('catalog'); filterByCategory('Aerial Drones')" class="hover:text-white transition">DJI Mini 4 Pro Fly More Combo (Rs. 10,000/day)</button></li>
           <li><button type="button" onclick="switchView('catalog'); filterByCategory('Smartphone Gimbals')" class="hover:text-white transition">DJI Osmo Mobile SE (Rs. 1,200/day)</button></li>
           <li><button type="button" onclick="switchView('catalog'); filterByCategory('Smartphone Gimbals')" class="hover:text-white transition">DJI Osmo Mobile 7P (Rs. 1,800/day)</button></li>
+          <li><a href="sound.html" class="hover:text-orange-400 transition">JBL PartyBox 320 &amp; Dual Mics</a></li>
         </ul>
       </div>
 
       <div class="space-y-2">
-        <div class="font-bold text-white uppercase tracking-wider text-[11px]">Quick Links &amp; Support</div>
+        <div class="font-bold text-white uppercase tracking-wider text-[11px]">Quick Links &amp; Trust</div>
         <ul class="space-y-1.5">
           <li><button type="button" onclick="switchView('verify')" class="hover:text-white transition">Online Equipment Reservation</button></li>
           <li><button type="button" onclick="openTrackModal()" class="hover:text-white transition">Track My Booking</button></li>
-          <li><a href="https://maps.app.goo.gl/uDF84DTuVNTLxa6w9" target="_blank" rel="noopener noreferrer" class="hover:text-white transition">Customer Reviews &amp; Ratings (5.0 ★)</a></li>
-          <li><a href="https://www.caa.lk/" target="_blank" rel="noopener noreferrer" class="hover:text-white transition">CAASL Drone Safety Guidelines ↗</a></li>
+          <li><a href="#howItWorksSection" class="hover:text-white transition">How It Works</a></li>
+          <li><a href="#reviewsSection" class="hover:text-white transition">Customer Reviews (5.0 ★)</a></li>
+          <li><a href="https://www.caa.lk/" target="_blank" rel="noopener noreferrer" class="hover:text-white transition">CAASL Drone Safety Regulations ↗</a></li>
         </ul>
       </div>
 
@@ -1442,21 +1623,29 @@
             <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
             <span class="font-extrabold text-white uppercase tracking-wider text-xs">Galle Handover Hub</span>
           </div>
-          <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/40">FAST PICKUP</span>
+          <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/40">OPEN 8AM–8PM</span>
         </div>
         <p class="text-xs text-slate-300 leading-relaxed font-normal">
-          Tested genuine DJI 4K hardware, in-store pilot walkthrough, and immediate refundable deposit settlement upon return.
+          5 minutes from Galle Fort. Tested genuine hardware, in-store pilot walkthrough, and immediate refundable deposit settlement upon return.
         </p>
         <div class="pt-1">
           <a href="https://maps.app.goo.gl/uDF84DTuVNTLxa6w9" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-700/80 hover:bg-slate-700 border border-slate-600 text-white text-xs font-semibold transition">
-            <span>📍 Open in Google Maps</span>
+            <span>📍 Open Google Maps Directions</span>
             <span class="text-blue-400">↗</span>
           </a>
         </div>
       </div>
     </div>
-    <div class="border-t border-slate-800/80 py-4 text-center text-[11px] text-slate-500">
-      © 2026 DronieX Rent Store — Galle. All Rights Reserved. <button type="button" onclick="openAdminPinModal()" class="text-slate-400/20 hover:text-slate-400 text-[10px] transition cursor-default ml-1.5" title="Staff Gateway">🔒</button>
+    <div class="border-t border-slate-800/80 py-4 px-4 flex flex-col sm:flex-row items-center justify-between gap-2 max-w-7xl mx-auto text-[11px] text-slate-500">
+      <div>
+        © 2026 DronieX Rent Store — Galle. All Rights Reserved. CAASL &amp; MOD Compliant Operations.
+      </div>
+      <div class="flex items-center gap-3">
+        <button type="button" onclick="openAdminPinModal()" class="text-slate-500 hover:text-slate-300 transition flex items-center gap-1 cursor-pointer">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          <span>Staff Portal</span>
+        </button>
+      </div>
     </div>
   </footer>
 
@@ -2908,6 +3097,7 @@
 
     function bookGimbalPackage(itemId, days) {
       selectCardPackage(itemId, days);
+      openReservationForItem(itemId);
     }
 
     function switchCardPhoto(itemId, photoIdx) {
@@ -3098,10 +3288,10 @@
         const isDrone = item.category === 'Aerial Drones';
         const activeIdx = item.activePhotoIdx || 0;
 
-        const valuePacksHtml = (!isDrone && item.packages && item.packages.length > 1)
+        const valuePacksHtml = (item.packages && item.packages.length > 1)
           ? `
             <div class="bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 space-y-1.5">
-              <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Select Duration Preset:</div>
+              <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Duration Package:</div>
               <div class="grid grid-cols-3 gap-1.5">
                 ${item.packages.map(pk => `
                   <button type="button" onclick="selectCardPackage('${item.id}', ${pk.days})"
@@ -3115,17 +3305,19 @@
                   </button>
                 `).join('')}
               </div>
+              ${isDrone ? `
+                <div class="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-200/80 dark:border-slate-700/80">
+                  <span>Compliance:</span>
+                  <span class="text-amber-800 dark:text-amber-300 font-semibold">CAASL &amp; MOD Compliant</span>
+                </div>
+              ` : ''}
             </div>
           `
           : `
             <div class="bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-[11px] space-y-1">
               <div class="flex justify-between text-slate-400">
                 <span>Equipment Class:</span>
-                <span class="font-bold text-blue-600 dark:text-blue-400">4K Aerial Camera Drone</span>
-              </div>
-              <div class="flex justify-between text-slate-400">
-                <span>Compliance:</span>
-                <span class="text-amber-800 dark:text-amber-300 font-semibold">CAASL &amp; MOD Compliant Drone</span>
+                <span class="font-bold text-blue-600 dark:text-blue-400">${item.category}</span>
               </div>
             </div>
           `;
