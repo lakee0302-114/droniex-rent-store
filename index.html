@@ -352,11 +352,8 @@
           <span id="wishlistCountBadge" class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-rose-500 text-[9px] font-bold text-white flex items-center justify-center">0</span>
         </button>
 
-        <!-- Cart Button -->
-        <button type="button" onclick="toggleCartDrawer()" class="sheen-btn flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-slate-900 dark:bg-blue-600 hover:bg-slate-800 dark:hover:bg-blue-700 text-white text-xs font-bold shadow-xs transition cursor-pointer">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
-          <span id="cartHeaderLabel">Reserve (0)</span>
-        </button>
+        <!-- Hidden anchor for cartHeaderLabel compatibility -->
+        <span id="cartHeaderLabel" class="hidden"></span>
       </div>
     </div>
 
@@ -3980,18 +3977,15 @@
       const existing = appState.cart.find(c => c.itemId === itemId);
       if (!existing) {
         appState.cart.push({ itemId, qty: 1 });
-        showToast(`Added "${item.title}" to your rental reservation!`);
-      } else {
-        showToast(`"${item.title}" is in your reservation!`);
       }
       renderCart();
-      // Slide open the cart drawer from the side (without navigating to verify view)
+      // Ensure cart drawer is closed if open
       const drawer = document.getElementById('cartDrawer');
       const backdrop = document.getElementById('cartDrawerBackdrop');
-      if (drawer && backdrop) {
-        drawer.classList.remove('translate-x-full');
-        backdrop.classList.remove('hidden');
-      }
+      if (drawer) drawer.classList.add('translate-x-full');
+      if (backdrop) backdrop.classList.add('hidden');
+      // Directly open the reservation form view
+      switchView('verify');
     }
 
     function populateReservationItemSelect() {
