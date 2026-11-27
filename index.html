@@ -3248,22 +3248,6 @@
                 ` : ''}
               </div>
 
-              <!-- 4 Clickable Mini Photo Thumbnails -->
-              ${item.gallery && item.gallery.length > 1 ? `
-                <div class="grid grid-cols-4 gap-2 px-6 pt-3">
-                  ${item.gallery.map((gImg, gIdx) => `
-                    <button type="button" onclick="switchCardPhoto('${item.id}', ${gIdx})"
-                      class="h-14 rounded-xl border-2 overflow-hidden bg-slate-100 dark:bg-slate-800 p-0.5 transition cursor-pointer ${
-                        activeIdx === gIdx
-                          ? 'border-blue-600 ring-2 ring-blue-500/30'
-                          : 'border-slate-200 dark:border-slate-700 hover:border-slate-400 opacity-70 hover:opacity-100'
-                      }" title="Photo ${gIdx + 1}">
-                      <img src="${gImg}" alt="${item.title} angle ${gIdx + 1}" class="w-full h-full object-cover rounded-lg" />
-                    </button>
-                  `).join('')}
-                </div>
-              ` : ''}
-
               <!-- Card Body: Clean, Big & Friendly -->
               <div class="p-6 space-y-4">
                 <div>
