@@ -58,6 +58,26 @@
       transform: translateY(-2px);
       box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.06), 0 4px 10px -4px rgba(15, 23, 42, 0.03);
     }
+
+    /* Subtle & Smooth Scroll Reveal Animation (Very gentle entrance) */
+    .reveal-item {
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity, transform;
+    }
+    .reveal-item.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal-item {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+      }
+    }
+
     
     .card-3d-hover {
       transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease;
@@ -3312,6 +3332,12 @@
           </article>
         `;
       }).join('');
+      setTimeout(() => {
+        if (typeof observeRevealElements === 'function') {
+          observeRevealElements();
+        }
+      }, 40);
+
     }
 
     // =========================================================================
@@ -5303,24 +5329,32 @@
         statsObserver.observe(statsEl.closest('section') || statsEl);
       }
 
-      // Add reveal-item class to sections
-      const sections = document.querySelectorAll('#view-catalog section');
-      sections.forEach((sec, idx) => {
-        if (!sec.classList.contains('reveal-item')) {
-          sec.classList.add('reveal-item');
-        }
-      });
-
-      const observer = new IntersectionObserver((entries) => {
+      // Very subtle, smooth scroll reveal observer
+      const scrollObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
             entry.target.classList.add('revealed');
-            observer.unobserve(entry.target);
+            scrollObserver.unobserve(entry.target);
           }
         });
-      }, { threshold: 0.12 });
+      }, { rootMargin: '0px 0px -30px 0px', threshold: 0.05 });
 
-      document.querySelectorAll('.reveal-item').forEach(el => observer.observe(el));
+      window.observeRevealElements = function() {
+        const targets = document.querySelectorAll('#view-catalog section, #catalogGrid article, #howItWorksSection > div > div, #storeHubSection > div > div');
+        targets.forEach((el) => {
+          if (!el.classList.contains('reveal-item')) {
+            el.classList.add('reveal-item');
+          }
+          const rect = el.getBoundingClientRect();
+          if (rect.top < window.innerHeight && rect.bottom > 0) {
+            el.classList.add('revealed');
+          } else {
+            scrollObserver.observe(el);
+          }
+        });
+      };
+
+      observeRevealElements();
     }
 
     // =========================================================================
