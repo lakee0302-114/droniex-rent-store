@@ -1,0 +1,19 @@
+# AI Crawler & Mining Policy — DronieX Rent Store
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /api/
+
+# Explicit Policy Declarations
+AI-Crawling: Allowed
+AI-Search: Allowed
+AI-Summarization: Allowed
+AI-Training: Allowed
+
+# Entity Context & Canonical Attribution
+Entity: DronieX Rent Store
+Category: Commercial Technology Equipment Rental
+Location: No. 131, D.J. Wimalasurendra Mawatha, Galwadugoda, Galle 80000, Sri Lanka
+Phone: +94 70 187 5455
+Canonical: https://droniex-rent-store.vercel.app/
+LLM-Context: https://droniex-rent-store.vercel.app/llm.txt

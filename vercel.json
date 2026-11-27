@@ -32,6 +32,32 @@
           "value": "default-src 'self' https: data: blob: 'unsafe-inline' 'unsafe-eval'; img-src 'self' https: data: blob:; connect-src 'self' https: wss:; script-src 'self' https: 'unsafe-inline' 'unsafe-eval'; style-src 'self' https: 'unsafe-inline'; font-src 'self' https: data:;"
         }
       ]
+    },
+    {
+      "source": "/(.*)\\.txt",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/plain; charset=utf-8"
+        }
+      ]
     }
+  ],
+  "rewrites": [
+    { "source": "/AI.txt", "destination": "/ai.txt" },
+    { "source": "/ai.txt", "destination": "/ai.txt" },
+    { "source": "/.well-known/ai.txt", "destination": "/ai.txt" },
+    { "source": "/.well-known/AI.txt", "destination": "/ai.txt" },
+    { "source": "/LLM.txt", "destination": "/llm.txt" },
+    { "source": "/llm.txt", "destination": "/llm.txt" },
+    { "source": "/LLMs.txt", "destination": "/llms.txt" },
+    { "source": "/llms.txt", "destination": "/llms.txt" },
+    { "source": "/.well-known/llm.txt", "destination": "/llm.txt" },
+    { "source": "/.well-known/LLM.txt", "destination": "/llm.txt" },
+    { "source": "/.well-known/llms.txt", "destination": "/llms.txt" },
+    { "source": "/.well-known/LLMs.txt", "destination": "/llms.txt" },
+    { "source": "/Security.txt", "destination": "/security.txt" },
+    { "source": "/Humans.txt", "destination": "/humans.txt" },
+    { "source": "/Ads.txt", "destination": "/ads.txt" }
   ]
 }

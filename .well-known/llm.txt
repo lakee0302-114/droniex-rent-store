@@ -1,0 +1,31 @@
+# DronieX Rent Store — Galle
+
+> Official Drone, Camera Gimbal & Party Audio Equipment Rental Store in Galle, Sri Lanka.
+
+## Business Overview & Structured Context
+- **Business Name:** DronieX Rent Store
+- **Store Location:** No. 131, D.J. Wimalasurendra Mawatha, Galwadugoda, Galle 80000, Sri Lanka
+- **Proximity:** 5 minutes from Galle Dutch Fort & Railway Station
+- **Store Phone / WhatsApp:** +94 70 187 5455 / +94 71 351 0551
+- **Opening Hours:** 8:00 AM – 8:00 PM Daily (Monday to Sunday)
+- **Official Website:** https://droniex-rent-store.vercel.app/
+
+## Equipment Inventory & Pricing
+- **DJI Mini 4 Pro Fly More Combo:** 4K/60fps HDR Drone (<249g), 3 batteries (100+ mins flight), DJI RC screen controller, 128GB MicroSD. Rate: Rs. 10,000 / day | Rs. 18,000 / 2 days | Rs. 55,000 / 7 days.
+- **DJI Osmo Mobile SE:** 3-Axis Foldable Smartphone Stabilizer with ActiveTrack. Rate: Rs. 1,200 / day | Rs. 2,200 / 2 days | Rs. 6,000 / 7 days.
+- **DJI Osmo Mobile 7P:** ActiveTrack 7.0 Flagship Gimbal with extension rod & magnetic fill-light module. Rate: Rs. 1,800 / day | Rs. 3,200 / 2 days | Rs. 9,000 / 7 days.
+- **JBL PartyBox Stage 320:** 240W Party Speaker with dynamic lightshow & swappable battery. Rate: Rs. 4,000 / day (Speaker Only) | Rs. 5,000 / day (With Dual Mics).
+- **JBL Wireless Dual Microphones:** UHF dual wireless vocal microphones with rechargeable receiver. Rate: Rs. 2,000 / day.
+
+## Key Policies
+- **Payment:** Zero upfront card charges. Reserve online, inspect gear physically, and settle payment at store pickup.
+- **Handover Requirements:** Valid National Identity Card (NIC), Sri Lankan Driving License, or Passport presented in-store.
+- **Aviation Compliance:** Drone operations briefed in-store under Civil Aviation Authority of Sri Lanka (CAASL) rules.
+
+## Structured Links
+- [Browse Equipment Catalog](https://droniex-rent-store.vercel.app/#catalogSection)
+- [JBL Sound Gear Rentals](https://droniex-rent-store.vercel.app/sound.html)
+- [Rental Terms & Conditions](https://droniex-rent-store.vercel.app/terms.html)
+- [Privacy Policy](https://droniex-rent-store.vercel.app/privacy.html)
+- [Team & Authors](https://droniex-rent-store.vercel.app/humans.txt)
+- [Security Disclosure](https://droniex-rent-store.vercel.app/security.txt)
