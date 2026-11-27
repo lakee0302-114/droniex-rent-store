@@ -1,4 +1,82 @@
-# AI Crawler & Mining Policy — DronieX Rent Store
+# ==============================================================================
+# AI.TXT — Standard AI Agent, Mining & Discovery Policy
+# Specification Reference: https://aitxt.ing | https://spawning.ai
+# ==============================================================================
+
+Site-Name: DronieX Rent Store
+Site-Domain: droniex-rent-store.vercel.app
+Domain: droniex-rent-store.vercel.app
+Host: droniex-rent-store.vercel.app
+Canonical: https://droniex-rent-store.vercel.app/
+
+Site-Description: DronieX Rent Store is the premier technology equipment rental service in Galle, Sri Lanka, offering genuine DJI 4K drones (Mini 4 Pro), smartphone gimbals (Osmo Mobile SE, 7P), and JBL party sound systems with dual wireless microphones.
+Description: Professional DJI camera drone, smartphone stabilizer, and JBL PartyBox speaker rentals in Galle, Sri Lanka. Complete all-inclusive rental kits with in-store walkthrough and physical pickup.
+
+Contact: info@droniex.lk
+Contact-Email: droniexstore@gmail.com
+Contact-Phone: +94 70 187 5455
+Contact-WhatsApp: +94 70 187 5455
+Contact-Address: No. 131, D.J. Wimalasurendra Mawatha, Galwadugoda, Galle 80000, Sri Lanka
+
+Sitemap: https://droniex-rent-store.vercel.app/sitemap.xml
+LLM-Context: https://droniex-rent-store.vercel.app/llm.txt
+LLMs-Txt: https://droniex-rent-store.vercel.app/llms.txt
+
+# ------------------------------------------------------------------------------
+# 1. ALLOWED AI SEARCH, DISCOVERY & ASSISTANT AGENTS
+# ------------------------------------------------------------------------------
+User-agent: GPTBot
+Allow: /
+Disallow: /admin.html
+Disallow: /api/
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /admin.html
+Disallow: /api/
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: meta-externalagent
+Allow: /
+
+User-agent: Cohere-ai
+Allow: /
+
+# ------------------------------------------------------------------------------
+# 2. BLOCKED AGGRESSIVE SCRAPERS & UNVERIFIED MINING AGENTS
+# ------------------------------------------------------------------------------
+User-agent: Bytespider
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: Diffbot
+Disallow: /
+
+# ------------------------------------------------------------------------------
+# 3. GLOBAL FALLBACK RULE
+# ------------------------------------------------------------------------------
 User-agent: *
 Allow: /
 Disallow: /admin.html
@@ -9,11 +87,4 @@ AI-Crawling: Allowed
 AI-Search: Allowed
 AI-Summarization: Allowed
 AI-Training: Allowed
-
-# Entity Context & Canonical Attribution
-Entity: DronieX Rent Store
-Category: Commercial Technology Equipment Rental
-Location: No. 131, D.J. Wimalasurendra Mawatha, Galwadugoda, Galle 80000, Sri Lanka
-Phone: +94 70 187 5455
-Canonical: https://droniex-rent-store.vercel.app/
-LLM-Context: https://droniex-rent-store.vercel.app/llm.txt
+Text-And-Data-Mining: Allowed

@@ -1,3 +1,57 @@
+# robots.txt for https://droniex-rent-store.vercel.app/
+
+Site-Name: DronieX Rent Store
+Site-Domain: droniex-rent-store.vercel.app
+Domain: droniex-rent-store.vercel.app
+Site-Description: Drone, camera gimbal, and party sound equipment rentals in Galle, Sri Lanka.
+Contact: +94 70 187 5455 / droniexstore@gmail.com
+
+# ------------------------------------------------------------------------------
+# ALLOWED AI AGENTS & SEARCH CRAWLERS
+# ------------------------------------------------------------------------------
+User-agent: GPTBot
+Allow: /
+Disallow: /admin.html
+Disallow: /api/
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /admin.html
+Disallow: /api/
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+# ------------------------------------------------------------------------------
+# BLOCKED AGGRESSIVE SCRAPERS
+# ------------------------------------------------------------------------------
+User-agent: Bytespider
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+# ------------------------------------------------------------------------------
+# DEFAULT RULE FOR ALL CRAWLERS
+# ------------------------------------------------------------------------------
 User-agent: *
 Allow: /
 Disallow: /admin.html

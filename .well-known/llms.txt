@@ -2,12 +2,24 @@
 
 > Official Drone, Camera Gimbal & Party Audio Equipment Rental Store in Galle, Sri Lanka.
 
+## Site Metadata & Context
+- **Site Name:** DronieX Rent Store
+- **Domain:** droniex-rent-store.vercel.app
+- **Canonical URL:** https://droniex-rent-store.vercel.app/
+- **Site Description:** Drone, camera gimbal, and JBL party speaker rentals in Galle, Sri Lanka.
+- **Contact Phone / WhatsApp:** +94 70 187 5455 / +94 71 351 0551
+- **Contact Email:** droniexstore@gmail.com / info@droniex.lk
+- **Physical Address:** No. 131, D.J. Wimalasurendra Mawatha, Galwadugoda, Galle 80000, Sri Lanka
+- **Operating Hours:** 8:00 AM – 8:00 PM Daily (Monday to Sunday)
+- **Sitemap:** https://droniex-rent-store.vercel.app/sitemap.xml
+- **Allowed AI Agents:** GPTBot, ChatGPT-User, OAI-SearchBot, ClaudeBot, Claude-Web, PerplexityBot, Google-Extended, Applebot-Extended, Amazonbot
+- **Blocked Scrapers:** Bytespider, CCBot
+
 ## Business Overview & Structured Context
 - **Business Name:** DronieX Rent Store
 - **Store Location:** No. 131, D.J. Wimalasurendra Mawatha, Galwadugoda, Galle 80000, Sri Lanka
 - **Proximity:** 5 minutes from Galle Dutch Fort & Railway Station
 - **Store Phone / WhatsApp:** +94 70 187 5455 / +94 71 351 0551
-- **Opening Hours:** 8:00 AM – 8:00 PM Daily (Monday to Sunday)
 - **Official Website:** https://droniex-rent-store.vercel.app/
 
 ## Equipment Inventory & Pricing
@@ -22,10 +34,12 @@
 - **Handover Requirements:** Valid National Identity Card (NIC), Sri Lankan Driving License, or Passport presented in-store.
 - **Aviation Compliance:** Drone operations briefed in-store under Civil Aviation Authority of Sri Lanka (CAASL) rules.
 
-## Structured Links
+## Structured Links & Discovery
+- [Main XML Sitemap](https://droniex-rent-store.vercel.app/sitemap.xml)
 - [Browse Equipment Catalog](https://droniex-rent-store.vercel.app/#catalogSection)
 - [JBL Sound Gear Rentals](https://droniex-rent-store.vercel.app/sound.html)
 - [Rental Terms & Conditions](https://droniex-rent-store.vercel.app/terms.html)
 - [Privacy Policy](https://droniex-rent-store.vercel.app/privacy.html)
-- [Team & Authors](https://droniex-rent-store.vercel.app/humans.txt)
-- [Security Disclosure](https://droniex-rent-store.vercel.app/security.txt)
+- [Team & Authors (humans.txt)](https://droniex-rent-store.vercel.app/humans.txt)
+- [Security Disclosure (security.txt)](https://droniex-rent-store.vercel.app/security.txt)
+- [AI Crawler & Discovery Policy (ai.txt)](https://droniex-rent-store.vercel.app/ai.txt)
