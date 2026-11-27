@@ -1,0 +1,7 @@
+Contact: mailto:info@droniex.lk
+Expires: 2027-12-31T23:59:59.000Z
+Preferred-Languages: en, si
+Canonical: https://droniex-rent-store.vercel.app/.well-known/security.txt
+Policy: https://droniex-rent-store.vercel.app/privacy.html
+Acknowledgments: https://droniex-rent-store.vercel.app/humans.txt
+Hiring: https://droniex-rent-store.vercel.app/

@@ -1,0 +1,49 @@
+# DronieX Rent Store — Galle
+
+> Official Drone, Camera Gimbal & Party Audio Equipment Rental Store in Galle, Sri Lanka.
+
+## Business Overview
+- Business Name: DronieX Rent Store
+- Registration / Location: No. 131, D.J. Wimalasurendra Mawatha, Galwadugoda, Galle 80000, Sri Lanka
+- Physical Store Proximity: 5 minutes from Galle Dutch Fort and Galle Railway Station
+- Hotlines / WhatsApp: +94 70 187 5455 / +94 71 351 0551
+- Operating Hours: 8:00 AM – 8:00 PM Daily (Monday to Sunday)
+- Website: https://droniex-rent-store.vercel.app/
+
+## Core Equipment Catalog
+1. **DJI Mini 4 Pro Fly More Combo**
+   - Category: Aerial Camera Drone (<249g regulation-friendly)
+   - Specs: 4K/60fps HDR video, omnidirectional obstacle sensing, vertical shooting
+   - Inclusions: DJI RC smart controller with screen, 3 intelligent flight batteries (100+ mins total flight), two-way charging hub, 128GB high-speed MicroSD card, shoulder carrying bag, spare propellers
+   - Daily Rate: Rs. 10,000 / day
+   - Weekend Pack (2 Days): Rs. 18,000
+   - Weekly Pack (7 Days): Rs. 55,000
+
+2. **DJI Osmo Mobile SE**
+   - Category: Smartphone Gimbal Stabilizer
+   - Specs: Foldable 3-axis mechanical stabilization, ActiveTrack, magnetic phone clamp, grip mini tripod
+   - Daily Rate: Rs. 1,200 / day
+   - Weekend Pack (2 Days): Rs. 2,200
+   - Weekly Pack (7 Days): Rs. 6,000
+
+3. **DJI Osmo Mobile 7P**
+   - Category: Flagship Smartphone Gimbal Stabilizer
+   - Specs: ActiveTrack 7.0 subject tracking, built-in 215mm extension rod, magnetic subject tracker & dual fill-light module, integrated fold-out tripod
+   - Daily Rate: Rs. 1,800 / day
+   - Weekend Pack (2 Days): Rs. 3,200
+   - Weekly Pack (7 Days): Rs. 9,000
+
+4. **JBL PartyBox Stage 320**
+   - Category: High-Power Bluetooth Party Speaker
+   - Specs: 240W RMS JBL Pro Sound, dual 6.5" woofers, dynamic lightshow, swappable party battery (6–8+ hrs), telescopic handle and wheels, IPX4 splashproof
+   - Daily Rate: Rs. 4,000 / day (Speaker Only) | Rs. 5,000 / day (With Dual Wireless Mics)
+
+5. **JBL Wireless Dual Microphones**
+   - Category: Professional Vocal & Karaoke Mics
+   - Specs: Dual UHF wireless microphones, rechargeable receiver, crystal-clear vocal range
+   - Daily Rate: Rs. 2,000 / day
+
+## Reservation & Handover Policies
+- Zero upfront online card charge: Hirers reserve online and settle payment upon physical equipment inspection in-store.
+- Verification: Valid National Identity Card (NIC), Sri Lankan Driving License, or Foreign Passport required at handover.
+- Drone Compliance: Drone hirers are briefed on CAASL flight limits (under 400ft, line-of-sight, no-fly zones around military & airport installations).

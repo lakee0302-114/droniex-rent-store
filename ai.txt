@@ -1,0 +1,11 @@
+# DronieX Rent Store - AI Crawler & Discovery Policy
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /api/
+
+# Canonical Domain & Licensing
+Canonical: https://droniex-rent-store.vercel.app
+Content-Type: Commercial Technology Rental Platform
+Organization: DronieX Rent Store
+Location: Galle, Sri Lanka

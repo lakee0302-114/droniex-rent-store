@@ -1,0 +1,18 @@
+/* TEAM */
+Store Owner & Founder: DronieX Galle
+Store Address: No. 131, D.J. Wimalasurendra Mawatha, Galwadugoda, Galle 80000, Sri Lanka
+Hotline: 070 187 5455 / 071 351 0551
+Email: info@droniex.lk
+
+/* SITE & CRAFTSMANSHIP */
+Architecture: Traditional Hand-Crafted Semantic Frontend
+Standards: HTML5, CSS3, ES6+ JavaScript, Tailwind CSS v3
+Design Philosophy: Clean, minimal, user-first equipment rental experience
+Infrastructure: Vercel Edge Cloud, Firebase Realtime Database
+Compliance: Sri Lanka PDPA compliant, WCAG 2.1 AA accessible, responsive mobile-first
+
+/* LOCATION */
+City: Galle
+Province: Southern Province
+Country: Sri Lanka
+Coordinates: 6.0435° N, 80.2117° E
