@@ -3211,7 +3211,7 @@
         return `
           <article class="bg-white dark:bg-slate-900 border ${item.available ? 'border-slate-200/90 dark:border-slate-800' : 'border-amber-300 dark:border-amber-700'} rounded-3xl overflow-hidden flex flex-col justify-between card-clean shadow-sm hover:shadow-md transition">
             <div>
-              <!-- Big Clear Product Image Header -->
+              <!-- Big Clear Product Image Header with 3-4 Photo Switcher -->
               <div class="relative h-64 bg-slate-50 dark:bg-slate-800/40 overflow-hidden flex items-center justify-center p-4">
                 <img src="${item.image}" onerror="if(this.dataset.fb){this.src=this.dataset.fb;this.removeAttribute('data-fb');}" data-fb="${item.fallbackImage || ''}" alt="${item.title}" class="w-full h-full object-contain rounded-2xl transition-transform duration-300 hover:scale-105 ${!item.available ? 'opacity-80' : ''}" />
 
@@ -3232,7 +3232,40 @@
                     </span>
                   `}
                 </div>
+
+                <!-- Numbered Photo Switcher Buttons [1] [2] [3] [4] -->
+                ${item.gallery && item.gallery.length > 1 ? `
+                  <div class="absolute bottom-3 left-3 flex items-center gap-1.5 bg-slate-900/85 backdrop-blur-md border border-slate-700/80 rounded-xl px-2.5 py-1.5 shadow-lg">
+                    <span class="text-[10px] text-white/80 font-bold uppercase tracking-wider mr-0.5">Photos:</span>
+                    ${item.gallery.map((_, gIdx) => `
+                      <button type="button" onclick="switchCardPhoto('${item.id}', ${gIdx})"
+                        class="w-6 h-6 rounded-lg text-[11px] font-black transition cursor-pointer flex items-center justify-center ${
+                          activeIdx === gIdx
+                            ? 'bg-blue-600 text-white shadow-xs ring-2 ring-white/80'
+                            : 'bg-white/20 hover:bg-white/40 text-white'
+                        }" title="View Photo ${gIdx + 1}">
+                        ${gIdx + 1}
+                      </button>
+                    `).join('')}
+                  </div>
+                ` : ''}
               </div>
+
+              <!-- 4 Clickable Mini Photo Thumbnails -->
+              ${item.gallery && item.gallery.length > 1 ? `
+                <div class="grid grid-cols-4 gap-2 px-6 pt-3">
+                  ${item.gallery.map((gImg, gIdx) => `
+                    <button type="button" onclick="switchCardPhoto('${item.id}', ${gIdx})"
+                      class="h-14 rounded-xl border-2 overflow-hidden bg-slate-100 dark:bg-slate-800 p-0.5 transition cursor-pointer ${
+                        activeIdx === gIdx
+                          ? 'border-blue-600 ring-2 ring-blue-500/30'
+                          : 'border-slate-200 dark:border-slate-700 hover:border-slate-400 opacity-70 hover:opacity-100'
+                      }" title="Photo ${gIdx + 1}">
+                      <img src="${gImg}" alt="${item.title} angle ${gIdx + 1}" class="w-full h-full object-cover rounded-lg" />
+                    </button>
+                  `).join('')}
+                </div>
+              ` : ''}
 
               <!-- Card Body: Clean, Big & Friendly -->
               <div class="p-6 space-y-4">
