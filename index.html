@@ -390,24 +390,17 @@
       </div>
     </div>
 
-    <!-- MOBILE ACTION DOCK (4 Clean Touch Targets) -->
-    <div class="md:hidden border-t border-slate-200 dark:border-slate-800 px-3 py-2 bg-white/95 dark:bg-slate-900/95 grid grid-cols-4 gap-1.5">
-      <a href="#catalogSection" class="px-2 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold text-[11px] flex items-center justify-center transition">
-        <span>Gear</span>
+    <!-- MOBILE & TABLET NAVIGATION BAR (Shows exact links on phone) -->
+    <nav class="lg:hidden border-t border-slate-200 dark:border-slate-800 px-3 py-2 bg-white/95 dark:bg-slate-900/95 flex items-center gap-2 overflow-x-auto text-xs font-bold text-slate-700 dark:text-slate-200 no-scrollbar">
+      <a href="#catalogSection" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400 whitespace-nowrap transition">Equipment</a>
+      <a href="#howItWorksSection" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400 whitespace-nowrap transition">How It Works</a>
+      <a href="#storeHubSection" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400 whitespace-nowrap transition">Store &amp; Location</a>
+      <a href="#reviewsSection" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400 whitespace-nowrap transition">Reviews</a>
+      <a href="#faqSection" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400 whitespace-nowrap transition">FAQ</a>
+      <a href="sound.html" class="px-3 py-1.5 rounded-xl bg-orange-50 dark:bg-orange-950/80 text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-800 whitespace-nowrap font-bold transition flex items-center gap-1">
+        <span>🔊 Sound Gear</span>
       </a>
-
-      <button type="button" onclick="switchView('verify')" class="px-2 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-[11px] flex items-center justify-center shadow-xs transition">
-        <span>Reserve</span>
-      </button>
-
-      <a href="sound.html" class="px-2 py-1.5 rounded-xl bg-orange-50 dark:bg-orange-950/80 border border-orange-200 dark:border-orange-800 text-orange-700 dark:text-orange-300 font-bold text-[11px] flex items-center justify-center transition">
-        <span class="flex items-center gap-1"><svg class="w-3.5 h-3.5 text-orange-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072M18.364 5.636a9 9 0 010 12.728M11 5L6 9H2v6h4l5 4V5z"/></svg>Sound</span>
-      </a>
-
-      <a href="https://wa.me/94701875455?text=Hello%20DronieX%20Galle" target="_blank" rel="noopener noreferrer" class="px-2 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 font-bold text-[11px] flex items-center justify-center transition">
-        <span>WhatsApp</span>
-      </a>
-    </div>
+    </nav>
   </header>
 
   <!-- MAIN CONTENT CONTAINER -->
